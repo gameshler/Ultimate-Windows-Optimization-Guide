@@ -1,22 +1,13 @@
-    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator"))
-    {Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-    Exit}
-    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
-    $Host.UI.RawUI.BackgroundColor = "Black"
-	$Host.PrivateData.ProgressBackgroundColor = "Black"
-    $Host.PrivateData.ProgressForegroundColor = "White"
-    Clear-Host
-
-    function Get-FileFromWeb {
-    param ([Parameter(Mandatory)][string]$URL, [Parameter(Mandatory)][string]$File)
-    function Show-Progress {
+function Get-FileFromWeb {
+  param ([Parameter(Mandatory)][string]$URL, [Parameter(Mandatory)][string]$File)
+  function Show-Progress {
     param ([Parameter(Mandatory)][Single]$TotalValue, [Parameter(Mandatory)][Single]$CurrentValue, [Parameter(Mandatory)][string]$ProgressText, [Parameter()][int]$BarSize = 10, [Parameter()][switch]$Complete)
     $percent = $CurrentValue / $TotalValue
     $percentComplete = $percent * 100
     if ($psISE) { Write-Progress "$ProgressText" -id 0 -percentComplete $percentComplete }
     else { Write-Host -NoNewLine "`r$ProgressText $(''.PadRight($BarSize * $percent, [char]9608).PadRight($BarSize, [char]9617)) $($percentComplete.ToString('##0.00').PadLeft(6)) % " }
-    }
-    try {
+  }
+  try {
     $request = [System.Net.HttpWebRequest]::Create($URL)
     $response = $request.GetResponse()
     if ($response.StatusCode -eq 401 -or $response.StatusCode -eq 403 -or $response.StatusCode -eq 404) { throw "Remote file either doesn't exist, is unauthorized, or is forbidden for '$URL'." }
@@ -29,43 +20,43 @@
     $reader = $response.GetResponseStream()
     $writer = new-object System.IO.FileStream $File, 'Create'
     do {
-    $count = $reader.Read($buffer, 0, $buffer.Length)
-    $writer.Write($buffer, 0, $count)
-    $total += $count
-    if ($fullSize -gt 0) { Show-Progress -TotalValue $fullSize -CurrentValue $total -ProgressText " $($File.Name)" }
+      $count = $reader.Read($buffer, 0, $buffer.Length)
+      $writer.Write($buffer, 0, $count)
+      $total += $count
+      if ($fullSize -gt 0) { Show-Progress -TotalValue $fullSize -CurrentValue $total -ProgressText " $($File.Name)" }
     } while ($count -gt 0)
-    }
-    finally {
+  }
+  finally {
     $reader.Close()
     $writer.Close()
-    }
-    }
+  }
+}
 
-    Write-Host "1. Start Menu Taskbar: Clean (Recommended)"
-    Write-Host "2. Start Menu Taskbar: Default"
-    while ($true) {
-    $choice = Read-Host " "
-    if ($choice -match '^[1-2]$') {
+Write-Host "1. Start Menu Taskbar: Clean (Recommended)"
+Write-Host "2. Start Menu Taskbar: Default"
+while ($true) {
+  $choice = Read-Host " "
+  if ($choice -match '^[1-2]$') {
     switch ($choice) {
-    1 {
+      1 {
 
-Clear-Host
-Write-Host "Start Menu Taskbar: Clean . . ."
-# CLEAN TASKBAR
-# unpin all taskbar icons
-cmd /c "reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband /f >nul 2>&1"
-Remove-Item -Recurse -Force "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch" -ErrorAction SilentlyContinue | Out-Null
-New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer" -Name "Quick Launch" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
-New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch" -Name "User Pinned" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
-New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned" -Name "TaskBar" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
-New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned" -Name "ImplicitAppShortcuts" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
-# pin file explorer to taskbar
-$WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("$env:AppData\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\File Explorer.lnk")
-$Shortcut.TargetPath = "explorer"
-$Shortcut.Save()
-# create reg file
-$MultilineComment = @"
+        Clear-Host
+        Write-Host "Start Menu Taskbar: Clean . . ."
+        # CLEAN TASKBAR
+        # unpin all taskbar icons
+        cmd /c "reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband /f >nul 2>&1"
+        Remove-Item -Recurse -Force "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch" -ErrorAction SilentlyContinue | Out-Null
+        New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer" -Name "Quick Launch" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
+        New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch" -Name "User Pinned" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
+        New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned" -Name "TaskBar" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
+        New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned" -Name "ImplicitAppShortcuts" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
+        # pin file explorer to taskbar
+        $WshShell = New-Object -comObject WScript.Shell
+        $Shortcut = $WshShell.CreateShortcut("$env:AppData\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\File Explorer.lnk")
+        $Shortcut.TargetPath = "explorer"
+        $Shortcut.Save()
+        # create reg file
+        $MultilineComment = @"
 Windows Registry Editor Version 5.00
 
 ; pin file explorer to taskbar
@@ -129,16 +120,16 @@ Windows Registry Editor Version 5.00
 [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer]
 "EnableAutoTray"=dword:00000000
 "@
-Set-Content -Path "$env:TEMP\Taskbar Clean.reg" -Value $MultilineComment -Force
-# import reg file
-Set-Location -Path "$env:TEMP"
-Regedit.exe /S "Taskbar Clean.reg"
-# CLEAN START MENU W11
-$progresspreference = 'silentlycontinue'
-Remove-Item -Recurse -Force "$env:USERPROFILE\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState\start2.bin" -ErrorAction SilentlyContinue
-#start2.bin cert
-#leaves only file explorer and settings pinned (edge too if its installed)
-$certContent = "-----BEGIN CERTIFICATE-----
+        Set-Content -Path "$env:TEMP\Taskbar Clean.reg" -Value $MultilineComment -Force
+        # import reg file
+        Set-Location -Path "$env:TEMP"
+        Regedit.exe /S "Taskbar Clean.reg"
+        # CLEAN START MENU W11
+        $progresspreference = 'silentlycontinue'
+        Remove-Item -Recurse -Force "$env:USERPROFILE\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState\start2.bin" -ErrorAction SilentlyContinue
+        #start2.bin cert
+        #leaves only file explorer and settings pinned (edge too if its installed)
+        $certContent = "-----BEGIN CERTIFICATE-----
 4nrhSwH8TRucAIEL3m5RhU5aX0cAW7FJilySr5CE+V40mv9utV7aAZARAABc9u55
 LN8F4borYyXEGl8Q5+RZ+qERszeqUhhZXDvcjTF6rgdprauITLqPgMVMbSZbRsLN
 /O5uMjSLEr6nWYIwsMJkZMnZyZrhR3PugUhUKOYDqwySCY6/CPkL/Ooz/5j2R2hw
@@ -236,14 +227,14 @@ DQv51k5/v4ZE2VL0dIIvj1M+KPw0nSs271QgJanYwK3CpFluK/1ilEi7JKDikT8X
 TSz1QZdkum5Y3uC7wc7paXh1rm11nwluCC7jiA==
 -----END CERTIFICATE-----
 "
-New-Item "$env:TEMP\start2.txt" -Value $certContent -Force | Out-Null
-certutil.exe -decode "$env:TEMP\start2.txt" "$env:TEMP\start2.bin" >$null
-Copy-Item "$env:TEMP\start2.bin" -Destination "$env:USERPROFILE\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState" -Force | Out-Null
-# CLEAN START MENU W10
-# delete startmenulayout.xml
-Remove-Item -Recurse -Force "$env:SystemDrive\Windows\StartMenuLayout.xml" -ErrorAction SilentlyContinue | Out-Null
-# create startmenulayout.xml
-$MultilineComment = @"
+        New-Item "$env:TEMP\start2.txt" -Value $certContent -Force | Out-Null
+        certutil.exe -decode "$env:TEMP\start2.txt" "$env:TEMP\start2.bin" >$null
+        Copy-Item "$env:TEMP\start2.bin" -Destination "$env:USERPROFILE\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState" -Force | Out-Null
+        # CLEAN START MENU W10
+        # delete startmenulayout.xml
+        Remove-Item -Recurse -Force "$env:SystemDrive\Windows\StartMenuLayout.xml" -ErrorAction SilentlyContinue | Out-Null
+        # create startmenulayout.xml
+        $MultilineComment = @"
 <LayoutModificationTemplate xmlns:defaultlayout="http://schemas.microsoft.com/Start/2014/FullDefaultLayout" xmlns:start="http://schemas.microsoft.com/Start/2014/StartLayout" Version="1" xmlns:taskbar="http://schemas.microsoft.com/Start/2014/TaskbarLayout" xmlns="http://schemas.microsoft.com/Start/2014/LayoutModification">
     <LayoutOptions StartTileGroupCellWidth="6" />
     <DefaultLayoutOverride>
@@ -253,77 +244,77 @@ $MultilineComment = @"
     </DefaultLayoutOverride>
 </LayoutModificationTemplate>
 "@
-Set-Content -Path "C:\Windows\StartMenuLayout.xml" -Value $MultilineComment -Force -Encoding ASCII
-# assign startmenulayout.xml registry
-$layoutFile="C:\Windows\StartMenuLayout.xml"
-$regAliases = @("HKLM", "HKCU")
-foreach ($regAlias in $regAliases){
-$basePath = $regAlias + ":\SOFTWARE\Policies\Microsoft\Windows"
-$keyPath = $basePath + "\Explorer"
-IF(!(Test-Path -Path $keyPath)) {
-New-Item -Path $basePath -Name "Explorer" | Out-Null
-}
-Set-ItemProperty -Path $keyPath -Name "LockedStartLayout" -Value 1 | Out-Null
-Set-ItemProperty -Path $keyPath -Name "StartLayoutFile" -Value $layoutFile | Out-Null
-}
-# restart explorer
-Stop-Process -Force -Name explorer -ErrorAction SilentlyContinue | Out-Null
-Timeout /T 5 | Out-Null
-# disable lockedstartlayout registry
-foreach ($regAlias in $regAliases){
-$basePath = $regAlias + ":\SOFTWARE\Policies\Microsoft\Windows"
-$keyPath = $basePath + "\Explorer"
-Set-ItemProperty -Path $keyPath -Name "LockedStartLayout" -Value 0
-}
-# restart explorer
-Stop-Process -Force -Name explorer -ErrorAction SilentlyContinue | Out-Null
-# delete startmenulayout.xml
-Remove-Item -Recurse -Force "$env:SystemDrive\Windows\StartMenuLayout.xml" -ErrorAction SilentlyContinue | Out-Null
-Clear-Host
-Write-Host "Restart to apply . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-exit
+        Set-Content -Path "C:\Windows\StartMenuLayout.xml" -Value $MultilineComment -Force -Encoding ASCII
+        # assign startmenulayout.xml registry
+        $layoutFile = "C:\Windows\StartMenuLayout.xml"
+        $regAliases = @("HKLM", "HKCU")
+        foreach ($regAlias in $regAliases) {
+          $basePath = $regAlias + ":\SOFTWARE\Policies\Microsoft\Windows"
+          $keyPath = $basePath + "\Explorer"
+          IF (!(Test-Path -Path $keyPath)) {
+            New-Item -Path $basePath -Name "Explorer" | Out-Null
+          }
+          Set-ItemProperty -Path $keyPath -Name "LockedStartLayout" -Value 1 | Out-Null
+          Set-ItemProperty -Path $keyPath -Name "StartLayoutFile" -Value $layoutFile | Out-Null
+        }
+        # restart explorer
+        Stop-Process -Force -Name explorer -ErrorAction SilentlyContinue | Out-Null
+        Timeout /T 5 | Out-Null
+        # disable lockedstartlayout registry
+        foreach ($regAlias in $regAliases) {
+          $basePath = $regAlias + ":\SOFTWARE\Policies\Microsoft\Windows"
+          $keyPath = $basePath + "\Explorer"
+          Set-ItemProperty -Path $keyPath -Name "LockedStartLayout" -Value 0
+        }
+        # restart explorer
+        Stop-Process -Force -Name explorer -ErrorAction SilentlyContinue | Out-Null
+        # delete startmenulayout.xml
+        Remove-Item -Recurse -Force "$env:SystemDrive\Windows\StartMenuLayout.xml" -ErrorAction SilentlyContinue | Out-Null
+        Clear-Host
+        Write-Host "Restart to apply . . ."
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        exit
 
       }
-    2 {
+      2 {
 
-Clear-Host
-Write-Host "Start Menu Taskbar: Default . . ."
-# TASKBAR
-# unpin all taskbar icons
-cmd /c "reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband /f >nul 2>&1"
-Remove-Item -Recurse -Force "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch" -ErrorAction SilentlyContinue | Out-Null
-New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer" -Name "Quick Launch" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
-New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch" -Name "User Pinned" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
-New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned" -Name "TaskBar" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
-New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned" -Name "ImplicitAppShortcuts" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
-# pin file explorer to taskbar
-$WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("$env:AppData\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\File Explorer.lnk")
-$Shortcut.TargetPath = "explorer"
-$Shortcut.Save()
-# pin microsoft edge to taskbar
-$WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("$env:AppData\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Microsoft Edge.lnk")
-$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"     
-$Shortcut.Save()
-# pin microsoft edge to taskbar
-$WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("$env:AppData\Microsoft\Internet Explorer\Quick Launch\Microsoft Edge.lnk")
-$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"     
-$Shortcut.Save()
-# pin show desktop to taskbar
-$WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("$env:AppData\Microsoft\Internet Explorer\Quick Launch\Show desktop.lnk")
-$Shortcut.TargetPath = "shell:::{3080F90D-D7AD-11D9-BD98-0000947B0257}"
-$Shortcut.Save()
-# pin switch between windows to taskbar
-$WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("$env:AppData\Microsoft\Internet Explorer\Quick Launch\Switch between windows.lnk")
-$Shortcut.TargetPath = "shell:::{3080F90E-D7AD-11D9-BD98-0000947B0257}"
-$Shortcut.Save()
-# create reg file
-$MultilineComment = @"
+        Clear-Host
+        Write-Host "Start Menu Taskbar: Default . . ."
+        # TASKBAR
+        # unpin all taskbar icons
+        cmd /c "reg delete HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband /f >nul 2>&1"
+        Remove-Item -Recurse -Force "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch" -ErrorAction SilentlyContinue | Out-Null
+        New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer" -Name "Quick Launch" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
+        New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch" -Name "User Pinned" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
+        New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned" -Name "TaskBar" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
+        New-Item -Path "$env:USERPROFILE\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User Pinned" -Name "ImplicitAppShortcuts" -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
+        # pin file explorer to taskbar
+        $WshShell = New-Object -comObject WScript.Shell
+        $Shortcut = $WshShell.CreateShortcut("$env:AppData\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\File Explorer.lnk")
+        $Shortcut.TargetPath = "explorer"
+        $Shortcut.Save()
+        # pin microsoft edge to taskbar
+        $WshShell = New-Object -comObject WScript.Shell
+        $Shortcut = $WshShell.CreateShortcut("$env:AppData\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\Microsoft Edge.lnk")
+        $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"     
+        $Shortcut.Save()
+        # pin microsoft edge to taskbar
+        $WshShell = New-Object -comObject WScript.Shell
+        $Shortcut = $WshShell.CreateShortcut("$env:AppData\Microsoft\Internet Explorer\Quick Launch\Microsoft Edge.lnk")
+        $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"     
+        $Shortcut.Save()
+        # pin show desktop to taskbar
+        $WshShell = New-Object -comObject WScript.Shell
+        $Shortcut = $WshShell.CreateShortcut("$env:AppData\Microsoft\Internet Explorer\Quick Launch\Show desktop.lnk")
+        $Shortcut.TargetPath = "shell:::{3080F90D-D7AD-11D9-BD98-0000947B0257}"
+        $Shortcut.Save()
+        # pin switch between windows to taskbar
+        $WshShell = New-Object -comObject WScript.Shell
+        $Shortcut = $WshShell.CreateShortcut("$env:AppData\Microsoft\Internet Explorer\Quick Launch\Switch between windows.lnk")
+        $Shortcut.TargetPath = "shell:::{3080F90E-D7AD-11D9-BD98-0000947B0257}"
+        $Shortcut.Save()
+        # create reg file
+        $MultilineComment = @"
 Windows Registry Editor Version 5.00
 
 ; pin all to taskbar
@@ -739,17 +730,17 @@ Windows Registry Editor Version 5.00
 [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer]
 "EnableAutoTray"=-
 "@
-Set-Content -Path "$env:TEMP\Taskbar Default.reg" -Value $MultilineComment -Force
-# import reg file
-Set-Location -Path "$env:TEMP"
-Regedit.exe /S "Taskbar Default.reg"
-# START MENU W11
-Remove-Item -Recurse -Force "$env:USERPROFILE\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState\start2.bin" -ErrorAction SilentlyContinue
-# START MENU W10
-# delete startmenulayout.xml
-Remove-Item -Recurse -Force "$env:SystemDrive\Windows\StartMenuLayout.xml" -ErrorAction SilentlyContinue | Out-Null
-# create startmenulayout.xml
-$MultilineComment = @"
+        Set-Content -Path "$env:TEMP\Taskbar Default.reg" -Value $MultilineComment -Force
+        # import reg file
+        Set-Location -Path "$env:TEMP"
+        Regedit.exe /S "Taskbar Default.reg"
+        # START MENU W11
+        Remove-Item -Recurse -Force "$env:USERPROFILE\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState\start2.bin" -ErrorAction SilentlyContinue
+        # START MENU W10
+        # delete startmenulayout.xml
+        Remove-Item -Recurse -Force "$env:SystemDrive\Windows\StartMenuLayout.xml" -ErrorAction SilentlyContinue | Out-Null
+        # create startmenulayout.xml
+        $MultilineComment = @"
 <LayoutModificationTemplate xmlns:defaultlayout="http://schemas.microsoft.com/Start/2014/FullDefaultLayout" xmlns:start="http://schemas.microsoft.com/Start/2014/StartLayout" Version="1" xmlns="http://schemas.microsoft.com/Start/2014/LayoutModification">
   <LayoutOptions StartTileGroupCellWidth="6" />
   <DefaultLayoutOverride>
@@ -783,36 +774,39 @@ $MultilineComment = @"
   </DefaultLayoutOverride>
 </LayoutModificationTemplate>
 "@
-Set-Content -Path "C:\Windows\StartMenuLayout.xml" -Value $MultilineComment -Force -Encoding ASCII
-# assign startmenulayout.xml registry
-$layoutFile="C:\Windows\StartMenuLayout.xml"
-$regAliases = @("HKLM", "HKCU")
-foreach ($regAlias in $regAliases){
-$basePath = $regAlias + ":\SOFTWARE\Policies\Microsoft\Windows"
-$keyPath = $basePath + "\Explorer"
-IF(!(Test-Path -Path $keyPath)) {
-New-Item -Path $basePath -Name "Explorer" | Out-Null
-}
-Set-ItemProperty -Path $keyPath -Name "LockedStartLayout" -Value 1 | Out-Null
-Set-ItemProperty -Path $keyPath -Name "StartLayoutFile" -Value $layoutFile | Out-Null
-}
-# restart explorer
-Stop-Process -Force -Name explorer -ErrorAction SilentlyContinue | Out-Null
-Timeout /T 5 | Out-Null
-# disable lockedstartlayout registry
-foreach ($regAlias in $regAliases){
-$basePath = $regAlias + ":\SOFTWARE\Policies\Microsoft\Windows"
-$keyPath = $basePath + "\Explorer"
-Set-ItemProperty -Path $keyPath -Name "LockedStartLayout" -Value 0
-}
-# restart explorer
-Stop-Process -Force -Name explorer -ErrorAction SilentlyContinue | Out-Null
-# delete startmenulayout.xml
-Remove-Item -Recurse -Force "$env:SystemDrive\Windows\StartMenuLayout.xml" -ErrorAction SilentlyContinue | Out-Null
-Clear-Host
-Write-Host "Restart to apply . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-exit
+        Set-Content -Path "C:\Windows\StartMenuLayout.xml" -Value $MultilineComment -Force -Encoding ASCII
+        # assign startmenulayout.xml registry
+        $layoutFile = "C:\Windows\StartMenuLayout.xml"
+        $regAliases = @("HKLM", "HKCU")
+        foreach ($regAlias in $regAliases) {
+          $basePath = $regAlias + ":\SOFTWARE\Policies\Microsoft\Windows"
+          $keyPath = $basePath + "\Explorer"
+          IF (!(Test-Path -Path $keyPath)) {
+            New-Item -Path $basePath -Name "Explorer" | Out-Null
+          }
+          Set-ItemProperty -Path $keyPath -Name "LockedStartLayout" -Value 1 | Out-Null
+          Set-ItemProperty -Path $keyPath -Name "StartLayoutFile" -Value $layoutFile | Out-Null
+        }
+        # restart explorer
+        Stop-Process -Force -Name explorer -ErrorAction SilentlyContinue | Out-Null
+        Timeout /T 5 | Out-Null
+        # disable lockedstartlayout registry
+        foreach ($regAlias in $regAliases) {
+          $basePath = $regAlias + ":\SOFTWARE\Policies\Microsoft\Windows"
+          $keyPath = $basePath + "\Explorer"
+          Set-ItemProperty -Path $keyPath -Name "LockedStartLayout" -Value 0
+        }
+        # restart explorer
+        Stop-Process -Force -Name explorer -ErrorAction SilentlyContinue | Out-Null
+        # delete startmenulayout.xml
+        Remove-Item -Recurse -Force "$env:SystemDrive\Windows\StartMenuLayout.xml" -ErrorAction SilentlyContinue | Out-Null
+        Clear-Host
+        Write-Host "Restart to apply . . ."
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        exit
 
       }
-    } } else { Write-Host "Invalid input. Please select a valid option (1-2)." } }
+    } 
+  }
+  else { Write-Host "Invalid input. Please select a valid option (1-2)." } 
+}

@@ -1,23 +1,23 @@
-    $Host.UI.RawUI.BackgroundColor = "Black"
-	$Host.PrivateData.ProgressBackgroundColor = "Black"
-    $Host.PrivateData.ProgressForegroundColor = "White"
-    Clear-Host
+$Host.UI.RawUI.BackgroundColor = "Black"
+$Host.PrivateData.ProgressBackgroundColor = "Black"
+$Host.PrivateData.ProgressForegroundColor = "White"
+Clear-Host
 	
 # open sounds
 Start-Process "mmsys.cpl"
 
-    Write-Host "Enable Loudness EQ?"
-    Write-Host "1. Yes"
-    Write-Host "2. No"
-    while ($true) {
+Write-Host "Enable Loudness EQ?"
+Write-Host "1. Yes"
+Write-Host "2. No"
+while ($true) {
     $choice = Read-Host " "
     if ($choice -match '^[1-2]$') {
-    switch ($choice) {
-    1 {
+        switch ($choice) {
+            1 {
 
-Clear-Host
-# create powershell file
-$MultilineComment = @"
+                Clear-Host
+                # create powershell file
+                $MultilineComment = @"
 Param(
    [Parameter(Mandatory,HelpMessage='PlaybackDeviceName?')]
    [ValidateLength(3,50)]
@@ -119,33 +119,36 @@ Restart-Service audiosrv -Force
 Start-Process "mmsys.cpl"
 exit
 "@
-Set-Content -Path "$env:TEMP\EQ.ps1" -Value $MultilineComment -Force
-$path = "$env:TEMP\EQ.ps1"
-(Get-Content $path) -replace '&','$' | out-file $path
-(Get-Content $path) -replace '<','`' | out-file $path
-Clear-Host
-Write-Host "Loudness EQ not working?"
-Write-Host "-Roll back/uninstall audio driver"
-Write-Host "-Or try a different playback device"
-Write-Host ""
-Write-Host "Copy playback device name . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-Clear-Host
-Start-Process "mmsys.cpl"
-Write-Host "Press any key to continue . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-Clear-Host
-# stop sounds running
-Stop-Process -Name rundll32 -Force -ErrorAction SilentlyContinue
-# run powershell file
-& "$env:TEMP\EQ.ps1"
-exit
+                Set-Content -Path "$env:TEMP\EQ.ps1" -Value $MultilineComment -Force
+                $path = "$env:TEMP\EQ.ps1"
+(Get-Content $path) -replace '&', '$' | out-file $path
+(Get-Content $path) -replace '<', '`' | out-file $path
+                Clear-Host
+                Write-Host "Loudness EQ not working?"
+                Write-Host "-Roll back/uninstall audio driver"
+                Write-Host "-Or try a different playback device"
+                Write-Host ""
+                Write-Host "Copy playback device name . . ."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+                Clear-Host
+                Start-Process "mmsys.cpl"
+                Write-Host "Press any key to continue . . ."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+                Clear-Host
+                # stop sounds running
+                Stop-Process -Name rundll32 -Force -ErrorAction SilentlyContinue
+                # run powershell file
+                & "$env:TEMP\EQ.ps1"
+                exit
 
-      }
-    2 {
+            }
+            2 {
 
-Clear-Host
-exit
+                Clear-Host
+                exit
 
-      }
-    } } else { Write-Host "Invalid input. Please select a valid option (1-2)." } }
+            }
+        } 
+    }
+    else { Write-Host "Invalid input. Please select a valid option (1-2)." } 
+}
