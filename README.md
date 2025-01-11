@@ -26,3 +26,4 @@ The definitive Windows optimization guide for power users seeking to enhance the
 This guide is continuously updated with improvements and bug fixes. <br> Make sure to always download the latest version from GitHub.
 
 
+![Script Showcase](image.png)
