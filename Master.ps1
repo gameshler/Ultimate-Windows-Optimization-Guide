@@ -35,6 +35,7 @@ function Show-Menu {
   Write-Host $asciiArt -ForegroundColor Magenta
   Write-Host "-----------------------------------------------" -ForegroundColor Green
   Write-Host "Select an option:" -ForegroundColor Green
+  Write-Host ""
 
   for ($i = 0; $i -lt $directories.Length; $i++) {
     $folderName = $directories[$i].Name -replace '^\d+\s*'
