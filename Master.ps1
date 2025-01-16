@@ -70,9 +70,9 @@ function Show-FilesInDirectory {
 
   try {
     $files = Get-ChildItem -Path $Directory.FullName -File | Sort-Object { [int]($_.Name -replace '^\D*(\d+).*$', '$1') }
-
+    $directoryName = $Directory.Name -replace '^\d+\s*'
     Clear-Host
-    Write-Host "Files in $($Directory.Name):" -ForegroundColor Yellow
+    Write-Host "Files in $($directoryName):" -ForegroundColor Yellow
     for ($i = 0; $i -lt $files.Length; $i++) {
       $fileName = $files[$i].Name -replace '^\d+\s*'
       Write-Host "$($i+1). $fileName" -ForegroundColor Cyan
