@@ -79,6 +79,7 @@ function show-launchers-menu {
     Write-Host "6. Electronic Arts" -ForegroundColor Cyan
     Write-Host "7. Rockstar Games" -ForegroundColor Cyan
     Write-Host "8. GOG launcher" -ForegroundColor Cyan
+    Write-Host "9. Plutonium" -ForegroundColor Cyan
 
 }
 
@@ -106,7 +107,7 @@ while ($true) {
             3 {
                 show-launchers-menu
                 $launcherChoice = Read-Host " "
-                if ($launcherChoice -match '^[1-8]$' ) {
+                if ($launcherChoice -match '^[1-9]$' ) {
                     switch ($launcherChoice ) { 
                         1 {
                             Clear-Host
@@ -180,10 +181,19 @@ while ($true) {
                             Start-Process "$env:TEMP\GOG launcher.exe"
                             show-launchers-menu
                         }
+                        9 {
+                            Clear-Host
+                            Write-Host "Installing: Plutonium . . ."
+                            # download plutonium
+                            Get-FileFromWeb -URL "https://cdn.plutonium.pw/updater/plutonium.exe" -File "$env:TEMP\Plutonium.exe"
+                            # install plutonium
+                            Start-Process "$env:TEMP\Plutonium.exe"
+                            show-launchers-menu
+                        }
                     }
                 }
                 else {
-                    Write-Host "Invalid input. Please select a valid option (1-8)."
+                    Write-Host "Invalid input. Please select a valid option (1-9)."
                 }
                
             }
