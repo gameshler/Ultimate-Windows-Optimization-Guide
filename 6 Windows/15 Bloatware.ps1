@@ -34,15 +34,19 @@ function Get-FileFromWeb {
 
 function show-menu {
     Clear-Host
-    Write-Host " 1. Exit"
-    Write-Host " 2. Remove : All Bloatware (Recommended)"
-    Write-Host " 3. Install: Store"
-    Write-Host " 4. Install: All UWP Apps"
-    Write-Host " 5. Install: UWP Features"
-    Write-Host " 6. Install: Legacy Features"
-    Write-Host " 7. Install: One Drive"
-    Write-Host " 8. Install: Remote Desktop Connection"
-    Write-Host " 9. Install: Legacy Snipping Tool W10"
+    Write-Host "-----------------------------------------------" -ForegroundColor Green
+    Write-Host "Select an option:" -ForegroundColor Green
+    Write-Host ""
+    Write-Host " 1. Exit" -ForegroundColor Red
+    Write-Host " 2. Remove : All Bloatware (Recommended)" -ForegroundColor Cyan
+    Write-Host " 3. Install: Store" -ForegroundColor Cyan
+    Write-Host " 4. Install: All UWP Apps" -ForegroundColor Cyan
+    Write-Host " 5. Install: UWP Features" -ForegroundColor Cyan
+    Write-Host " 6. Install: Legacy Features" -ForegroundColor Cyan
+    Write-Host " 7. Install: One Drive" -ForegroundColor Cyan
+    Write-Host " 8. Install: Remote Desktop Connection" -ForegroundColor Cyan
+    Write-Host " 9. Install: Legacy Snipping Tool W10" -ForegroundColor Cyan
+    Write-Host "-----------------------------------------------" -ForegroundColor Green
 }
 show-menu
 while ($true) {
@@ -208,7 +212,11 @@ while ($true) {
                 # clean adobe type manager w10
                 cmd /c "reg delete `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Font Drivers`" /f >nul 2>&1"
                 # uninstall old snippingtool w10
-                Start-Process "C:\Windows\System32\SnippingTool.exe" -ArgumentList "/Uninstall"
+                if (Test-Path "C:\Windows\System32\SnippingTool.exe") {
+                    Start-Process "C:\Windows\System32\SnippingTool.exe" -ArgumentList "/Uninstall" -ErrorAction Stop
+                }
+                else {
+                }
                 Clear-Host
                 # silent window for old snippingtool w10
                 $processExists = Get-Process -Name SnippingTool -ErrorAction SilentlyContinue
@@ -228,7 +236,11 @@ while ($true) {
                 }
                 Timeout /T 1 | Out-Null
                 # uninstall remote desktop connection
-                Start-Process "mstsc" -ArgumentList "/Uninstall"
+                if (Test-Path "C:\Windows\System32\mstsc.exe") {
+                    Start-Process "mstsc" -ArgumentList "/Uninstall" -ErrorAction Stop 
+                }
+                else {
+                }
                 Clear-Host
                 # silent window for remote desktop connection
                 $processExists = Get-Process -Name mstsc -ErrorAction SilentlyContinue
