@@ -65,6 +65,96 @@ function show-browser-menu {
     Write-Host "2. Google Chrome" -ForegroundColor Cyan
     Write-Host "3. Firefox" -ForegroundColor Cyan
     Write-Host "4. Thorium Browser" -ForegroundColor Cyan
+
+    $browserChoice = Read-Host " "
+    $firefoxExtensions = @(
+        "https://addons.mozilla.org/en-US/firefox/addon/decentraleyes/", 
+        "https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/", 
+        "https://addons.mozilla.org/en-US/firefox/addon/privacy-badger17/",
+        "https://addons.mozilla.org/en-US/firefox/addon/react-devtools/", 
+        "https://addons.mozilla.org/en-US/firefox/addon/search_by_image/"
+    )
+    $chromiumExtensions = @(
+        "https://chromewebstore.google.com/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm", 
+        "https://chromewebstore.google.com/detail/privacy-badger/pkehgijcmpdhfbdbbnkijodmdjhbjlgp", 
+        "https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi", 
+        "https://chromewebstore.google.com/detail/search-by-image/cnojnbdhbhnkbcieeekonklommdnndci", 
+        "https://chromewebstore.google.com/detail/decentraleyes/ldpochfccmkkmhdbclfhpagapcfdljkj"
+    )
+
+    $thoriumPaths = @(
+        "$env:LOCALAPPDATA\Thorium\Application\thorium.exe"
+    )
+
+    $chromePaths = @(
+        "C:\Program Files\Google\Chrome\Application\chrome.exe", 
+        "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+        
+    )
+
+    $firefoxPaths = @(
+        "C:\Program Files\Mozilla Firefox\firefox.exe", 
+        "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" 
+    )
+    if ($browserChoice -match '^[1-4]$') {
+        switch ($browserChoice) {
+            1 {
+                Clear-Host
+                show-menu
+            } 
+            2 {
+                Clear-Host
+                Write-Host "Installing: Google Chrome . . ."
+                # download google chrome
+                Get-FileFromWeb -URL "https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi" -File "$env:TEMP\Chrome.msi"
+                # install google chrome
+                Start-Process -wait "$env:TEMP\Chrome.msi" -ArgumentList "/quiet"
+                $chromePath = $chromePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+                if ($chromePath) {
+                    foreach ($extension in $chromiumExtensions) {
+                        Start-Process $chromePath $extension
+                    }
+                }
+                show-menu
+            } 
+            3 {
+                Clear-Host
+                Write-Host "Installing: Firefox . . ."
+                # download firefox
+                Get-FileFromWeb -URL "https://download.mozilla.org/?product=firefox-latest-ssl&os=win&lang=en-US" -File "$env:TEMP\Firefox Installer.exe"
+                # install firefox
+                Start-Process -wait "$env:TEMP\Firefox Installer.exe" -ArgumentList "/S"
+    
+                $firefoxPath = $firefoxPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+                if ($firefoxPath) {
+                    foreach ($extension in $firefoxExtensions) {
+                        Start-Process $firefoxPath $extension
+                    }
+                }
+
+                show-menu
+            } 
+            4 {
+                Clear-Host
+                Write-Host "Installing: Thorium Browser . . ."
+                # download thorium browser
+                Get-FileFromWeb -URL "https://github.com/Alex313031/Thorium-Win/releases/download/M128.0.6613.189/thorium_AVX2_mini_installer.exe" -File "$env:TEMP\Thorium Browser.exe"
+                # install thorium browser
+                Start-Process -wait "$env:TEMP\Thorium Browser.exe" -ArgumentList "/S"
+                $thoriumPath = $thoriumPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+                if ($thoriumPath) {
+                    foreach ($extension in $chromiumExtensions) {
+                        Start-Process $thoriumPath $extension
+                    }
+                }
+                show-menu
+            }
+        }
+    }
+    else {
+        Write-Host "Invalid input. Please select a valid option (1-4)."
+    }
+
 }
 
 function show-launchers-menu {
@@ -80,6 +170,97 @@ function show-launchers-menu {
     Write-Host "7. Rockstar Games" -ForegroundColor Cyan
     Write-Host "8. GOG launcher" -ForegroundColor Cyan
     Write-Host "9. Plutonium" -ForegroundColor Cyan
+
+    $launcherChoice = Read-Host " "
+    if ($launcherChoice -match '^[1-9]$' ) {
+        switch ($launcherChoice ) { 
+            1 {
+                Clear-Host
+                show-menu
+            }
+            2 {
+                Clear-Host
+                Write-Host "Installing: Battle.net . . ."
+                # download battle.net
+                Get-FileFromWeb -URL "https://downloader.battle.net/download/getInstaller?os=win&installer=Battle.net-Setup.exe" -File "$env:TEMP\Battle.net.exe"
+                # install battle.net 
+                Start-Process "$env:TEMP\Battle.net.exe" -ArgumentList '--lang=enUS --installpath="C:\Program Files (x86)\Battle.net"'
+                # create battle.net shortcut
+                $WshShell = New-Object -comObject WScript.Shell
+                $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Battle.net.lnk")
+                $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Battle.net\Battle.net Launcher.exe"
+                $Shortcut.Save()
+                show-launchers-menu
+            }
+            3 {
+                Clear-Host
+                Write-Host "Installing: Steam . . ."
+                # download steam
+                Get-FileFromWeb -URL "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe" -File "$env:TEMP\Steam.exe"
+                # install steam
+                Start-Process -wait "$env:TEMP\Steam.exe" -ArgumentList "/S"
+                show-launchers-menu
+            }
+            4 {
+                Clear-Host
+                Write-Host "Installing: Epic Games . . ."
+                # download epic games
+                Get-FileFromWeb -URL "https://epicgames-download1.akamaized.net/Builds/UnrealEngineLauncher/Installers/Win32/EpicInstaller-15.17.1.msi?launcherfilename=EpicInstaller-15.17.1.msi" -File "$env:TEMP\Epic Games.msi"
+                # install epic games
+                Start-Process -wait "$env:TEMP\Epic Games.msi" -ArgumentList "/quiet"
+                show-launchers-menu
+            }
+            5 {
+                Clear-Host
+                Write-Host "Installing: Ubisoft Connect . . ."
+                # download ubisoft connect
+                Get-FileFromWeb -URL "https://static3.cdn.ubi.com/orbit/launcher_installer/UbisoftConnectInstaller.exe" -File "$env:TEMP\Ubisoft Connect.exe"
+                # install ubisoft connect
+                Start-Process -wait "$env:TEMP\Ubisoft Connect.exe" -ArgumentList "/S"
+                show-launchers-menu
+            }
+            6 {
+                Clear-Host
+                Write-Host "Installing: Electronic Arts . . ."
+                # download electronic arts
+                Get-FileFromWeb -URL "https://origin-a.akamaihd.net/EA-Desktop-Client-Download/installer-releases/EAappInstaller.exe" -File "$env:TEMP\Electronic Arts.exe"
+                # install electronic arts
+                Start-Process "$env:TEMP\Electronic Arts.exe"
+                show-launchers-menu
+            }
+            7 {
+                Clear-Host
+                Write-Host "Installing: Rockstar Games . . ."
+                # download rockstar games
+                Get-FileFromWeb -URL "https://gamedownloads.rockstargames.com/public/installer/Rockstar-Games-Launcher.exe" -File "$env:TEMP\Rockstar Games.exe"
+                # install rockstar games
+                Start-Process "$env:TEMP\Rockstar Games.exe"
+                show-launchers-menu
+            }
+            8 {
+                Clear-Host
+                Write-Host "Installing: GOG launcher . . ."
+                # download gog launcher
+                Get-FileFromWeb -URL "https://webinstallers.gog-statics.com/download/GOG_Galaxy_2.0.exe" -File "$env:TEMP\GOG launcher.exe"
+                # install gog launcher
+                Start-Process "$env:TEMP\GOG launcher.exe"
+                show-launchers-menu
+            }
+            9 {
+                Clear-Host
+                Write-Host "Installing: Plutonium . . ."
+                # download plutonium
+                Get-FileFromWeb -URL "https://cdn.plutonium.pw/updater/plutonium.exe" -File "$env:TEMP\Plutonium.exe"
+                # install plutonium
+                Start-Process "$env:TEMP\Plutonium.exe"
+                show-launchers-menu
+            }
+        }
+    }
+    else {
+        Write-Host "Invalid input. Please select a valid option (1-9)."
+    }
+   
 
 }
 
@@ -106,96 +287,7 @@ while ($true) {
             }
             3 {
                 show-launchers-menu
-                $launcherChoice = Read-Host " "
-                if ($launcherChoice -match '^[1-9]$' ) {
-                    switch ($launcherChoice ) { 
-                        1 {
-                            Clear-Host
-                            show-menu
-                        }
-                        2 {
-                            Clear-Host
-                            Write-Host "Installing: Battle.net . . ."
-                            # download battle.net
-                            Get-FileFromWeb -URL "https://downloader.battle.net/download/getInstaller?os=win&installer=Battle.net-Setup.exe" -File "$env:TEMP\Battle.net.exe"
-                            # install battle.net 
-                            Start-Process "$env:TEMP\Battle.net.exe" -ArgumentList '--lang=enUS --installpath="C:\Program Files (x86)\Battle.net"'
-                            # create battle.net shortcut
-                            $WshShell = New-Object -comObject WScript.Shell
-                            $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Battle.net.lnk")
-                            $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Battle.net\Battle.net Launcher.exe"
-                            $Shortcut.Save()
-                            show-launchers-menu
-                        }
-                        3 {
-                            Clear-Host
-                            Write-Host "Installing: Steam . . ."
-                            # download steam
-                            Get-FileFromWeb -URL "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe" -File "$env:TEMP\Steam.exe"
-                            # install steam
-                            Start-Process -wait "$env:TEMP\Steam.exe" -ArgumentList "/S"
-                            show-launchers-menu
-                        }
-                        4 {
-                            Clear-Host
-                            Write-Host "Installing: Epic Games . . ."
-                            # download epic games
-                            Get-FileFromWeb -URL "https://epicgames-download1.akamaized.net/Builds/UnrealEngineLauncher/Installers/Win32/EpicInstaller-15.17.1.msi?launcherfilename=EpicInstaller-15.17.1.msi" -File "$env:TEMP\Epic Games.msi"
-                            # install epic games
-                            Start-Process -wait "$env:TEMP\Epic Games.msi" -ArgumentList "/quiet"
-                            show-launchers-menu
-                        }
-                        5 {
-                            Clear-Host
-                            Write-Host "Installing: Ubisoft Connect . . ."
-                            # download ubisoft connect
-                            Get-FileFromWeb -URL "https://static3.cdn.ubi.com/orbit/launcher_installer/UbisoftConnectInstaller.exe" -File "$env:TEMP\Ubisoft Connect.exe"
-                            # install ubisoft connect
-                            Start-Process -wait "$env:TEMP\Ubisoft Connect.exe" -ArgumentList "/S"
-                            show-launchers-menu
-                        }
-                        6 {
-                            Clear-Host
-                            Write-Host "Installing: Electronic Arts . . ."
-                            # download electronic arts
-                            Get-FileFromWeb -URL "https://origin-a.akamaihd.net/EA-Desktop-Client-Download/installer-releases/EAappInstaller.exe" -File "$env:TEMP\Electronic Arts.exe"
-                            # install electronic arts
-                            Start-Process "$env:TEMP\Electronic Arts.exe"
-                            show-launchers-menu
-                        }
-                        7 {
-                            Clear-Host
-                            Write-Host "Installing: Rockstar Games . . ."
-                            # download rockstar games
-                            Get-FileFromWeb -URL "https://gamedownloads.rockstargames.com/public/installer/Rockstar-Games-Launcher.exe" -File "$env:TEMP\Rockstar Games.exe"
-                            # install rockstar games
-                            Start-Process "$env:TEMP\Rockstar Games.exe"
-                            show-launchers-menu
-                        }
-                        8 {
-                            Clear-Host
-                            Write-Host "Installing: GOG launcher . . ."
-                            # download gog launcher
-                            Get-FileFromWeb -URL "https://webinstallers.gog-statics.com/download/GOG_Galaxy_2.0.exe" -File "$env:TEMP\GOG launcher.exe"
-                            # install gog launcher
-                            Start-Process "$env:TEMP\GOG launcher.exe"
-                            show-launchers-menu
-                        }
-                        9 {
-                            Clear-Host
-                            Write-Host "Installing: Plutonium . . ."
-                            # download plutonium
-                            Get-FileFromWeb -URL "https://cdn.plutonium.pw/updater/plutonium.exe" -File "$env:TEMP\Plutonium.exe"
-                            # install plutonium
-                            Start-Process "$env:TEMP\Plutonium.exe"
-                            show-launchers-menu
-                        }
-                    }
-                }
-                else {
-                    Write-Host "Invalid input. Please select a valid option (1-9)."
-                }
-               
+                
             }
             4 {
 
@@ -208,8 +300,6 @@ while ($true) {
                 show-menu
 
             }
-            
-            
             5 {
 
                 Clear-Host
@@ -224,95 +314,6 @@ while ($true) {
             
             6 {
                 show-browser-menu
-                $browserChoice = Read-Host " "
-                $firefoxExtensions = @(
-                    "https://addons.mozilla.org/en-US/firefox/addon/decentraleyes/", 
-                    "https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/", 
-                    "https://addons.mozilla.org/en-US/firefox/addon/privacy-badger17/",
-                    "https://addons.mozilla.org/en-US/firefox/addon/react-devtools/", 
-                    "https://addons.mozilla.org/en-US/firefox/addon/search_by_image/"
-                )
-                $chromiumExtensions = @(
-                    "https://chromewebstore.google.com/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm", 
-                    "https://chromewebstore.google.com/detail/privacy-badger/pkehgijcmpdhfbdbbnkijodmdjhbjlgp", 
-                    "https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi", 
-                    "https://chromewebstore.google.com/detail/search-by-image/cnojnbdhbhnkbcieeekonklommdnndci", 
-                    "https://chromewebstore.google.com/detail/decentraleyes/ldpochfccmkkmhdbclfhpagapcfdljkj"
-                )
-
-                $thoriumPaths = @(
-                    "$env:LOCALAPPDATA\Thorium\Application\thorium.exe"
-                )
-
-                $chromePaths = @(
-                    "C:\Program Files\Google\Chrome\Application\chrome.exe", 
-                    "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-                    
-                )
-
-                $firefoxPaths = @(
-                    "C:\Program Files\Mozilla Firefox\firefox.exe", 
-                    "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" 
-                )
-                if ($browserChoice -match '^[1-4]$') {
-                    switch ($browserChoice) {
-                        1 {
-                            Clear-Host
-                            show-menu
-                        } 
-                        2 {
-                            Clear-Host
-                            Write-Host "Installing: Google Chrome . . ."
-                            # download google chrome
-                            Get-FileFromWeb -URL "https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi" -File "$env:TEMP\Chrome.msi"
-                            # install google chrome
-                            Start-Process -wait "$env:TEMP\Chrome.msi" -ArgumentList "/quiet"
-                            $chromePath = $chromePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
-                            if ($chromePath) {
-                                foreach ($extension in $chromiumExtensions) {
-                                    Start-Process $chromePath $extension
-                                }
-                            }
-                            show-menu
-                        } 
-                        3 {
-                            Clear-Host
-                            Write-Host "Installing: Firefox . . ."
-                            # download firefox
-                            Get-FileFromWeb -URL "https://download.mozilla.org/?product=firefox-latest-ssl&os=win&lang=en-US" -File "$env:TEMP\Firefox Installer.exe"
-                            # install firefox
-                            Start-Process -wait "$env:TEMP\Firefox Installer.exe" -ArgumentList "/S"
-                
-                            $firefoxPath = $firefoxPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
-                            if ($firefoxPath) {
-                                foreach ($extension in $firefoxExtensions) {
-                                    Start-Process $firefoxPath $extension
-                                }
-                            }
-
-                            show-menu
-                        } 
-                        4 {
-                            Clear-Host
-                            Write-Host "Installing: Thorium Browser . . ."
-                            # download thorium browser
-                            Get-FileFromWeb -URL "https://github.com/Alex313031/Thorium-Win/releases/download/M128.0.6613.189/thorium_AVX2_mini_installer.exe" -File "$env:TEMP\Thorium Browser.exe"
-                            # install thorium browser
-                            Start-Process -wait "$env:TEMP\Thorium Browser.exe" -ArgumentList "/S"
-                            $thoriumPath = $thoriumPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
-                            if ($thoriumPath) {
-                                foreach ($extension in $chromiumExtensions) {
-                                    Start-Process $thoriumPath $extension
-                                }
-                            }
-                            show-menu
-                        }
-                    }
-                }
-                else {
-                    Write-Host "Invalid input. Please select a valid option (1-4)."
-                }
-
             }
             7 {
 
