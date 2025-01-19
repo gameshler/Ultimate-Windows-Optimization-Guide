@@ -1,4 +1,4 @@
-# get motherboard id
-$instanceID = (wmic baseboard get product)
-# search motherboard id in web browser
-Start-Process "https://duckduckgo.com/?q=$instanceID"
+$mbInfo = Get-WmiObject win32_baseboard | Select-Object Product
+$mbModel = "$($mbInfo.Product)"
+$url = "https://www.duckduckgo.com/?q=$mbModel"
+Start-Process $url
