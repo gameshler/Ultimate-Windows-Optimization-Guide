@@ -29,6 +29,13 @@ The definitive Windows optimization guide for power users seeking to enhance the
 
 This guide is continuously updated with improvements and bug fixes. <br> Make sure to always download the latest version from GitHub.
 
+## Usage
+
+1. Run `Master.ps1` script as an administrator.
+2. Follow the on-screen menu to select and execute the desired optimization scripts.
+3. Each script can be run independently and includes notes for reference.
+4. The scripts are designed to be silent and operate without user intervention.
+
 ## Guide
 
 [Video](https://youtu.be/PlACZ9Gp1xo)
