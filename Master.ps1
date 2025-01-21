@@ -1,3 +1,5 @@
+# Gameshler's Ultimate Windows Optimization Guide
+
 # Run as administrator
 If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
   Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
@@ -5,7 +7,7 @@ If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 }
 
 # Set the console title and colors
-$Host.UI.RawUI.WindowTitle = "Ultimate Windows Optimization Guide (Administrator)"
+$Host.UI.RawUI.WindowTitle = "Gameshler's Ultimate Windows Optimization Guide (Administrator)"
 $Host.UI.RawUI.BackgroundColor = "Black"
 $Host.PrivateData.ProgressBackgroundColor = "Black"
 $Host.PrivateData.ProgressForegroundColor = "White"
@@ -18,12 +20,12 @@ $directories = Get-ChildItem -Path $rootDirectory -Directory
 
 # ASCII art for the name
 $asciiArt = @"
-__________ __________________  ____  __   ____             __  
-/ ____/ __ \__  /__  /_  __/ / / /\ \/ /  / __ \____ ______/ /__
-/ /_  / /_/ //_ < /_ < / / / /_/ /  \  /  / /_/ / __ `/ ___/ //_/
-/ __/ / _, _/__/ /__/ // / / __  /   / /  / ____/ /_/ / /__/ ,<   
-/_/   /_/ |_/____/____//_/ /_/ /_/   /_/  /_/    \__,_/\___/_/|_|  
-                                                                                                                                     
+______                          __    __             ____             __  
+/ ____/___ _____ ___  ___  _____/ /_  / /__  _____   / __ \____ ______/ /__
+/ / __/ __ `/ __ `__ \/ _ \/ ___/ __ \/ / _ \/ ___/  / /_/ / __ `/ ___/ //_/
+/ /_/ / /_/ / / / / / /  __(__  ) / / / /  __/ /     / ____/ /_/ / /__/ ,<   
+\____/\__,_/_/ /_/ /_/\___/____/_/ /_/_/\___/_/     /_/    \__,_/\___/_/|_|  
+                                                                         
 "@
 
 # Function that displays the menu
