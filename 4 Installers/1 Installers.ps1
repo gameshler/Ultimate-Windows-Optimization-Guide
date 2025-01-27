@@ -65,6 +65,7 @@ function show-browser-menu {
     Write-Host "2. Google Chrome" -ForegroundColor Cyan
     Write-Host "3. Firefox" -ForegroundColor Cyan
     Write-Host "4. Thorium Browser" -ForegroundColor Cyan
+    Write-Host "5. Brave Browser" -ForegroundColor Cyan
 
     $browserChoice = Read-Host " "
     $firefoxExtensions = @(
@@ -96,7 +97,12 @@ function show-browser-menu {
         "C:\Program Files\Mozilla Firefox\firefox.exe", 
         "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" 
     )
-    if ($browserChoice -match '^[1-4]$') {
+
+    $bravePaths = @(
+        "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\Application\brave.exe", 
+        "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
+    )
+    if ($browserChoice -match '^[1-5]$') {
         switch ($browserChoice) {
             1 {
                 Clear-Host
@@ -149,10 +155,25 @@ function show-browser-menu {
                 }
                 show-menu
             }
+            5 {
+                Clear-Host
+                Write-Host "Installing: Brave Browser . . ."
+                # download brave browser
+                Get-FileFromWeb -URL "https://laptop-updates.brave.com/latest/winx64" -File "$env:TEMP\BraveBrowserSetup.exe"
+                # install brave browser
+                Start-Process -wait "$env:TEMP\BraveBrowserSetup.exe" -ArgumentList "/silent", "/install"
+                $bravePath = $bravePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+                if ($bravePath) {
+                    foreach ($extension in $chromiumExtensions) {
+                        Start-Process $bravePath $extension
+                    }
+                }
+                show-menu
+            }
         }
     }
     else {
-        Write-Host "Invalid input. Please select a valid option (1-4)."
+        Write-Host "Invalid input. Please select a valid option (1 - 5)."
     }
 
 }
@@ -251,14 +272,25 @@ function show-launchers-menu {
                 Write-Host "Installing: Plutonium . . ."
                 # download plutonium
                 Get-FileFromWeb -URL "https://cdn.plutonium.pw/updater/plutonium.exe" -File "$env:TEMP\Plutonium.exe"
-                # install plutonium
-                Start-Process "$env:TEMP\Plutonium.exe"
+                # create Plutonium folder in Program Files
+                $plutoniumFolderPath = "$env:SystemDrive\Program Files (x86)\Plutonium"
+                if (-Not (Test-Path -Path $plutoniumFolderPath)) {
+                    New-Item -ItemType Directory -Path $plutoniumFolderPath
+                }
+                # move plutonium.exe to the Plutonium folder
+                Move-Item -Path "$env:TEMP\Plutonium.exe" -Destination "$plutoniumFolderPath\Plutonium.exe"
+                # create plutonium shortcut
+                $WshShell = New-Object -comObject WScript.Shell
+                $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Plutonium.lnk")
+                $Shortcut.TargetPath = "$plutoniumFolderPath\Plutonium.exe"
+                $Shortcut.Save()
+                Start-Process "$plutoniumFolderPath\Plutonium.exe"
                 show-launchers-menu
             }
         }
     }
     else {
-        Write-Host "Invalid input. Please select a valid option (1-9)."
+        Write-Host "Invalid input. Please select a valid option (1 - 9)."
     }
    
 
@@ -374,5 +406,5 @@ while ($true) {
            
         } 
     }
-    else { Write-Host "Invalid input. Please select a valid option (1-11)." } 
+    else { Write-Host "Invalid input. Please select a valid option (1 - 11)." } 
 }
