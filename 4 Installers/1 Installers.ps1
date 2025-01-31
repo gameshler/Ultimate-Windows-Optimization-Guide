@@ -53,7 +53,7 @@ function show-menu {
     Write-Host "9. OBS Studio" -ForegroundColor Cyan
     Write-Host "10.Roblox" -ForegroundColor Cyan
     Write-Host "11.Valorant" -ForegroundColor Cyan
-   
+    Write-Host "12.Microsoft Office 2024 LSTC Edition" -ForegroundColor Cyan
 }
 
 
@@ -300,7 +300,7 @@ show-menu
 
 while ($true) {
     $choice = Read-Host " "
-    if ($choice -match '^(1[0-1]|[1-9])$' ) {
+    if ($choice -match '^(1[0-2]|[1-9])$' ) {
         switch ($choice ) { 
             1 {
                 Clear-Host
@@ -403,8 +403,69 @@ while ($true) {
                 show-menu
 
             }
+            12 {
+                Clear-Host
+                Write-Host "Installing: Microsoft Office 2024 LSTC Edition . . ."
+                $toolPath = "$env:TEMP\officedeploymenttool_18227-20162.exe"
+                $configurationPath = "$env:TEMP\OfficeDeployment\configuration-Office365-x64.xml"
+                # download microsoft office
+                Get-FileFromWeb -URL "https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_18227-20162.exe" -File $toolPath
+                
+                # extract office deployment tool
+                Start-Process -FilePath $toolPath -ArgumentList "/quiet /extract:$env:TEMP\OfficeDeployment" -Wait
+                
+                # create configuration file
+                $configureOffice = @"
+<Configuration ID="7ccad42d-bf21-44c0-8399-a0d9fba9ba0c">
+  <Add OfficeClientEdition="64" Channel="PerpetualVL2024">
+    <Product ID="ProPlus2024Volume" PIDKEY="XJ2XN-FW8RK-P4HMP-DKDBV-GCVGB">
+      <Language ID="en-gb" />
+      <ExcludeApp ID="Lync" />
+      <ExcludeApp ID="OneDrive" />
+      <ExcludeApp ID="Outlook" />
+    </Product>
+  </Add>
+  <Property Name="SharedComputerLicensing" Value="0" />
+  <Property Name="FORCEAPPSHUTDOWN" Value="FALSE" />
+  <Property Name="DeviceBasedLicensing" Value="0" />
+  <Property Name="SCLCacheOverride" Value="0" />
+  <Property Name="AUTOACTIVATE" Value="1" />
+  <Updates Enabled="TRUE" />
+  <AppSettings>
+    <User Key="software\microsoft\office\16.0\excel\options" Name="defaultformat" Value="51" Type="REG_DWORD" App="excel16" Id="L_SaveExcelfilesas" />
+    <User Key="software\microsoft\office\16.0\powerpoint\options" Name="defaultformat" Value="27" Type="REG_DWORD" App="ppt16" Id="L_SavePowerPointfilesas" />
+    <User Key="software\microsoft\office\16.0\word\options" Name="defaultformat" Value="" Type="REG_SZ" App="word16" Id="L_SaveWordfilesas" />
+  </AppSettings>
+</Configuration>
+"@
+                $configureOffice | Set-Content -Path $configurationPath -Force 
+                # install microsoft office
+                Start-Process -FilePath "$env:TEMP\OfficeDeployment\setup.exe" -ArgumentList "/configure $configurationPath" -Wait
+                # activating microsoft office
+                Write-Host "Activating Microsoft Office . . ."
+                $officePaths = @(
+                    "$env:ProgramFiles(x86)\Microsoft Office\Office16",
+                    "$env:ProgramFiles\Microsoft Office\Office16"
+                )
+
+                foreach ($path in $officePaths) {
+                    if (Test-Path $path) {
+                        Set-Location -Path $path
+                        $licenseFiles = Get-ChildItem -Path "..\root\Licenses16\ProPlus2021VL_KMS*.xrm-ms"
+                        foreach ($file in $licenseFiles) {
+                            Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /inslic:`"$file`"" -Wait
+                        }
+                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /setprt:1688" -Wait
+                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /unpkey:6F7TH >nul" -Wait
+                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /inpkey:FXYTK-NJJ8C-GB6DW-3DYQT-6F7TH" -Wait
+                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /sethst:107.175.77.7" -Wait
+                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /act" -Wait
+                    }
+                }
+                show-menu
+            }
            
         } 
     }
-    else { Write-Host "Invalid input. Please select a valid option (1 - 11)." } 
+    else { Write-Host "Invalid input. Please select a valid option (1 - 12)." } 
 }
