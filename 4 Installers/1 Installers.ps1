@@ -191,9 +191,10 @@ function show-launchers-menu {
     Write-Host "7. Rockstar Games" -ForegroundColor Cyan
     Write-Host "8. GOG launcher" -ForegroundColor Cyan
     Write-Host "9. Plutonium" -ForegroundColor Cyan
+    Write-Host "10.Origin" -ForegroundColor Cyan
 
     $launcherChoice = Read-Host " "
-    if ($launcherChoice -match '^[1-9]$' ) {
+    if ($launcherChoice -match '^[1-9]$|^10$' ) {
         switch ($launcherChoice ) { 
             1 {
                 Clear-Host
@@ -287,10 +288,44 @@ function show-launchers-menu {
                 Start-Process "$plutoniumFolderPath\Plutonium.exe"
                 show-launchers-menu
             }
+            10 {
+                Clear-Host
+                Write-Host "Installing: Origin . . ."
+                $localConfigurationPath = "$env:ProgramData\Origin\local.xml"
+                # download origin
+                Get-FileFromWeb -URL "https://download.dm.origin.com/origin/live/OriginSetup.exe" -File "$env:TEMP\OriginSetup.exe"
+                # install origin 
+                Start-Process -wait "$env:TEMP\OriginSetup.exe" -ArgumentList "/S"
+              
+                
+                # set the local.xml configuration file to read-only
+                Set-ItemProperty -Path "$localConfigurationPath" -Name IsReadOnly -Value $true
+                
+                Clear-Host
+                Write-Host "Installing Fuck off EA App . . . (Check Pretend EA App is Installed)"
+                # download Fuck off EA App Installer
+                Get-FileFromWeb -URL "https://github.com/p0358/Fuck_off_EA_App/releases/download/v6/Fuck_off_EA_App_installer.exe" -File "$env:TEMP\Fuck_off_EA_App_installer.exe"
+                # install Fuck off EA App Installer
+                Start-Process -wait "$env:TEMP\Fuck_off_EA_App_installer.exe" 
+                
+                Clear-Host
+                Write-Host "Installing: Punkbuster Service Updater . . . (Add Games to Punkbuster)"
+                # download punkbuster service updater
+                Get-FileFromWeb -URL "https://www.evenbalance.com/downloads/W/gui/pbsetup.zip" -File "$env:TEMP\pbsetup.zip"
+                # extract punkbuster service updater
+                Expand-Archive "$env:TEMP\pbsetup.zip" -DestinationPath "$env:TEMP\pbsetup" -ErrorAction SilentlyContinue
+                # install punkbuster service updater
+                Start-Process -wait "$env:TEMP\pbsetup\pbsetup.exe"
+                
+                
+                show-launchers-menu
+
+
+            }
         }
     }
     else {
-        Write-Host "Invalid input. Please select a valid option (1 - 9)."
+        Write-Host "Invalid input. Please select a valid option (1 - 10)."
     }
    
 
