@@ -58,7 +58,7 @@ function show-menu {
 
 
 function show-browser-menu {
-    Clear-Host 
+    Clear-Host
     Write-Host "Choose a browser to install:" -ForegroundColor Green
     Write-Host ""
     Write-Host "1. Exit" -ForegroundColor Red
@@ -69,17 +69,17 @@ function show-browser-menu {
 
     $browserChoice = Read-Host " "
     $firefoxExtensions = @(
-        "https://addons.mozilla.org/en-US/firefox/addon/decentraleyes/", 
-        "https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/", 
+        "https://addons.mozilla.org/en-US/firefox/addon/decentraleyes/",
+        "https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/",
         "https://addons.mozilla.org/en-US/firefox/addon/privacy-badger17/",
-        "https://addons.mozilla.org/en-US/firefox/addon/react-devtools/", 
+        "https://addons.mozilla.org/en-US/firefox/addon/react-devtools/",
         "https://addons.mozilla.org/en-US/firefox/addon/search_by_image/"
     )
     $chromiumExtensions = @(
-        "https://chromewebstore.google.com/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm", 
-        "https://chromewebstore.google.com/detail/privacy-badger/pkehgijcmpdhfbdbbnkijodmdjhbjlgp", 
-        "https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi", 
-        "https://chromewebstore.google.com/detail/search-by-image/cnojnbdhbhnkbcieeekonklommdnndci", 
+        "https://chromewebstore.google.com/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm",
+        "https://chromewebstore.google.com/detail/privacy-badger/pkehgijcmpdhfbdbbnkijodmdjhbjlgp",
+        "https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi",
+        "https://chromewebstore.google.com/detail/search-by-image/cnojnbdhbhnkbcieeekonklommdnndci",
         "https://chromewebstore.google.com/detail/decentraleyes/ldpochfccmkkmhdbclfhpagapcfdljkj"
     )
 
@@ -88,18 +88,18 @@ function show-browser-menu {
     )
 
     $chromePaths = @(
-        "C:\Program Files\Google\Chrome\Application\chrome.exe", 
+        "C:\Program Files\Google\Chrome\Application\chrome.exe",
         "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-        
+
     )
 
     $firefoxPaths = @(
-        "C:\Program Files\Mozilla Firefox\firefox.exe", 
-        "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" 
+        "C:\Program Files\Mozilla Firefox\firefox.exe",
+        "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
     )
 
     $bravePaths = @(
-        "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\Application\brave.exe", 
+        "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\Application\brave.exe",
         "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
     )
     if ($browserChoice -match '^[1-5]$') {
@@ -107,7 +107,7 @@ function show-browser-menu {
             1 {
                 Clear-Host
                 show-menu
-            } 
+            }
             2 {
                 Clear-Host
                 Write-Host "Installing: Google Chrome . . ."
@@ -122,7 +122,7 @@ function show-browser-menu {
                     }
                 }
                 show-menu
-            } 
+            }
             3 {
                 Clear-Host
                 Write-Host "Installing: Firefox . . ."
@@ -130,7 +130,7 @@ function show-browser-menu {
                 Get-FileFromWeb -URL "https://download.mozilla.org/?product=firefox-latest-ssl&os=win&lang=en-US" -File "$env:TEMP\Firefox Installer.exe"
                 # install firefox
                 Start-Process -wait "$env:TEMP\Firefox Installer.exe" -ArgumentList "/S"
-    
+
                 $firefoxPath = $firefoxPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
                 if ($firefoxPath) {
                     foreach ($extension in $firefoxExtensions) {
@@ -139,7 +139,7 @@ function show-browser-menu {
                 }
 
                 show-menu
-            } 
+            }
             4 {
                 Clear-Host
                 Write-Host "Installing: Thorium Browser . . ."
@@ -192,10 +192,11 @@ function show-launchers-menu {
     Write-Host "8. GOG launcher" -ForegroundColor Cyan
     Write-Host "9. Plutonium" -ForegroundColor Cyan
     Write-Host "10.Origin" -ForegroundColor Cyan
+    Write-Host "11.Faceit Launcher" -ForegroundColor Cyan
 
     $launcherChoice = Read-Host " "
-    if ($launcherChoice -match '^[1-9]$|^10$' ) {
-        switch ($launcherChoice ) { 
+    if ($launcherChoice -match '^[1-9]$|^11$' ) {
+        switch ($launcherChoice ) {
             1 {
                 Clear-Host
                 show-menu
@@ -205,7 +206,7 @@ function show-launchers-menu {
                 Write-Host "Installing: Battle.net . . ."
                 # download battle.net
                 Get-FileFromWeb -URL "https://downloader.battle.net/download/getInstaller?os=win&installer=Battle.net-Setup.exe" -File "$env:TEMP\Battle.net.exe"
-                # install battle.net 
+                # install battle.net
                 Start-Process "$env:TEMP\Battle.net.exe" -ArgumentList '--lang=enUS --installpath="C:\Program Files (x86)\Battle.net"'
                 # create battle.net shortcut
                 $WshShell = New-Object -comObject WScript.Shell
@@ -294,20 +295,20 @@ function show-launchers-menu {
                 $localConfigurationPath = "$env:ProgramData\Origin\local.xml"
                 # download origin
                 Get-FileFromWeb -URL "https://download.dm.origin.com/origin/live/OriginSetup.exe" -File "$env:TEMP\OriginSetup.exe"
-                # install origin 
+                # install origin
                 Start-Process -wait "$env:TEMP\OriginSetup.exe" -ArgumentList "/S"
-              
-                
+
+
                 # set the local.xml configuration file to read-only
                 Set-ItemProperty -Path "$localConfigurationPath" -Name IsReadOnly -Value $true
-                
+
                 Clear-Host
                 Write-Host "Installing Fuck off EA App . . . (Check Pretend EA App is Installed)"
                 # download Fuck off EA App Installer
                 Get-FileFromWeb -URL "https://github.com/p0358/Fuck_off_EA_App/releases/download/v6/Fuck_off_EA_App_installer.exe" -File "$env:TEMP\Fuck_off_EA_App_installer.exe"
                 # install Fuck off EA App Installer
-                Start-Process -wait "$env:TEMP\Fuck_off_EA_App_installer.exe" 
-                
+                Start-Process -wait "$env:TEMP\Fuck_off_EA_App_installer.exe"
+
                 Clear-Host
                 Write-Host "Installing: Punkbuster Service Updater . . . (Add Games to Punkbuster)"
                 # download punkbuster service updater
@@ -316,18 +317,36 @@ function show-launchers-menu {
                 Expand-Archive "$env:TEMP\pbsetup.zip" -DestinationPath "$env:TEMP\pbsetup" -ErrorAction SilentlyContinue
                 # install punkbuster service updater
                 Start-Process -wait "$env:TEMP\pbsetup\pbsetup.exe"
-                
-                
+
+
                 show-launchers-menu
 
+
+            }
+            11 {
+              Clear-Host
+              Write-Host "Installing FaceIt Launcher . . ."
+              #download faceit launcher
+              Get-FileFromWeb -URL "https://faceit-client.faceit-cdn.net/release/FACEIT-setup-latest.exe" -File "$env:TEMP\FACEIT-setup-latest.exe"
+              #install faceit launcher
+              Start-Process -wait "$env:TEMP\FACEIT-setup-latest.exe" -ArgumentList "/S"
+              Clear-Host
+
+              Write-Host "Installing FaceIt Anti-Cheat . . ."
+              #download face it AC
+              Get-FileFromWeb -URL "https://anticheat-client.faceit-cdn.net/FACEITInstaller_64.exe" -File "$env:TEMP\FACEITInstaller_64.exe"
+              #install face it AC
+              Start-Process -wait "$env:TEMP\FACEITInstaller_64.exe" -ArgumentList "/S"
+
+              show-launchers-menu
 
             }
         }
     }
     else {
-        Write-Host "Invalid input. Please select a valid option (1 - 10)."
+        Write-Host "Invalid input. Please select a valid option (1 - 11)."
     }
-   
+
 
 }
 
@@ -336,7 +355,7 @@ show-menu
 while ($true) {
     $choice = Read-Host " "
     if ($choice -match '^(1[0-2]|[1-9])$' ) {
-        switch ($choice ) { 
+        switch ($choice ) {
             1 {
                 Clear-Host
                 exit
@@ -354,7 +373,7 @@ while ($true) {
             }
             3 {
                 show-launchers-menu
-                
+
             }
             4 {
 
@@ -372,13 +391,13 @@ while ($true) {
                 Clear-Host
                 Write-Host "Installing: Escape From Tarkov . . ."
                 # download escape from tarkov
-                Get-FileFromWeb -URL "https://prod.escapefromtarkov.com/launcher/download" -File "$env:TEMP\Escape From Tarkov.exe" 
+                Get-FileFromWeb -URL "https://prod.escapefromtarkov.com/launcher/download" -File "$env:TEMP\Escape From Tarkov.exe"
                 # install escape from tarkov
                 Start-Process "$env:TEMP\Escape From Tarkov.exe"
                 show-menu
 
             }
-            
+
             6 {
                 show-browser-menu
             }
@@ -426,14 +445,14 @@ while ($true) {
                 show-menu
 
             }
-            
+
             11 {
 
                 Clear-Host
                 Write-Host "Installing: Valorant . . ."
                 # download valorant
                 Get-FileFromWeb -URL "https://valorant.secure.dyn.riotcdn.net/channels/public/x/installer/current/live.live.ap.exe" -File "$env:TEMP\Valorant.exe"
-                # install valorant 
+                # install valorant
                 Start-Process "$env:TEMP\Valorant.exe"
                 show-menu
 
@@ -445,10 +464,10 @@ while ($true) {
                 $configurationPath = "$env:TEMP\OfficeDeployment\configuration-Office365-x64.xml"
                 # download microsoft office
                 Get-FileFromWeb -URL "https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_18227-20162.exe" -File $toolPath
-                
+
                 # extract office deployment tool
                 Start-Process -FilePath $toolPath -ArgumentList "/quiet /extract:$env:TEMP\OfficeDeployment" -Wait
-                
+
                 # create configuration file
                 $configureOffice = @"
 <Configuration ID="7ccad42d-bf21-44c0-8399-a0d9fba9ba0c">
@@ -473,7 +492,7 @@ while ($true) {
   </AppSettings>
 </Configuration>
 "@
-                $configureOffice | Set-Content -Path $configurationPath -Force 
+                $configureOffice | Set-Content -Path $configurationPath -Force
                 # install microsoft office
                 Start-Process -FilePath "$env:TEMP\OfficeDeployment\setup.exe" -ArgumentList "/configure $configurationPath" -Wait
                 # activating microsoft office
@@ -499,8 +518,8 @@ while ($true) {
                 }
                 show-menu
             }
-           
-        } 
+
+        }
     }
-    else { Write-Host "Invalid input. Please select a valid option (1 - 12)." } 
+    else { Write-Host "Invalid input. Please select a valid option (1 - 12)." }
 }
