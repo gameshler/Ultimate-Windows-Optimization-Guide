@@ -144,7 +144,7 @@ function show-browser-menu {
                 Clear-Host
                 Write-Host "Installing: Thorium Browser . . ."
                 # download thorium browser
-                Get-FileFromWeb -URL "https://github.com/Alex313031/Thorium-Win/releases/download/M128.0.6613.189/thorium_AVX2_mini_installer.exe" -File "$env:TEMP\Thorium Browser.exe"
+                Get-FileFromWeb -URL "https://github.com/Alex313031/Thorium-Win/releases/download/M130.0.6723.174/thorium_AVX2_mini_installer.exe" -File "$env:TEMP\Thorium Browser.exe"
                 # install thorium browser
                 Start-Process -wait "$env:TEMP\Thorium Browser.exe" -ArgumentList "/S"
                 $thoriumPath = $thoriumPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
