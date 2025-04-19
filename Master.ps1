@@ -104,4 +104,4 @@ function Show-FilesInDirectory {
 }
 
 # Start the menu
-Show-Menu
+Show-Menu 

@@ -1,15 +1,24 @@
-Write-Host "1. Registry: Optimize (Recommended)"
-Write-Host "2. Registry: Default"
-while ($true) {
-  $choice = Read-Host " "
-  if ($choice -match '^[1-2]$') {
-    switch ($choice) {
-      1 {
+    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator"))
+    {Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
+    Exit}
+    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
+    $Host.UI.RawUI.BackgroundColor = "Black"
+	$Host.PrivateData.ProgressBackgroundColor = "Black"
+    $Host.PrivateData.ProgressForegroundColor = "White"
+    Clear-Host
 
-        Clear-Host
-        Write-Host "Registry: Optimize . . ."
-        # create reg file
-        $MultilineComment = @"
+    Write-Host "1. Registry: Optimize (Recommended)"
+    Write-Host "2. Registry: Default"
+    while ($true) {
+    $choice = Read-Host " "
+    if ($choice -match '^[1-2]$') {
+    switch ($choice) {
+    1 {
+
+Clear-Host
+Write-Host "Registry: Optimize . . ."
+# create reg file
+$MultilineComment = @"
 Windows Registry Editor Version 5.00
 
 ; --LEGACY CONTROL PANEL--
@@ -710,6 +719,16 @@ Windows Registry Editor Version 5.00
 "NoStartMenuMFUprogramsList"=-
 "NoInstrumentation"=-
 
+; start menu hide recommended w11
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\current\device\Start]
+"HideRecommendedSection"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\current\device\Education]
+"IsEducationEnvironment"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer]
+"HideRecommendedSection"=dword:00000001
+
 ; more pins personalization start
 [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
 "Start_Layout"=dword:00000001
@@ -1027,8 +1046,16 @@ E0,F6,C5,D5,0E,CA,50,00,00
 
 
 ; NVIDIA
-; enable old nvidia sharpening
+; enable old nvidia legacy sharpening
+; old location
 [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\nvlddmkm\FTS]
+"EnableGR535"=dword:00000000
+
+; new location
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\nvlddmkm\Parameters\FTS]
+"EnableGR535"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\nvlddmkm\Parameters\FTS]
 "EnableGR535"=dword:00000000
 
 
@@ -1134,25 +1161,31 @@ E0,F6,C5,D5,0E,CA,50,00,00
 "MouseSpeed"="0"
 "MouseThreshold1"="0"
 "MouseThreshold2"="0"
+
+; enable endtask menu taskbar w11
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings]
+"TaskbarEndTask"=dword:00000001
 "@
-        Set-Content -Path "$env:TEMP\Registry Optimize.reg" -Value $MultilineComment -Force
-        # edit reg file
-        $path = "$env:TEMP\Registry Optimize.reg"
-(Get-Content $path) -replace "\?", "$" | Out-File $path
-        # import reg file
-        Regedit.exe /S "$env:TEMP\Registry Optimize.reg"
-        Clear-Host
-        Write-Host "Restart to apply . . ."
-        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-        exit
+Set-Content -Path "$env:TEMP\Registry Optimize.reg" -Value $MultilineComment -Force
+# edit reg file
+$path = "$env:TEMP\Registry Optimize.reg"
+(Get-Content $path) -replace "\?","$" | Out-File $path
+# disable optimize drives
+schtasks /Change /DISABLE /TN "\Microsoft\Windows\Defrag\ScheduledDefrag" | Out-Null
+# import reg file
+Regedit.exe /S "$env:TEMP\Registry Optimize.reg"
+Clear-Host
+Write-Host "Restart to apply . . ."
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+exit
 
       }
-      2 {
+    2 {
 
-        Clear-Host
-        Write-Host "Registry: Default . . ."
-        # create reg file
-        $MultilineComment = @"
+Clear-Host
+Write-Host "Registry: Default . . ."
+# create reg file
+$MultilineComment = @"
 Windows Registry Editor Version 5.00
 
 ; --LEGACY CONTROL PANEL--
@@ -1830,6 +1863,14 @@ Windows Registry Editor Version 5.00
 
 [-HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer]
 
+; revert start menu hide recommended w11
+[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\current\device\Start]
+
+[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\current\device\Education]
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer]
+"HideRecommendedSection"=-
+
 ; default pins personalization start
 [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
 "Start_Layout"=-
@@ -2127,8 +2168,16 @@ Windows Registry Editor Version 5.00
 
 
 ; NVIDIA
-; old nvidia sharpening
+; disable old nvidia legacy sharpening
+; old location
 [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\nvlddmkm\FTS]
+"EnableGR535"=dword:00000001
+
+; new location
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\nvlddmkm\Parameters\FTS]
+"EnableGR535"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\nvlddmkm\Parameters\FTS]
 "EnableGR535"=dword:00000001
 
 
@@ -2224,20 +2273,23 @@ Windows Registry Editor Version 5.00
 "MouseSpeed"="1"
 "MouseThreshold1"="6"
 "MouseThreshold2"="10"
+
+; disable endtask menu taskbar w11
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings]
+"TaskbarEndTask"=dword:00000000
 "@
-        Set-Content -Path "$env:TEMP\Registry Defaults.reg" -Value $MultilineComment -Force
-        # edit reg file
-        $path = "$env:TEMP\Registry Defaults.reg"
-(Get-Content $path) -replace "\?", "$" | Out-File $path
-        # import reg file
-        Regedit.exe /S "$env:TEMP\Registry Defaults.reg"
-        Clear-Host
-        Write-Host "Restart to apply . . ."
-        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-        exit
+Set-Content -Path "$env:TEMP\Registry Defaults.reg" -Value $MultilineComment -Force
+# edit reg file
+$path = "$env:TEMP\Registry Defaults.reg"
+(Get-Content $path) -replace "\?","$" | Out-File $path
+# enable optimize drives
+schtasks /Change /ENABLE /TN "\Microsoft\Windows\Defrag\ScheduledDefrag" | Out-Null
+# import reg file
+Regedit.exe /S "$env:TEMP\Registry Defaults.reg"
+Clear-Host
+Write-Host "Restart to apply . . ."
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+exit
 
       }
-    } 
-  }
-  else { Write-Host "Invalid input. Please select a valid option (1-2)." } 
-}
+    } } else { Write-Host "Invalid input. Please select a valid option (1-2)." } }

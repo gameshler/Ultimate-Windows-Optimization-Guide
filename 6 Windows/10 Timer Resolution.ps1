@@ -1,15 +1,24 @@
-Write-Host "1. Timer Resolution: On (Recommended)"
-Write-Host "2. Timer Resolution: Default"
-while ($true) {
+    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator"))
+    {Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
+    Exit}
+    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
+    $Host.UI.RawUI.BackgroundColor = "Black"
+	$Host.PrivateData.ProgressBackgroundColor = "Black"
+    $Host.PrivateData.ProgressForegroundColor = "White"
+    Clear-Host
+
+    Write-Host "1. Timer Resolution: On (Recommended)"
+    Write-Host "2. Timer Resolution: Default"
+    while ($true) {
     $choice = Read-Host " "
     if ($choice -match '^[1-2]$') {
-        switch ($choice) {
-            1 {
+    switch ($choice) {
+    1 {
 
-                Clear-Host
-                Write-Host "Installing: Set Timer Resolution Service . . ."
-                # create .cs file
-                $MultilineComment = @"
+Clear-Host
+Write-Host "Installing: Set Timer Resolution Service . . ."
+# create .cs file
+$MultilineComment = @"
 using System;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
@@ -206,35 +215,32 @@ namespace WindowsService
     }
 }
 "@
-                Set-Content -Path "$env:SystemDrive\Windows\SetTimerResolutionService.cs" -Value $MultilineComment -Force
-                # compile and create service
-                Start-Process -Wait "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe" -ArgumentList "-out:C:\Windows\SetTimerResolutionService.exe C:\Windows\SetTimerResolutionService.cs" -WindowStyle Hidden
-                # delete file
-                Remove-Item "$env:SystemDrive\Windows\SetTimerResolutionService.cs" -ErrorAction SilentlyContinue | Out-Null
-                # install and start service
-                New-Service -Name "Set Timer Resolution Service" -BinaryPathName "$env:SystemDrive\Windows\SetTimerResolutionService.exe" -ErrorAction SilentlyContinue | Out-Null
-                Set-Service -Name "Set Timer Resolution Service" -StartupType Auto -ErrorAction SilentlyContinue | Out-Null
-                Set-Service -Name "Set Timer Resolution Service" -Status Running -ErrorAction SilentlyContinue | Out-Null
-                # start taskmanager
-                Start-Process taskmgr.exe
-                exit
+Set-Content -Path "$env:SystemDrive\Windows\SetTimerResolutionService.cs" -Value $MultilineComment -Force
+# compile and create service
+Start-Process -Wait "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe" -ArgumentList "-out:C:\Windows\SetTimerResolutionService.exe C:\Windows\SetTimerResolutionService.cs" -WindowStyle Hidden
+# delete file
+Remove-Item "$env:SystemDrive\Windows\SetTimerResolutionService.cs" -ErrorAction SilentlyContinue | Out-Null
+# install and start service
+New-Service -Name "Set Timer Resolution Service" -BinaryPathName "$env:SystemDrive\Windows\SetTimerResolutionService.exe" -ErrorAction SilentlyContinue | Out-Null
+Set-Service -Name "Set Timer Resolution Service" -StartupType Auto -ErrorAction SilentlyContinue | Out-Null
+Set-Service -Name "Set Timer Resolution Service" -Status Running -ErrorAction SilentlyContinue | Out-Null
+# start taskmanager
+Start-Process taskmgr.exe
+exit
 
-            }
-            2 {
+      }
+    2 {
 
-                Clear-Host
-                # stop disable delete service
-                Set-Service -Name "Set Timer Resolution Service" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
-                Set-Service -Name "Set Timer Resolution Service" -Status Stopped -ErrorAction SilentlyContinue | Out-Null
-                sc.exe delete "Set Timer Resolution Service" | Out-Null
-                # delete file
-                Remove-Item "$env:SystemDrive\Windows\SetTimerResolutionService.exe" -Force -ErrorAction SilentlyContinue | Out-Null
-                # start taskmanager
-                Start-Process taskmgr.exe
-                exit
+Clear-Host
+# stop disable delete service
+Set-Service -Name "Set Timer Resolution Service" -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+Set-Service -Name "Set Timer Resolution Service" -Status Stopped -ErrorAction SilentlyContinue | Out-Null
+sc.exe delete "Set Timer Resolution Service" | Out-Null
+# delete file
+Remove-Item "$env:SystemDrive\Windows\SetTimerResolutionService.exe" -Force -ErrorAction SilentlyContinue | Out-Null
+# start taskmanager
+Start-Process taskmgr.exe
+exit
 
-            }
-        } 
-    }
-    else { Write-Host "Invalid input. Please select a valid option (1-2)." } 
-}
+      }
+    } } else { Write-Host "Invalid input. Please select a valid option (1-2)." } }

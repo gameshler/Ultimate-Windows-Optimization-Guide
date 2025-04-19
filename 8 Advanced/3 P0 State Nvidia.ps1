@@ -7,8 +7,8 @@
     $Host.PrivateData.ProgressForegroundColor = "White"
     Clear-Host
 
-    Write-Host "NVIDIA High-Bandwidth Digital Content Protection"
-    Write-Host "1. Off"
+    Write-Host "NVIDIA Highest Performance Power State"
+    Write-Host "1. On"
     Write-Host "2. Default"
     while ($true) {
     $choice = Read-Host " "
@@ -21,17 +21,17 @@ Clear-Host
 $subkeys = (Get-ChildItem -Path "Registry::HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}" -Force -ErrorAction SilentlyContinue).Name
 foreach($key in $subkeys){
 if ($key -notlike '*Configuration'){
-# disable hdcp regedit
-reg add "$key" /v "RMHdcpKeyglobZero" /t REG_DWORD /d "1" /f | Out-Null
+# enable p0 state regedit
+reg add "$key" /v "DisableDynamicPstate" /t REG_DWORD /d "1" /f | Out-Null
 }
 }
 Clear-Host
-Write-Host "HDCP: Off . . ."
+Write-Host "P0 State: On . . ."
 $subkeys = (Get-ChildItem -Path "Registry::HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}" -Force -ErrorAction SilentlyContinue).Name
 foreach($key in $subkeys){
 if ($key -notlike '*Configuration'){
 # show regedit value
-Get-ItemProperty -Path "Registry::$key" -Name 'RMHdcpKeyglobZero'
+Get-ItemProperty -Path "Registry::$key" -Name 'DisableDynamicPstate'
 }
 }
 Write-Host "Restart to apply . . ."
@@ -46,17 +46,17 @@ Clear-Host
 $subkeys = (Get-ChildItem -Path "Registry::HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}" -Force -ErrorAction SilentlyContinue).Name
 foreach($key in $subkeys){
 if ($key -notlike '*Configuration'){
-# enable hdcp regedit
-reg add "$key" /v "RMHdcpKeyglobZero" /t REG_DWORD /d "0" /f | Out-Null
+reg add "$key" /v "DisableDynamicPstate" /t REG_DWORD /d "0" /f | Out-Null
+# disable p0 state regedit
 }
 }
 Clear-Host
-Write-Host "HDCP: Default . . ."
+Write-Host "P0 State: Default . . ."
 $subkeys = (Get-ChildItem -Path "Registry::HKLM\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}" -Force -ErrorAction SilentlyContinue).Name
 foreach($key in $subkeys){
 if ($key -notlike '*Configuration'){
 # show regedit value
-Get-ItemProperty -Path "Registry::$key" -Name 'RMHdcpKeyglobZero'
+Get-ItemProperty -Path "Registry::$key" -Name 'DisableDynamicPstate'
 }
 }
 Write-Host "Restart to apply . . ."
