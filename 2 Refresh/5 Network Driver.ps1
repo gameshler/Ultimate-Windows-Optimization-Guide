@@ -8,6 +8,6 @@
     Clear-Host
 
 # get motherboard id
-$instanceID = (wmic baseboard get product)
+$instanceID = (Get-WmiObject win32_baseboard | Select-Object -ExpandProperty Product)
 # search motherboard id in web browser
 Start-Process "https://www.google.com/search?q=$instanceID"
