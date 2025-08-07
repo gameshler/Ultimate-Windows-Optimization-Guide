@@ -45,7 +45,6 @@ function Get-FileFromWeb {
 function show-menu {
     Clear-Host
     Write-Host "Game launchers, programs and web browsers:" -ForegroundColor Green
-    Write-Host "-Disable hardware acceleration" -ForegroundColor Green
     Write-Host "-Turn off running at startup" -ForegroundColor Green
     Write-Host "-Deactivate overlays" -ForegroundColor Green
     Write-Host ""
@@ -106,7 +105,7 @@ while ($true) {
                 Write-Host "Installing: Battle.net . . ."
                 # download battle.net
                 Get-FileFromWeb -URL "https://downloader.battle.net/download/getInstaller?os=win&installer=Battle.net-Setup.exe" -File "$env:TEMP\Battle.net.exe"
-                # install battle.net 
+                # install battle.net
                 Start-Process "$env:TEMP\Battle.net.exe" -ArgumentList '--lang=enUS --installpath="C:\Program Files (x86)\Battle.net"'
                 # create battle.net shortcut
                 $WshShell = New-Object -comObject WScript.Shell
@@ -158,7 +157,7 @@ while ($true) {
                 Clear-Host
                 Write-Host "Installing: Escape From Tarkov . . ."
                 # download escape from tarkov
-                Get-FileFromWeb -URL "https://prod.escapefromtarkov.com/launcher/download" -File "$env:TEMP\Escape From Tarkov.exe" 
+                Get-FileFromWeb -URL "https://prod.escapefromtarkov.com/launcher/download" -File "$env:TEMP\Escape From Tarkov.exe"
                 # install escape from tarkov
                 Start-Process "$env:TEMP\Escape From Tarkov.exe"
                 show-menu
@@ -353,7 +352,7 @@ while ($true) {
                 Write-Host "Installing: Valorant . . ."
                 # download valorant
                 Get-FileFromWeb -URL "https://valorant.secure.dyn.riotcdn.net/channels/public/x/installer/current/live.live.ap.exe" -File "$env:TEMP\Valorant.exe"
-                # install valorant 
+                # install valorant
                 Start-Process "$env:TEMP\Valorant.exe"
                 show-menu
 
@@ -416,7 +415,7 @@ while ($true) {
                 #install faceit launcher
                 Start-Process -wait "$env:TEMP\FACEIT-setup-latest.exe" -ArgumentList "/S"
                 Clear-Host
-  
+
                 Write-Host "Installing FaceIt Anti-Cheat . . ."
                 #download face it AC
                 Get-FileFromWeb -URL "https://anticheat-client.faceit-cdn.net/FACEITInstaller_64.exe" -File "$env:TEMP\FACEITInstaller_64.exe"
@@ -562,7 +561,7 @@ while ($true) {
                 }
                 show-menu
             }
-        } 
+        }
     }
-    else { Write-Host "Invalid input. Please select a valid option (1-24)." } 
+    else { Write-Host "Invalid input. Please select a valid option (1-24)." }
 }
