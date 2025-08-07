@@ -1,0 +1,45 @@
+name: PowerShell Lint & Spell Check
+
+on:
+  push:
+    paths:
+      - "**/*.ps1"
+      - "**/*.psm1"
+  pull_request:
+    paths:
+      - "**/*.ps1"
+      - "**/*.psm1"
+
+jobs:
+  lint_and_spellcheck:
+    name: Analyze PowerShell Scripts
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser -AllowClobber
+
+      - name: Run PSScriptAnalyzer on all .ps1/.psm1
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Path . -Recurse -Include *.ps1, *.psm1 -File
+          foreach ($file in $files) {
+            Write-Host "Analyzing $($file.FullName)"
+            Invoke-ScriptAnalyzer -Path $file.FullName -Severity Error | Format-Table -AutoSize
+          }
+
+      - name: Setup Node.js for cspell
+        uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+
+      - name: Install cspell
+        run: npm install -g cspell
+
+      - name: Run cspell on PowerShell Scripts
+        run: cspell "**/*.ps1" "**/*.psm1"
