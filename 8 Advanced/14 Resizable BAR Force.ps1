@@ -289,6 +289,8 @@ Set-Content -Path "$env:TEMP\ReBarOn.nip" -Value $MultilineComment -Force
 Start-Process -wait "$env:TEMP\Inspector.exe" -ArgumentList "$env:TEMP\ReBarOn.nip"
 Clear-Host
 Write-Host "Check Resizable BAR Is On: In Inspector . . ." -ForegroundColor Red
+Write-Host ""
+Write-Host "Also Check Game Profile (Some Games Force On/Off In Individual Game Profile)" -ForegroundColor Red
 # open inspector
 Start-Process -wait "$env:TEMP\Inspector.exe"
 Clear-Host
@@ -526,6 +528,8 @@ Set-Content -Path "$env:TEMP\ReBarOff.nip" -Value $MultilineComment -Force
 Start-Process -wait "$env:TEMP\Inspector.exe" -ArgumentList "$env:TEMP\ReBarOff.nip"
 Clear-Host
 Write-Host "Check Resizable BAR Is Off: In Inspector . . ." -ForegroundColor Red
+Write-Host ""
+Write-Host "Also Check Game Profile (Some Games Force On/Off In Individual Game Profile)" -ForegroundColor Red
 # open inspector
 Start-Process -wait "$env:TEMP\Inspector.exe"
 Clear-Host

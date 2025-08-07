@@ -20,17 +20,17 @@ $directories = Get-ChildItem -Path $rootDirectory -Directory
 
 # ASCII art for the name
 $asciiArt = @"
-______                          __    __             ____             __  
+______                          __    __             ____             __
 / ____/___ _____ ___  ___  _____/ /_  / /__  _____   / __ \____ ______/ /__
 / / __/ __ `/ __ `__ \/ _ \/ ___/ __ \/ / _ \/ ___/  / /_/ / __ `/ ___/ //_/
-/ /_/ / /_/ / / / / / /  __(__  ) / / / /  __/ /     / ____/ /_/ / /__/ ,<   
-\____/\__,_/_/ /_/ /_/\___/____/_/ /_/_/\___/_/     /_/    \__,_/\___/_/|_|  
-                                                                         
+/ /_/ / /_/ / / / / / /  __(__  ) / / / /  __/ /     / ____/ /_/ / /__/ ,<
+\____/\__,_/_/ /_/ /_/\___/____/_/ /_/_/\___/_/     /_/    \__,_/\___/_/|_|
+
 "@
 
 # Function that displays the menu
 function Show-Menu {
-  
+
   Clear-Host
   Write-Host $asciiArt -ForegroundColor Magenta
   Write-Host "-----------------------------------------------" -ForegroundColor Green
@@ -61,7 +61,7 @@ function Show-Menu {
 
 # Function that displays the files in a directory
 function Show-FilesInDirectory {
-  
+
   param (
     [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
@@ -104,4 +104,4 @@ function Show-FilesInDirectory {
 }
 
 # Start the menu
-Show-Menu 
+Show-Menu
