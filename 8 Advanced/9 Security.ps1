@@ -104,7 +104,7 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Features]
 "TamperProtection"=dword:00000004
 
-; controlled folder access 
+; controlled folder access
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\Controlled Folder Access]
 "EnableControlledFolderAccess"=dword:00000000
 
@@ -179,8 +179,8 @@ Windows Registry Editor Version 5.00
 "MitigationOptions"=hex:22,22,22,00,00,01,00,00,00,00,00,00,00,00,00,00,\
 00,00,00,00,00,00,00,00
 
-; core isolation 
-; memory integrity 
+; core isolation
+; memory integrity
 [HKEY_LOCAL_MACHINE\System\ControlSet001\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity]
 "ChangedInBootCycle"=-
 "Enabled"=dword:00000000
@@ -605,7 +605,7 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Features]
 "TamperProtection"=dword:00000005
 
-; controlled folder access 
+; controlled folder access
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\Controlled Folder Access]
 "EnableControlledFolderAccess"=dword:00000001
 
@@ -680,8 +680,8 @@ Windows Registry Editor Version 5.00
 "MitigationOptions"=hex(3):11,11,11,00,00,01,00,00,00,00,00,00,00,00,00,00,\
 00,00,00,00,00,00,00,00
 
-; core isolation 
-; memory integrity 
+; core isolation
+; memory integrity
 [HKEY_LOCAL_MACHINE\System\ControlSet001\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity]
 "ChangedInBootCycle"=-
 "Enabled"=dword:00000001

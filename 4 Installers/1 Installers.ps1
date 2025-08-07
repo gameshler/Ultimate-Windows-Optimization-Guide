@@ -45,6 +45,7 @@ function Get-FileFromWeb {
 function show-menu {
     Clear-Host
     Write-Host "Game launchers, programs and web browsers:" -ForegroundColor Green
+    Write-Host "-Disable hardware acceleration" -ForegroundColor Green
     Write-Host "-Turn off running at startup" -ForegroundColor Green
     Write-Host "-Deactivate overlays" -ForegroundColor Green
     Write-Host ""

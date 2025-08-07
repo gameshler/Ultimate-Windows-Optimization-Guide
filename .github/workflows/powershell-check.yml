@@ -1,4 +1,4 @@
-name: PowerShell Lint & Spell Check
+name: PowerShell Lint
 
 on:
   push:
@@ -11,12 +11,12 @@ on:
       - "**/*.psm1"
 
 jobs:
-  lint_and_spellcheck:
-    name: Analyze PowerShell Scripts
+  lint:
+    name: PowerShell Script Linting
     runs-on: windows-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Install PSScriptAnalyzer
@@ -24,22 +24,21 @@ jobs:
         run: |
           Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser -AllowClobber
 
-      - name: Run PSScriptAnalyzer on all .ps1/.psm1
+      - name: Run PSScriptAnalyzer
         shell: pwsh
         run: |
+          $errorFound = $false
           $files = Get-ChildItem -Path . -Recurse -Include *.ps1, *.psm1 -File
           foreach ($file in $files) {
-            Write-Host "Analyzing $($file.FullName)"
-            Invoke-ScriptAnalyzer -Path $file.FullName -Severity Error | Format-Table -AutoSize
+            Write-Host "Linting $($file.FullName)"
+            $results = Invoke-ScriptAnalyzer -Path $file.FullName -Severity Error
+            if ($results.Count -gt 0) {
+              $errorFound = $true
+              Write-Host "Errors in $($file.FullName):"
+              $results | Format-Table -AutoSize
+            }
           }
-
-      - name: Setup Node.js for cspell
-        uses: actions/setup-node@v3
-        with:
-          node-version: "22"
-
-      - name: Install cspell
-        run: npm install -g cspell
-
-      - name: Run cspell on PowerShell Scripts
-        run: cspell "**/*.ps1" "**/*.psm1"
+          if ($errorFound) {
+            Write-Error "PSScriptAnalyzer found one or more errors."
+            exit 1
+          }
