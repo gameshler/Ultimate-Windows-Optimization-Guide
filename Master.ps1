@@ -16,7 +16,8 @@ $Host.PrivateData.ProgressForegroundColor = "White"
 $rootDirectory = $PSScriptRoot
 
 # Define the directories
-$directories = Get-ChildItem -Path $rootDirectory -Directory
+$directories = Get-ChildItem -Path $rootDirectory -Directory |
+               Where-Object {-not $_.Name.StartsWith('.')}
 
 # ASCII art for the name
 $asciiArt = @"
@@ -58,49 +59,52 @@ function Show-Menu {
     Show-Menu
   }
 }
-
-# Function that displays the files in a directory
 function Show-FilesInDirectory {
+    param (
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [System.IO.DirectoryInfo]$Directory
+    )
+    try {
 
-  param (
-    [Parameter(Mandatory = $true)]
-    [ValidateNotNullOrEmpty()]
-    [System.IO.DirectoryInfo]$Directory
-  )
+        $files = Get-ChildItem -Path $Directory.FullName -File |
+                Where-Object {-not $_.Name.StartsWith('.')} |
+                Sort-Object { [int]($_.Name -replace '^\D*(\d+).*$', '$1') }
 
-  try {
-    $files = Get-ChildItem -Path $Directory.FullName -File | Sort-Object { [int]($_.Name -replace '^\D*(\d+).*$', '$1') }
-    $directoryName = $Directory.Name -replace '^\d+\s*'
-    Clear-Host
-    Write-Host "Files in $($directoryName):" -ForegroundColor Yellow
-    for ($i = 0; $i -lt $files.Length; $i++) {
-      $fileName = $files[$i].Name -replace '^\d+\s*'
-      Write-Host "$($i+1). $fileName" -ForegroundColor Cyan
-    }
-    Write-Host "0. Go back" -ForegroundColor Red
-    Write-Host "-----------------------------------------------" -ForegroundColor Yellow
+        $directoryName = $Directory.Name -replace '^\d+\s*'
+        Clear-Host
+        Write-Host "Files in $($directoryName):" -ForegroundColor Yellow
 
-    $choice = Read-Host " "
-    if ($choice -match '^[1-9]\d*$' -and [int]$choice -le $files.Length) {
-      $selectedFile = $files[$choice - 1]
-      Invoke-Expression -Command "& '$($selectedFile.FullName)'"
-      Start-Sleep -Seconds 1
-      Show-FilesInDirectory -Directory $Directory
+        for ($i = 0; $i -lt $files.Length; $i++) {
+            $fileName = $files[$i].Name -replace '^\d+\s*'
+            Write-Host "$($i+1). $fileName" -ForegroundColor Cyan
+        }
+
+        Write-Host "0. Go back" -ForegroundColor Red
+        Write-Host "-----------------------------------------------" -ForegroundColor Yellow
+
+        $choice = Read-Host " "
+
+        if ($choice -match '^[1-9]\d*$' -and [int]$choice -le $files.Length) {
+            $selectedFile = $files[$choice - 1]
+            Invoke-Expression -Command "& '$($selectedFile.FullName)'"
+            Start-Sleep -Seconds 1
+            Show-FilesInDirectory -Directory $Directory
+        }
+        elseif ($choice -eq "0") {
+            Show-Menu
+        }
+        else {
+            Write-Host "Invalid choice. Please try again." -ForegroundColor Red
+            Start-Sleep -Seconds 1
+            Show-FilesInDirectory -Directory $Directory
+        }
     }
-    elseif ($choice -eq "0") {
-      Show-Menu
+    catch {
+        Write-Host "An error occurred: $_" -ForegroundColor Red
+        Start-Sleep -Seconds 2
+        Show-Menu
     }
-    else {
-      Write-Host "Invalid choice. Please try again." -ForegroundColor Red
-      Start-Sleep -Seconds 1
-      Show-FilesInDirectory -Directory $Directory
-    }
-  }
-  catch {
-    Write-Host "An error occurred: $_" -ForegroundColor Red
-    Start-Sleep -Seconds 2
-    Show-Menu
-  }
 }
 
 # Start the menu

@@ -71,12 +71,11 @@ function show-menu {
     Write-Host "16. Ubisoft Connect"  -ForegroundColor Cyan
     Write-Host "17. Valorant"  -ForegroundColor Cyan
     Write-Host "18. Plutonium"  -ForegroundColor Cyan
-    Write-Host "19. Origin"  -ForegroundColor Cyan
-    Write-Host "20. Faceit Launcher"  -ForegroundColor Cyan
-    Write-Host "21. Firefox"  -ForegroundColor Cyan
-    Write-Host "22. Thorium"  -ForegroundColor Cyan
-    Write-Host "23. Brave"  -ForegroundColor Cyan
-    Write-Host "24. Microsoft Office 2024 LSTC Edition"  -ForegroundColor Cyan
+    Write-Host "19. Faceit Launcher"  -ForegroundColor Cyan
+    Write-Host "20. Firefox"  -ForegroundColor Cyan
+    Write-Host "21. Thorium"  -ForegroundColor Cyan
+    Write-Host "22. Brave"  -ForegroundColor Cyan
+    Write-Host "23. Microsoft Office 2024 LSTC Edition"  -ForegroundColor Cyan
 }
 show-menu
 while ($true) {
@@ -128,15 +127,21 @@ while ($true) {
 
             }
             5 {
-
                 Clear-Host
                 Write-Host "Installing: Electronic Arts . . ."
                 # download electronic arts
                 Get-FileFromWeb -URL "https://origin-a.akamaihd.net/EA-Desktop-Client-Download/installer-releases/EAappInstaller.exe" -File "$env:TEMP\Electronic Arts.exe"
                 # install electronic arts
                 Start-Process "$env:TEMP\Electronic Arts.exe"
+                Clear-Host
+                Write-Host "Installing: Punkbuster Service Updater . . . (Add Games to Punkbuster)"
+                # download punkbuster service updater
+                Get-FileFromWeb -URL "https://www.evenbalance.com/downloads/W/gui/pbsetup.zip" -File "$env:TEMP\pbsetup.zip"
+                # extract punkbuster service updater
+                Expand-Archive "$env:TEMP\pbsetup.zip" -DestinationPath "$env:TEMP\pbsetup" -ErrorAction SilentlyContinue
+                # install punkbuster service updater
+                Start-Process -wait "$env:TEMP\pbsetup\pbsetup.exe"
                 show-menu
-
             }
             6 {
 
@@ -380,36 +385,6 @@ while ($true) {
             }
             19 {
                 Clear-Host
-                Write-Host "Installing: Origin . . ."
-                $localConfigurationPath = "$env:ProgramData\Origin\local.xml"
-                # download origin
-                Get-FileFromWeb -URL "https://download.dm.origin.com/origin/live/OriginSetup.exe" -File "$env:TEMP\OriginSetup.exe"
-                # install origin
-                Start-Process -wait "$env:TEMP\OriginSetup.exe" -ArgumentList "/S"
-
-
-                # set the local.xml configuration file to read-only
-                Set-ItemProperty -Path "$localConfigurationPath" -Name IsReadOnly -Value $true
-
-                Clear-Host
-                Write-Host "Installing Fuck off EA App . . . (Check Pretend EA App is Installed)"
-                # download Fuck off EA App Installer
-                Get-FileFromWeb -URL "https://github.com/p0358/Fuck_off_EA_App/releases/download/v6/Fuck_off_EA_App_installer.exe" -File "$env:TEMP\Fuck_off_EA_App_installer.exe"
-                # install Fuck off EA App Installer
-                Start-Process -wait "$env:TEMP\Fuck_off_EA_App_installer.exe"
-
-                Clear-Host
-                Write-Host "Installing: Punkbuster Service Updater . . . (Add Games to Punkbuster)"
-                # download punkbuster service updater
-                Get-FileFromWeb -URL "https://www.evenbalance.com/downloads/W/gui/pbsetup.zip" -File "$env:TEMP\pbsetup.zip"
-                # extract punkbuster service updater
-                Expand-Archive "$env:TEMP\pbsetup.zip" -DestinationPath "$env:TEMP\pbsetup" -ErrorAction SilentlyContinue
-                # install punkbuster service updater
-                Start-Process -wait "$env:TEMP\pbsetup\pbsetup.exe"
-                show-menu
-            }
-            20 {
-                Clear-Host
                 Write-Host "Installing FaceIt Launcher . . ."
                 #download faceit launcher
                 Get-FileFromWeb -URL "https://faceit-client.faceit-cdn.net/release/FACEIT-setup-latest.exe" -File "$env:TEMP\FACEIT-setup-latest.exe"
@@ -424,7 +399,7 @@ while ($true) {
                 Start-Process -wait "$env:TEMP\FACEITInstaller_64.exe" -ArgumentList "/S"
                 show-menu
             }
-            21 {
+            20 {
                 Clear-Host
                 Write-Host "Installing: Firefox . . ."
                 # download firefox
@@ -450,7 +425,7 @@ while ($true) {
                 }
                 show-menu
             }
-            22 {
+            21 {
                 Clear-Host
                 Write-Host "Installing: Thorium Browser . . ."
                 # download thorium browser
@@ -465,7 +440,8 @@ while ($true) {
                     "https://chromewebstore.google.com/detail/privacy-badger/pkehgijcmpdhfbdbbnkijodmdjhbjlgp",
                     "https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi",
                     "https://chromewebstore.google.com/detail/search-by-image/cnojnbdhbhnkbcieeekonklommdnndci",
-                    "https://chromewebstore.google.com/detail/decentraleyes/ldpochfccmkkmhdbclfhpagapcfdljkj"
+                    "https://chromewebstore.google.com/detail/decentraleyes/ldpochfccmkkmhdbclfhpagapcfdljkj",
+                    "https://chromewebstore.google.com/detail/enhancer-for-youtube/ponfpcnoihfmfllpaingbgckeeldkhle"
                 )
                 $thoriumPath = $thoriumPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
                 if ($thoriumPath) {
@@ -475,7 +451,7 @@ while ($true) {
                 }
                 show-menu
             }
-            23 {
+            22 {
                 Clear-Host
                 Write-Host "Installing: Brave Browser . . ."
                 # download brave browser
@@ -491,7 +467,8 @@ while ($true) {
                     "https://chromewebstore.google.com/detail/privacy-badger/pkehgijcmpdhfbdbbnkijodmdjhbjlgp",
                     "https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi",
                     "https://chromewebstore.google.com/detail/search-by-image/cnojnbdhbhnkbcieeekonklommdnndci",
-                    "https://chromewebstore.google.com/detail/decentraleyes/ldpochfccmkkmhdbclfhpagapcfdljkj"
+                    "https://chromewebstore.google.com/detail/decentraleyes/ldpochfccmkkmhdbclfhpagapcfdljkj",
+                    "https://chromewebstore.google.com/detail/enhancer-for-youtube/ponfpcnoihfmfllpaingbgckeeldkhle"
                 )
                 $bravePath = $bravePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
                 if ($bravePath) {
@@ -501,13 +478,13 @@ while ($true) {
                 }
                 show-menu
             }
-            24 {
+            23 {
                 Clear-Host
                 Write-Host "Installing: Microsoft Office 2024 LSTC Edition . . ."
-                $toolPath = "$env:TEMP\officedeploymenttool_18227-20162.exe"
+                $toolPath = "$env:TEMP\officedeploymenttool_19029-20136.exe"
                 $configurationPath = "$env:TEMP\OfficeDeployment\configuration-Office365-x64.xml"
                 # download microsoft office
-                Get-FileFromWeb -URL "https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_18227-20162.exe" -File $toolPath
+                Get-FileFromWeb -URL "https://download.microsoft.com/download/6c1eeb25-cf8b-41d9-8d0d-cc1dbc032140/officedeploymenttool_19029-20136.exe" -File $toolPath
 
                 # extract office deployment tool
                 Start-Process -FilePath $toolPath -ArgumentList "/quiet /extract:$env:TEMP\OfficeDeployment" -Wait
@@ -541,25 +518,21 @@ while ($true) {
                 Start-Process -FilePath "$env:TEMP\OfficeDeployment\setup.exe" -ArgumentList "/configure $configurationPath" -Wait
                 # activating microsoft office
                 Write-Host "Activating Microsoft Office . . ."
-                $officePaths = @(
-                    "$env:ProgramFiles(x86)\Microsoft Office\Office16",
-                    "$env:ProgramFiles\Microsoft Office\Office16"
-                )
-
-                foreach ($path in $officePaths) {
-                    if (Test-Path $path) {
-                        Set-Location -Path $path
-                        $licenseFiles = Get-ChildItem -Path "..\root\Licenses16\ProPlus2021VL_KMS*.xrm-ms"
-                        foreach ($file in $licenseFiles) {
-                            Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /inslic:`"$file`"" -Wait
-                        }
-                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /setprt:1688" -Wait
-                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /unpkey:6F7TH >nul" -Wait
-                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /inpkey:FXYTK-NJJ8C-GB6DW-3DYQT-6F7TH" -Wait
-                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /sethst:107.175.77.7" -Wait
-                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /act" -Wait
-                    }
-                }
+                $cmdScript = @"
+@echo off
+cd /d "%ProgramFiles(x86)%\Microsoft Office\Office16"
+cd /d "%ProgramFiles%\Microsoft Office\Office16"
+for /f %x in ('dir /b ..\root\Licenses16\ProPlus2021VL_KMS*.xrm-ms') do cscript ospp.vbs /inslic:"..\root\Licenses16\%x"
+cscript ospp.vbs /setprt:1688
+cscript ospp.vbs /unpkey:6F7TH >nul
+cscript ospp.vbs /inpkey:FXYTK-NJJ8C-GB6DW-3DYQT-6F7TH
+cscript ospp.vbs /sethst:23.226.136.46
+cscript ospp.vbs /act
+pause
+"@
+$scriptPath = Join-Path $env:TEMP "activate.cmd"
+$cmdScript | Set-Content -Path $scriptPath -Encoding ASCII
+Start-Process cmd.exe -ArgumentList "/c", $scriptPath -Verb RunAs
                 show-menu
             }
         }
