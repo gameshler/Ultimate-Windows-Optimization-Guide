@@ -9,24 +9,26 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
 # Admin rights check
-function Test-Administrator {
-    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
-    $principal = [Security.Principal.WindowsPrincipal]::new($identity)
-    return $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-}
+$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
+    [Security.Principal.WindowsBuiltInRole]::Administrator
+)
 
-if (-not (Test-Administrator)) {
+if (-not ($isAdmin)) {
     Write-Host "This script requires administrator privileges. Restarting with elevated permissions..." -ForegroundColor Yellow
 
-    # Build argument string properly
-    $argString = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
-
-    if ($Force) { $argString += " -Force" }
-    if ($SkipChocoInstall) { $argString += " -SkipChocoInstall" }
-    if ($SkipAppInstall) { $argString += " -SkipAppInstall" }
-
+        $arguments = @(
+        "-NoProfile"
+        "-ExecutionPolicy"
+        "Bypass"
+        "-File"
+        "`"$PSCommandPath`""
+    )
+    if ($Force) { $arguments += " -Force" }
+    if ($SkipChocoInstall) { $arguments += " -SkipChocoInstall" }
+    if ($SkipAppInstall) { $arguments += " -SkipAppInstall" }
+    $arguments += $args
     try {
-        Start-Process PowerShell.exe -ArgumentList $argString -Verb RunAs -Wait
+        Start-Process PowerShell.exe -ArgumentList $arguments -Verb RunAs -Wait
         Exit
     }
     catch {
