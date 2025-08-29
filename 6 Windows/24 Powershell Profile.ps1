@@ -1,61 +1,3 @@
-Write-Host "Installing Full-Stack Developer PowerShell Profile..." -ForegroundColor Cyan
-
-# Ensure profile file exists
-if (!(Test-Path $PROFILE)) {
-    Write-Host "Creating profile file..." -ForegroundColor Yellow
-    New-Item -ItemType File -Path $PROFILE -Force
-}
-
-# Check PSReadLine version and set compatible options
-$psReadLineVersion = (Get-Module PSReadLine -ListAvailable | Select-Object -First 1).Version
-
-Write-Host "PSReadLine version detected: $($psReadLineVersion.ToString())" -ForegroundColor Yellow
-
-# Install required modules
-Write-Host "Installing required modules..." -ForegroundColor Yellow
-
-try {
-    # Install PowerShell modules
-    if (Get-Module -ListAvailable -Name Terminal-Icons) {
-        Write-Host "Terminal-Icons already installed" -ForegroundColor Green
-    } else {
-        Write-Host "Installing Terminal-Icons..." -ForegroundColor Yellow
-        Install-Module -Name Terminal-Icons -Force
-    }
-
-    if (Get-Module -ListAvailable -Name posh-git) {
-        Write-Host "posh-git already installed" -ForegroundColor Green
-    } else {
-        Write-Host "Installing posh-git..." -ForegroundColor Yellow
-        Install-Module -Name posh-git -Force
-    }
-
-    # Install Oh-My-Posh
-    Write-Host "Checking for Oh-My-Posh..." -ForegroundColor Yellow
-    $ohMyPoshInstalled = Get-Command oh-my-posh -ErrorAction SilentlyContinue
-
-    if (-not $ohMyPoshInstalled) {
-        Write-Host "Installing Oh-My-Posh via winget..." -ForegroundColor Yellow
-        try {
-            winget install JanDeDobbeleer.OhMyPosh --source winget --scope user --force
-            Write-Host "Oh-My-Posh installed successfully" -ForegroundColor Green
-        }
-        catch {
-            Write-Host "Failed to install Oh-My-Posh via winget. You may need to install it manually." -ForegroundColor Red
-            Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
-        }
-    } else {
-        Write-Host "Oh-My-Posh already installed" -ForegroundColor Green
-    }
-
-    # Import modules temporarily for this session
-    Write-Host "Importing modules..." -ForegroundColor Yellow
-    Import-Module -Name Terminal-Icons -ErrorAction SilentlyContinue
-    Import-Module -Name PSReadLine -ErrorAction SilentlyContinue
-    Import-Module -Name posh-git -ErrorAction SilentlyContinue
-
-    # Create the profile content with version-compatible PSReadLine options
-    $profileContent = @'
 # ==============================================
 # PowerShell Profile for Full-Stack Developer
 # ==============================================
@@ -96,7 +38,7 @@ catch {
 # Git Shortcuts
 function gs { git status }
 function ga { git add $args }
-function gc { git commit -m $args }
+function gcom { git commit -m $args }
 function gpush { git push }
 function gpull { git pull }
 function gco { git checkout $args }
@@ -209,18 +151,4 @@ try {
 }
 catch {
     Write-Host "Profile loaded at $(Get-Date -Format 'HH:mm:ss')" -ForegroundColor DarkGray
-}
-'@
-
-    # Write the content to the profile
-    Write-Host "Writing profile configuration..." -ForegroundColor Yellow
-    $profileContent | Out-File -FilePath $PROFILE -Encoding UTF8 -Force
-
-    Write-Host "Profile installed successfully!" -ForegroundColor Green
-    Write-Host "Profile location: $PROFILE" -ForegroundColor Cyan
-
-}
-catch {
-    Write-Host "Error occurred during installation: $($_.Exception.Message)" -ForegroundColor Red
-    Write-Host "You may need to run this script as Administrator for module installation" -ForegroundColor Yellow
 }
