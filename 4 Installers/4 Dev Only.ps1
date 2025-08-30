@@ -177,11 +177,8 @@ try {
         "revo-uninstaller", "slack", "gpu-z", "vlc", "vscode",
         "winscp", "zoom", "nodejs-lts", "cypress", "pnpm"
     )
-
-    $wingetApps = @(
-        "Microsoft.WindowsTerminal",
-        "Microsoft.PowerShell"
-    )
+# Add winget apps here
+    $wingetApps = @()
 
     # Install Chocolatey if not skipped
     $chocoSuccess = $true
