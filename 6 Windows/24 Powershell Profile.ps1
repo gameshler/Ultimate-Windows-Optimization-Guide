@@ -177,6 +177,346 @@ function serve($port = 3000) {
         npx http-server -p $port
     }
 }
+# ==============================================
+# DIRECTORY SEARCH FUNCTIONS
+# ==============================================
+
+function Search-Files {
+    <#
+    .SYNOPSIS
+        Advanced file search with regex, content search, and multiple filters
+    #>
+
+    param(
+        [string]$NamePattern = "*",
+        [string]$ContentPattern,
+        [string]$Path = ".",
+        [string[]]$Extension,
+        [switch]$UseRegex,
+        [switch]$CaseSensitive,
+        [switch]$Recursive,
+        [double]$MaxSizeMB,
+        [double]$MinSizeMB,
+        [datetime]$ModifiedAfter,
+        [datetime]$ModifiedBefore,
+        [datetime]$CreatedAfter,
+        [datetime]$CreatedBefore,
+        [string[]]$ExcludeDirs = @("node_modules", ".git", "bin", "obj", "packages"),
+        [switch]$IncludeHidden,
+        [int]$MaxResults = 500,
+        [switch]$Parallel,
+        [switch]$ShowFullPath
+    )
+
+    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+    Write-Host "Searching..." -ForegroundColor Cyan
+
+    # Build search parameters
+    $searchParams = @{
+        Path = $Path
+        File = $true
+        ErrorAction = "SilentlyContinue"
+    }
+
+    if ($Recursive) { $searchParams.Recurse = $true }
+    if ($IncludeHidden) { $searchParams.Force = $true }
+
+    # Set filter pattern
+    $searchParams.Filter = if (-not $UseRegex -and $NamePattern -ne "*") {
+        if ($NamePattern.Contains('*')) { $NamePattern } else { "*$NamePattern*" }
+    } else {
+        "*"
+    }
+
+    # Get files and apply filters
+    $files = Get-ChildItem @searchParams | Where-Object {
+        $file = $_
+
+        # Apply all filters
+        $shouldInclude = $true
+
+        $shouldInclude = $shouldInclude -and (Test-ExcludedDirectory -File $file -ExcludeDirs $ExcludeDirs)
+        $shouldInclude = $shouldInclude -and (Test-Extension -File $file -Extension $Extension)
+        $shouldInclude = $shouldInclude -and (Test-FileSize -File $file -MinSizeMB $MinSizeMB -MaxSizeMB $MaxSizeMB)
+        $shouldInclude = $shouldInclude -and (Test-DateFilters -File $file -ModifiedAfter $ModifiedAfter -ModifiedBefore $ModifiedBefore -CreatedAfter $CreatedAfter -CreatedBefore $CreatedBefore)
+        $shouldInclude = $shouldInclude -and (Test-NamePattern -File $file -NamePattern $NamePattern -UseRegex $UseRegex -CaseSensitive $CaseSensitive)
+
+        return $shouldInclude
+    }
+
+    # Content search if specified
+    if ($ContentPattern) {
+        $files = Search-Content -Files $files -ContentPattern $ContentPattern -CaseSensitive $CaseSensitive -Parallel $Parallel
+    }
+
+    $results = $files | Select-Object -First $MaxResults
+    $stopwatch.Stop()
+
+    # Display results
+    Show-Results -Results $results -Stopwatch $stopwatch -ShowFullPath $ShowFullPath
+}
+
+# Search-Files Helper Functions
+function Test-ExcludedDirectory {
+    param($File, $ExcludeDirs)
+
+    foreach ($dir in $ExcludeDirs) {
+        if ($File.FullName -like "*\$dir\*") {
+            return $false
+        }
+    }
+    return $true
+}
+
+function Test-Extension {
+    param($File, $Extension)
+
+    if (-not $Extension -or $Extension.Count -eq 0) { return $true }
+
+    $fileExt = $File.Extension.TrimStart('.')
+    return ($Extension -contains $fileExt) -or ($Extension -contains "*.$fileExt")
+}
+
+function Test-FileSize {
+    param($File, $MinSizeMB, $MaxSizeMB)
+
+    $sizeMB = $File.Length / 1MB
+
+    $passMin = if ($MinSizeMB) { $sizeMB -ge $MinSizeMB } else { $true }
+    $passMax = if ($MaxSizeMB) { $sizeMB -le $MaxSizeMB } else { $true }
+
+    return $passMin -and $passMax
+}
+
+function Test-DateFilters {
+    param($File, $ModifiedAfter, $ModifiedBefore, $CreatedAfter, $CreatedBefore)
+
+    $passModifiedAfter = if ($ModifiedAfter) { $File.LastWriteTime -ge $ModifiedAfter } else { $true }
+    $passModifiedBefore = if ($ModifiedBefore) { $File.LastWriteTime -le $ModifiedBefore } else { $true }
+    $passCreatedAfter = if ($CreatedAfter) { $File.CreationTime -ge $CreatedAfter } else { $true }
+    $passCreatedBefore = if ($CreatedBefore) { $File.CreationTime -le $CreatedBefore } else { $true }
+
+    return $passModifiedAfter -and $passModifiedBefore -and $passCreatedAfter -and $passCreatedBefore
+}
+
+function Test-NamePattern {
+    param($File, $NamePattern, $UseRegex, $CaseSensitive)
+
+    if (-not $UseRegex -and $NamePattern -eq "*") { return $true }
+
+    $pattern = if ($UseRegex) { $NamePattern } else { [regex]::Escape($NamePattern) }
+    $regexOptions = if ($CaseSensitive) { [Text.RegularExpressions.RegexOptions]::None } else { [Text.RegularExpressions.RegexOptions]::IgnoreCase }
+
+    return [regex]::IsMatch($File.Name, $pattern, $regexOptions)
+}
+
+function Search-Content {
+    param($Files, $ContentPattern, $CaseSensitive, $Parallel)
+
+    $contentRegexOptions = if ($CaseSensitive) { [Text.RegularExpressions.RegexOptions]::None } else { [Text.RegularExpressions.RegexOptions]::IgnoreCase }
+
+    if ($Parallel -and $PSVersionTable.PSVersion -ge [version]"7.0") {
+        return $Files | ForEach-Object -Parallel {
+            $file = $_
+            try {
+                if ($file.Length -gt 0 -and $file.Length -lt 10MB) {
+                    $content = Get-Content -Path $file.FullName -Raw -ErrorAction SilentlyContinue
+                    if ($content -and [regex]::IsMatch($content, $using:ContentPattern, $using:contentRegexOptions)) {
+                        $file
+                    }
+                }
+            } catch {}
+        } -ThrottleLimit 8
+    } else {
+        return $Files | Where-Object {
+            try {
+                if ($_.Length -gt 0 -and $_.Length -lt 10MB) {
+                    $content = Get-Content -Path $_.FullName -Raw -ErrorAction SilentlyContinue
+                    $content -and [regex]::IsMatch($content, $ContentPattern, $contentRegexOptions)
+                } else {
+                    $false
+                }
+            } catch {
+                $false
+            }
+        }
+    }
+}
+
+function Show-Results {
+    param($Results, $Stopwatch, $ShowFullPath)
+
+    if ($Results) {
+        Write-Host "Found $($Results.Count) files in $($Stopwatch.Elapsed.TotalSeconds.ToString('0.00'))s" -ForegroundColor Green
+
+        if ($ShowFullPath) {
+            $Results | ForEach-Object {
+                [PSCustomObject]@{
+                    Name = $_.Name
+                    Size = Format-FileSize $_.Length
+                    Modified = $_.LastWriteTime.ToString("yyyy-MM-dd HH:mm")
+                    FullPath = $_.FullName
+                }
+            } | Format-Table -AutoSize
+        } else {
+            $Results | Format-Table @(
+                @{Name="Name"; Expression={$_.Name}; Width=35},
+                @{Name="Size"; Expression={Format-FileSize $_.Length}; Width=10},
+                @{Name="Modified"; Expression={$_.LastWriteTime.ToString("yyyy-MM-dd")}; Width=12},
+                @{Name="Directory"; Expression={$_.DirectoryName}; Width=50}
+            ) -AutoSize
+        }
+    } else {
+        Write-Host "No files found" -ForegroundColor Red
+    }
+}
+
+function Format-FileSize {
+    param([long]$Size)
+    switch ($Size) {
+        { $_ -gt 1GB } { return "{0:N1} GB" -f ($_ / 1GB) }
+        { $_ -gt 1MB } { return "{0:N1} MB" -f ($_ / 1MB) }
+        { $_ -gt 1KB } { return "{0:N1} KB" -f ($_ / 1KB) }
+        default { return "$_ B" }
+    }
+}
+
+function Find-Duplicates {
+    <#
+    .SYNOPSIS
+        Find duplicate files by content hash with full paths
+    #>
+    param(
+        [string]$Path = ".",
+        [switch]$Recursive,
+        [int]$MinSizeKB = 100,
+        [switch]$ShowFullPath
+    )
+
+    Write-Host "Finding duplicate files..." -ForegroundColor Cyan
+    $hashes = @{}
+    $duplicates = @()
+
+    Get-ChildItem -Path $Path -File -Recurse:$Recursive |
+        Where-Object { $_.Length -gt ($MinSizeKB * 1KB) } |
+        ForEach-Object {
+            $hash = (Get-FileHash -Path $_.FullName -Algorithm MD5).Hash
+            if ($hashes.ContainsKey($hash)) {
+                $duplicates += [PSCustomObject]@{
+                    Hash = $hash
+                    Size = $_.Length
+                    Files = @($hashes[$hash], $_.FullName)
+                }
+            } else {
+                $hashes[$hash] = $_.FullName
+            }
+        }
+
+    if ($duplicates) {
+        Write-Host "Found $($duplicates.Count) sets of duplicates:" -ForegroundColor Green
+        $duplicates | ForEach-Object {
+            Write-Host "`nHash: $($_.Hash) | Size: $(Format-FileSize $_.Size)" -ForegroundColor Yellow
+            $_.Files | ForEach-Object { Write-Host "   📄 $_" -ForegroundColor Gray }
+        }
+    } else {
+        Write-Host "No duplicates found" -ForegroundColor Green
+    }
+}
+
+function Find-LargeFiles {
+    <#
+    .SYNOPSIS
+        Find large files consuming disk space with full paths
+    #>
+    param(
+        [string]$Path = ".",
+        [double]$MinSizeMB = 50,
+        [int]$Top = 20,
+        [switch]$ShowFullPath
+    )
+
+    Write-Host "Finding large files (> ${MinSizeMB}MB)..." -ForegroundColor Cyan
+
+    $results = Get-ChildItem -Path $Path -File -Recurse -ErrorAction SilentlyContinue |
+        Where-Object { $_.Length -gt ($MinSizeMB * 1MB) } |
+        Sort-Object Length -Descending |
+        Select-Object -First $Top
+
+    if ($ShowFullPath) {
+        $results | ForEach-Object {
+            [PSCustomObject]@{
+                Name = $_.Name
+                Size = Format-FileSize $_.Length
+                Modified = $_.LastWriteTime.ToString("yyyy-MM-dd HH:mm")
+                FullPath = $_.FullName
+            }
+        } | Format-Table -AutoSize
+    } else {
+        $results | Format-Table @(
+            @{Name="Name"; Expression={$_.Name}; Width=35},
+            @{Name="Size"; Expression={Format-FileSize $_.Length}; Width=12},
+            @{Name="Modified"; Expression={$_.LastWriteTime.ToString("yyyy-MM-dd")}; Width=12},
+            @{Name="Path"; Expression={$_.DirectoryName}; Width=50}
+        ) -AutoSize
+    }
+}
+
+function Search-Recent {
+    <#
+    .SYNOPSIS
+        Find recently modified files with full paths
+    #>
+    param(
+        [int]$Days = 7,
+        [string]$Path = ".",
+        [string]$Pattern = "*",
+        [switch]$ShowFullPath
+    )
+
+    $since = (Get-Date).AddDays(-$Days)
+
+    $results = Get-ChildItem -Path $Path -File -Recurse -Filter $Pattern -ErrorAction SilentlyContinue |
+        Where-Object { $_.LastWriteTime -gt $since } |
+        Sort-Object LastWriteTime -Descending
+
+    if ($ShowFullPath) {
+        $results | ForEach-Object {
+            [PSCustomObject]@{
+                Name = $_.Name
+                Size = Format-FileSize $_.Length
+                Modified = $_.LastWriteTime.ToString("MM-dd HH:mm")
+                FullPath = $_.FullName
+            }
+        } | Format-Table -AutoSize
+    } else {
+        $results | Format-Table @(
+            @{Name="Name"; Expression={$_.Name}; Width=35},
+            @{Name="Size"; Expression={Format-FileSize $_.Length}; Width=10},
+            @{Name="Modified"; Expression={$_.LastWriteTime.ToString("MM-dd HH:mm")}; Width=12},
+            @{Name="Path"; Expression={$_.DirectoryName}; Width=50}
+        ) -AutoSize
+    }
+}
+
+# ==============================================
+# ALIASES
+# ==============================================
+
+# Main search alias
+Set-Alias -Name search -Value Search-Files
+Set-Alias -Name fs -Value Search-Files
+
+# Quick search functions
+function ds { Search-Files -NamePattern $args -Recursive }
+function dscs { Search-Files -NamePattern $args -CaseSensitive -Recursive  }
+function dsre { Search-Files -NamePattern $args -UseRegex -Recursive  }
+function dscont { Search-Files -ContentPattern $args -Recursive  }
+
+# Specialized searches
+function find-large { Find-LargeFiles @args }
+function find-dupes { Find-Duplicates @args }
+function find-recent { Search-Recent @args  }
+function find-ext { Search-Files -Extension $args -Recursive  }
 
 # ==============================================
 # PowerShell Configuration
@@ -197,6 +537,7 @@ catch {
 # ==============================================
 # Startup Message
 # ==============================================
+Clear-Host
 Write-Host "Welcome back! " -ForegroundColor Green -NoNewline
 
 # Display system info
