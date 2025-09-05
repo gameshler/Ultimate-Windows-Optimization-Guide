@@ -68,15 +68,11 @@ if ($psReadLineVersion -ge [version]"2.1.0") {
     Set-PSReadLineOption -PredictionViewStyle ListView
 }
 
-# Common options for all versions
 Set-PSReadLineOption -EditMode Windows
 Set-PSReadLineOption -BellStyle None
 Set-PSReadLineKeyHandler -Key Tab -Function Complete
 Set-PSReadLineKeyHandler -Chord 'Ctrl+d' -Function DeleteCharOrExit
 
-# ==============================================
-# Oh-My-Posh Theme
-# ==============================================
 try {
     oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json" | Invoke-Expression
 }
@@ -85,52 +81,11 @@ catch {
     function prompt { "PS $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) " }
 }
 
-# ==============================================
-# Aliases for Development
-# ==============================================
-
-# Git Shortcuts
-function gs { git status }
-function ga { git add $args }
-function gcom { git commit -m $args }
-function gpush { git push }
-function gpull { git pull }
-function gco { git checkout $args }
-function gb { git branch $args }
-function gl { git log --oneline --graph --decorate --all }
-function gd { git diff $args }
-
-# Navigation
-function dev { Set-Location ~\Development }
-function proj { Set-Location ~\projects }
-function docs { Set-Location ~\Documents }
-
-# Node.js/PNPM
-function pni { pnpm install $args }
-function pns { pnpm start }
-function pnt { pnpm test }
-function pnrd { pnpm run dev }
-function pnrsd {pnpm run start:dev}
-function pnrb { pnpm run build }
-
-# Docker
-function dk { docker $args }
-function dkc { docker-compose $args }
-function dkup { docker-compose up -d }
-function dkdown { docker-compose down }
-function dklogs { docker-compose logs -f }
-function code. { code . }
-
-# ==============================================
 # Environment Variables
-# ==============================================
+
 $env:PATH += ";C:\Program Files\Git\bin"
 $env:PATH += ";C:\Program Files\nodejs"
 $env:PATH += ";$env:USERPROFILE\AppData\Local\Programs\Microsoft VS Code\bin"
-
-# ==============================================
-# Functions
-# ==============================================
 
 # Quick directory creation and navigation
 function mkcd ($dir) {
@@ -161,7 +116,30 @@ function repo-status {
 
 # Find process using specific port
 function Find-Port($port) {
-    Get-Process -Id (Get-NetTCPConnection -LocalPort $port).OwningProcess
+    $connections = Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue
+    if (-not $connections) {
+        Write-Host "No processes found using port $port" -ForegroundColor Red
+        return
+    }
+
+    foreach ($connection in $connections) {
+        if ($connection.OwningProcess -gt 0) {
+            try {
+                $process = Get-Process -Id $connection.OwningProcess -ErrorAction SilentlyContinue
+                if ($process) {
+                    Write-Host "Process found on port ${port}:" -ForegroundColor Green
+                    Write-Host "Name: $($process.ProcessName)" -ForegroundColor Cyan
+                    Write-Host "PID: $($process.Id)" -ForegroundColor Cyan
+                    Write-Host "State: $($connection.State)" -ForegroundColor Cyan
+                    Write-Host "Path: $($process.Path)" -ForegroundColor Gray
+                    Write-Host ""
+                }
+            }
+            catch {
+                Write-Host "Process ID $($connection.OwningProcess) not found (may have terminated)" -ForegroundColor Yellow
+            }
+        }
+    }
 }
 
 # Quick HTTP server
@@ -177,9 +155,8 @@ function serve($port = 3000) {
         npx http-server -p $port
     }
 }
-# ==============================================
+
 # DIRECTORY SEARCH FUNCTIONS
-# ==============================================
 
 function Search-Files {
     <#
@@ -211,7 +188,6 @@ function Search-Files {
     $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
     Write-Host "Searching..." -ForegroundColor Cyan
 
-    # Build search parameters
     $searchParams = @{
         Path = $Path
         File = $true
@@ -221,18 +197,18 @@ function Search-Files {
     if ($Recursive) { $searchParams.Recurse = $true }
     if ($IncludeHidden) { $searchParams.Force = $true }
 
-    # Set filter pattern
+
     $searchParams.Filter = if (-not $UseRegex -and $NamePattern -ne "*") {
         if ($NamePattern.Contains('*')) { $NamePattern } else { "*$NamePattern*" }
     } else {
         "*"
     }
 
-    # Get files and apply filters
+
     $files = Get-ChildItem @searchParams | Where-Object {
         $file = $_
 
-        # Apply all filters
+
         $shouldInclude = $true
 
         $shouldInclude = $shouldInclude -and (Test-ExcludedDirectory -File $file -ExcludeDirs $ExcludeDirs)
@@ -244,7 +220,7 @@ function Search-Files {
         return $shouldInclude
     }
 
-    # Content search if specified
+
     if ($ContentPattern) {
         $files = Search-Content -Files $files -ContentPattern $ContentPattern -CaseSensitive $CaseSensitive -Parallel $Parallel
     }
@@ -252,7 +228,7 @@ function Search-Files {
     $results = $files | Select-Object -First $MaxResults
     $stopwatch.Stop()
 
-    # Display results
+
     Show-Results -Results $results -Stopwatch $stopwatch -ShowFullPath $ShowFullPath
 }
 
@@ -416,7 +392,7 @@ function Find-Duplicates {
         Write-Host "Found $($duplicates.Count) sets of duplicates:" -ForegroundColor Green
         $duplicates | ForEach-Object {
             Write-Host "`nHash: $($_.Hash) | Size: $(Format-FileSize $_.Size)" -ForegroundColor Yellow
-            $_.Files | ForEach-Object { Write-Host "   📄 $_" -ForegroundColor Gray }
+            $_.Files | ForEach-Object { Write-Host "   $_" -ForegroundColor Gray }
         }
     } else {
         Write-Host "No duplicates found" -ForegroundColor Green
@@ -498,13 +474,42 @@ function Search-Recent {
     }
 }
 
-# ==============================================
-# ALIASES
-# ==============================================
 
-# Main search alias
+function Get-DirectoryStats {
+    <#
+    .SYNOPSIS
+        Show statistics for the current directory
+    #>
+    param([string]$Path = ".")
+
+    $dir = Get-Item -Path $Path
+    $files = Get-ChildItem -Path $Path -File -Recurse -ErrorAction SilentlyContinue
+    $directories = Get-ChildItem -Path $Path -Directory -Recurse -ErrorAction SilentlyContinue
+
+    $totalSize = ($files | Measure-Object -Property Length -Sum).Sum
+    $extensions = $files | Group-Object -Property Extension | Sort-Object -Property Count -Descending
+
+    Write-Host "Directory Statistics for: $($dir.FullName)" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Files:        $($files.Count)" -ForegroundColor Cyan
+    Write-Host "Directories:  $($directories.Count)" -ForegroundColor Cyan
+    Write-Host "Total Size:   $(Format-FileSize $totalSize)" -ForegroundColor Cyan
+    Write-Host "`nTop File Extensions:" -ForegroundColor Yellow
+
+    $extensions | Select-Object -First 5 | ForEach-Object {
+        Write-Host ("{0,-8} {1}" -f $_.Name, $_.Count) -ForegroundColor Gray
+    }
+
+    Write-Host ""
+}
+
+# ALIASES
+
+# Main alias
 Set-Alias -Name search -Value Search-Files
 Set-Alias -Name fs -Value Search-Files
+Set-Alias -Name port -Value Find-Port
+Set-Alias -Name stats -Value Get-DirectoryStats
 
 # Quick search functions
 function ds { Search-Files -NamePattern $args -Recursive }
@@ -518,9 +523,41 @@ function find-dupes { Find-Duplicates @args }
 function find-recent { Search-Recent @args  }
 function find-ext { Search-Files -Extension $args -Recursive  }
 
-# ==============================================
+# Git Shortcuts
+function gs { git status }
+function ga { git add $args }
+function gcom { git commit -m $args }
+function gpush { git push }
+function gpull { git pull }
+function gco { git checkout $args }
+function gb { git branch $args }
+function gl { git log --oneline --graph --decorate --all }
+function gd { git diff $args }
+
+# Navigation
+function dev { Set-Location ~\Development }
+function proj { Set-Location ~\projects }
+function docs { Set-Location ~\Documents }
+
+# Node.js/PNPM
+function pni { pnpm install $args }
+function pns { pnpm start }
+function pnt { pnpm test }
+function pnrd { pnpm run dev }
+function pnrsd {pnpm run start:dev}
+function pnrb { pnpm run build }
+
+# Docker
+function dk { docker $args }
+function dkc { docker-compose $args }
+function dkup { docker-compose up -d }
+function dkdown { docker-compose down }
+function dklogs { docker-compose logs -f }
+function code. { code . }
+
+
 # PowerShell Configuration
-# ==============================================
+
 try {
     Set-PSReadLineOption -Colors @{
         "Command" = [ConsoleColor]::Green
@@ -534,11 +571,11 @@ catch {
     Write-Host "PSReadLine version doesn't support color customization" -ForegroundColor DarkGray
 }
 
-# ==============================================
 # Startup Message
-# ==============================================
+
 Clear-Host
-Write-Host "Welcome back! " -ForegroundColor Green -NoNewline
+Write-Host "Welcome back! Master" -ForegroundColor Green
+Write-Host "What are we building today?" -ForegroundColor Cyan
 
 # Display system info
 try {
@@ -548,6 +585,7 @@ try {
 catch {
     Write-Host "Profile loaded at $(Get-Date -Format 'HH:mm:ss')" -ForegroundColor DarkGray
 }
+
 
 '@
 
