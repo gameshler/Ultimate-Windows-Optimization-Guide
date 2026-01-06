@@ -210,7 +210,7 @@ cmd /c "MsiExec.exe /X{85C69797-7336-4E83-8D97-32A7C8465A3B} /qn >nul 2>&1"
 Stop-Process -Force -Name OneDrive -ErrorAction SilentlyContinue | Out-Null
 # uninstall onedrive w10
 cmd /c "C:\Windows\SysWOW64\OneDriveSetup.exe -uninstall >nul 2>&1"
-# clean onedrive w10
+# clean onedrive w10 
 Get-ScheduledTask | Where-Object {$_.Taskname -match 'OneDrive'} | Unregister-ScheduledTask -Confirm:$false
 # uninstall onedrive w11
 cmd /c "C:\Windows\System32\OneDriveSetup.exe -uninstall >nul 2>&1"
@@ -272,7 +272,7 @@ Write-Host "Restart to apply . . ."
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 show-menu
 
-      }
+      }	  
     4 {
 
 Clear-Host
@@ -285,7 +285,7 @@ Write-Host "Restart to apply . . ."
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 show-menu
 
-      }
+      }	  
     5 {
 
 Clear-Host
@@ -408,14 +408,14 @@ Write-Host "Restart to apply . . ."
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 show-menu
 
-      }
+      }	  
     8 {
 
 Clear-Host
 Write-Host "Installing: Remote Desktop Connection. Please wait . . ."
 # download remote desktop connection
 Get-FileFromWeb -URL "https://go.microsoft.com/fwlink/?linkid=2247659" -File "$env:TEMP\RemoteDesktopConnection.exe"
-# install remote desktop connection
+# install remote desktop connection 
 cmd /c "%TEMP%\RemoteDesktopConnection.exe >nul 2>&1"
 Clear-Host
 Write-Host "Restart to apply . . ."
