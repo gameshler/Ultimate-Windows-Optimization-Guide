@@ -49,7 +49,7 @@ Expand-Archive "$env:TEMP\DDU.zip" -DestinationPath "$env:TEMP\DDU" -ErrorAction
 # create config for ddu
 $MultilineComment = @"
 <?xml version="1.0" encoding="utf-8"?>
-<DisplayDriverUninstaller Version="18.0.7.8">
+<DisplayDriverUninstaller Version="18.1.4.0">
 	<Settings>
 		<SelectedLanguage>en-US</SelectedLanguage>
 		<RemoveMonitors>True</RemoveMonitors>
@@ -64,6 +64,10 @@ $MultilineComment = @"
 		<RemoveNVBROADCAST>True</RemoveNVBROADCAST>
 		<RemoveNVCP>True</RemoveNVCP>
 		<RemoveINTELCP>True</RemoveINTELCP>
+		<RemoveINTELIGS>True</RemoveINTELIGS>
+		<RemoveOneAPI>True</RemoveOneAPI>
+		<RemoveEnduranceGaming>True</RemoveEnduranceGaming>
+		<RemoveIntelNpu>True</RemoveIntelNpu>
 		<RemoveAMDCP>True</RemoveAMDCP>
 		<UseRoamingConfig>False</UseRoamingConfig>
 		<CheckUpdates>False</CheckUpdates>
