@@ -44,10 +44,10 @@
     Write-Host "1. Install: Nvidia Driver (Recommended)"
     Write-Host "2. Install: NvCleanInstall"
 	Write-Host ""
-	Write-Host "Unless recording or using replay buffer," -ForegroundColor Red
+	Write-Host "Unless recording or using replay buffer," -ForegroundColor Red 
 	Write-Host "avoid installing the NVIDIA App." -ForegroundColor Red
 	Write-Host ""
-	Write-Host "Game Filter (ALT+F3) and Statistics (ALT+R)," -ForegroundColor Red
+	Write-Host "Game Filter (ALT+F3) and Statistics (ALT+R)," -ForegroundColor Red 
 	Write-Host "will significantly reduce FPS when enabled." -ForegroundColor Red
     Write-Host ""
     Write-Host "In the NVIDIA App turn off," -ForegroundColor Red
