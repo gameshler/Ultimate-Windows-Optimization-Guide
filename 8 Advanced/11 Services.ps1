@@ -100,6 +100,7 @@ Windows Registry Editor Version 5.00
 
 ; W10 & W11 SERVICES OFF
 ; graphic driver & defender services left out.
+; Dnscache needed for internet w11. (w10 can disable).
 ; sppsvc set to auto for windows activation. (can disable).
 ; seclogon left out, as it will always enable itself. (can disable).
 ; appxsvc & TextInputManagementService left out, needed for w11. (w10 can disable).
@@ -107,6 +108,9 @@ Windows Registry Editor Version 5.00
 ; Schedule left out, needed for MSI Afterburner to apply GPU overclocks on startup. (can disable).
 ; TermService, KeyIso, NgcCtnrSvc & NgcSvc left out, needed for microsoft account login. (local account can disable).
 ; camsvc & netprofm left out, needed for mic to work. (can disable. camsvc & netprofm both need to be manual on w11. w10 can run camsvc independently)
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\ADPSvc]
+"Start"=dword:00000004
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\AarSvc]
 "Start"=dword:00000004
@@ -134,6 +138,9 @@ Windows Registry Editor Version 5.00
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\AppXSvc]
 "Start"=dword:00000003
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\ApxSvc]
+"Start"=dword:00000004
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\AssignedAccessManagerSvc]
 "Start"=dword:00000004
@@ -280,7 +287,7 @@ Windows Registry Editor Version 5.00
 "Start"=dword:00000004
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\Dnscache]
-"Start"=dword:00000004
+"Start"=dword:00000002
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\DoSvc]
 "Start"=dword:00000004
@@ -360,6 +367,9 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\hidserv]
 "Start"=dword:00000004
 
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\hpatchmon]
+"Start"=dword:00000004
+
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\HvHost]
 "Start"=dword:00000004
 
@@ -403,6 +413,9 @@ Windows Registry Editor Version 5.00
 "Start"=dword:00000004
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\lmhosts]
+"Start"=dword:00000004
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\LocalKdc]
 "Start"=dword:00000004
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\logi_lamparray_service]
@@ -540,7 +553,13 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\Power]
 "Start"=dword:00000002
 
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\PrintDeviceConfigurationService]
+"Start"=dword:00000004
+
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\PrintNotify]
+"Start"=dword:00000004
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\PrintScanBrokerService]
 "Start"=dword:00000004
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\PrintWorkflowUserSvc]
@@ -559,6 +578,9 @@ Windows Registry Editor Version 5.00
 "Start"=dword:00000004
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\RasMan]
+"Start"=dword:00000004
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\refsdedupsvc]
 "Start"=dword:00000004
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\RemoteAccess]
@@ -849,6 +871,9 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WFDSConMgrSvc]
 "Start"=dword:00000004
 
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\whesvc]
+"Start"=dword:00000004
+
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WiaRpc]
 "Start"=dword:00000004
 
@@ -900,6 +925,9 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WpnUserService]
 "Start"=dword:00000004
 
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WSAIFabricSvc]
+"Start"=dword:00000004
+
 ; [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\wscsvc]
 ; "Start"=dword:00000004
 
@@ -922,6 +950,9 @@ Windows Registry Editor Version 5.00
 "Start"=dword:00000004
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\XboxNetApiSvc]
+"Start"=dword:00000004
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\ZTHELPER]
 "Start"=dword:00000004
 "@
 Set-Content -Path "$env:TEMP\ServicesOff.reg" -Value $MultilineComment -Force
@@ -952,6 +983,9 @@ Windows Registry Editor Version 5.00
 ; W10 & W11 SERVICES ON
 ; graphic driver & defender services left out.
 
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\ADPSvc]
+"Start"=dword:00000003
+
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\AarSvc]
 "Start"=dword:00000003
 
@@ -977,6 +1011,9 @@ Windows Registry Editor Version 5.00
 "Start"=dword:00000004
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\AppXSvc]
+"Start"=dword:00000003
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\ApxSvc]
 "Start"=dword:00000003
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\AssignedAccessManagerSvc]
@@ -1204,6 +1241,9 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\hidserv]
 "Start"=dword:00000003
 
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\hpatchmon]
+"Start"=dword:00000003
+
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\HvHost]
 "Start"=dword:00000003
 
@@ -1247,6 +1287,9 @@ Windows Registry Editor Version 5.00
 "Start"=dword:00000003
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\lmhosts]
+"Start"=dword:00000003
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\LocalKdc]
 "Start"=dword:00000003
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\logi_lamparray_service]
@@ -1384,7 +1427,13 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\Power]
 "Start"=dword:00000002
 
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\PrintDeviceConfigurationService]
+"Start"=dword:00000003
+
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\PrintNotify]
+"Start"=dword:00000003
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\PrintScanBrokerService]
 "Start"=dword:00000003
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\PrintWorkflowUserSvc]
@@ -1403,6 +1452,9 @@ Windows Registry Editor Version 5.00
 "Start"=dword:00000003
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\RasMan]
+"Start"=dword:00000003
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\refsdedupsvc]
 "Start"=dword:00000003
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\RemoteAccess]
@@ -1693,6 +1745,9 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WFDSConMgrSvc]
 "Start"=dword:00000003
 
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\whesvc]
+"Start"=dword:00000002
+
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WiaRpc]
 "Start"=dword:00000003
 
@@ -1744,6 +1799,9 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WpnUserService]
 "Start"=dword:00000002
 
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\WSAIFabricSvc]
+"Start"=dword:00000002
+
 ; [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\wscsvc]
 ; "Start"=dword:00000002
 
@@ -1766,6 +1824,9 @@ Windows Registry Editor Version 5.00
 "Start"=dword:00000003
 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\XboxNetApiSvc]
+"Start"=dword:00000003
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\ZTHELPER]
 "Start"=dword:00000003
 "@
 Set-Content -Path "$env:TEMP\ServicesOn.reg" -Value $MultilineComment -Force
