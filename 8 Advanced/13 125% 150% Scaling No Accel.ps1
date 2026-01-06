@@ -61,8 +61,8 @@ Set-Content -Path "$env:TEMP\100%.reg" -Value $MultilineComment -Force
 # import reg file
 Regedit.exe /S "$env:TEMP\100%.reg"
 Timeout /T 5 | Out-Null
-# logout
-logoff
+Write-Host "Restart to apply . . ."
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 exit
 
       }
@@ -111,8 +111,8 @@ Set-Content -Path "$env:TEMP\125%.reg" -Value $MultilineComment -Force
 # import reg file
 Regedit.exe /S "$env:TEMP\125%.reg"
 Timeout /T 5 | Out-Null
-# logout
-logoff
+Write-Host "Restart to apply . . ."
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 exit
 
       }
@@ -161,8 +161,8 @@ Set-Content -Path "$env:TEMP\150%.reg" -Value $MultilineComment -Force
 # import reg file
 Regedit.exe /S "$env:TEMP\150%.reg"
 Timeout /T 5 | Out-Null
-# logout
-logoff
+Write-Host "Restart to apply . . ."
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
 exit
 
       }
