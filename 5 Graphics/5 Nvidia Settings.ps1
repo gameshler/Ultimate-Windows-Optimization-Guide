@@ -109,7 +109,7 @@ $MultilineComment = @"
       <ProfileSetting>
         <SettingNameInfo>Vertical Sync</SettingNameInfo>
         <SettingID>11041231</SettingID>
-        <SettingValue>138504007</SettingValue>
+        <SettingValue>1620202130</SettingValue>
         <ValueType>Dword</ValueType>
       </ProfileSetting>
       <ProfileSetting>
