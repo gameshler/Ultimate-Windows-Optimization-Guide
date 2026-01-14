@@ -1,45 +1,46 @@
-    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator"))
-    {Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-    Exit}
-    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
-    $Host.UI.RawUI.BackgroundColor = "Black"
-	$Host.PrivateData.ProgressBackgroundColor = "Black"
-    $Host.PrivateData.ProgressForegroundColor = "White"
-    Clear-Host
+If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
+    Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
+    Exit
+}
+$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
+$Host.UI.RawUI.BackgroundColor = "Black"
+$Host.PrivateData.ProgressBackgroundColor = "Black"
+$Host.PrivateData.ProgressForegroundColor = "White"
+Clear-Host
 
-    function Get-FileFromWeb {
+function Get-FileFromWeb {
     param ([Parameter(Mandatory)][string]$URL, [Parameter(Mandatory)][string]$File)
     function Show-Progress {
-    param ([Parameter(Mandatory)][Single]$TotalValue, [Parameter(Mandatory)][Single]$CurrentValue, [Parameter(Mandatory)][string]$ProgressText, [Parameter()][int]$BarSize = 10, [Parameter()][switch]$Complete)
-    $percent = $CurrentValue / $TotalValue
-    $percentComplete = $percent * 100
-    if ($psISE) { Write-Progress "$ProgressText" -id 0 -percentComplete $percentComplete }
-    else { Write-Host -NoNewLine "`r$ProgressText $(''.PadRight($BarSize * $percent, [char]9608).PadRight($BarSize, [char]9617)) $($percentComplete.ToString('##0.00').PadLeft(6)) % " }
+        param ([Parameter(Mandatory)][Single]$TotalValue, [Parameter(Mandatory)][Single]$CurrentValue, [Parameter(Mandatory)][string]$ProgressText, [Parameter()][int]$BarSize = 10, [Parameter()][switch]$Complete)
+        $percent = $CurrentValue / $TotalValue
+        $percentComplete = $percent * 100
+        if ($psISE) { Write-Progress "$ProgressText" -id 0 -percentComplete $percentComplete }
+        else { Write-Host -NoNewLine "`r$ProgressText $(''.PadRight($BarSize * $percent, [char]9608).PadRight($BarSize, [char]9617)) $($percentComplete.ToString('##0.00').PadLeft(6)) % " }
     }
     try {
-    $request = [System.Net.HttpWebRequest]::Create($URL)
-    $response = $request.GetResponse()
-    if ($response.StatusCode -eq 401 -or $response.StatusCode -eq 403 -or $response.StatusCode -eq 404) { throw "Remote file either doesn't exist, is unauthorized, or is forbidden for '$URL'." }
-    if ($File -match '^\.\\') { $File = Join-Path (Get-Location -PSProvider 'FileSystem') ($File -Split '^\.')[1] }
-    if ($File -and !(Split-Path $File)) { $File = Join-Path (Get-Location -PSProvider 'FileSystem') $File }
-    if ($File) { $fileDirectory = $([System.IO.Path]::GetDirectoryName($File)); if (!(Test-Path($fileDirectory))) { [System.IO.Directory]::CreateDirectory($fileDirectory) | Out-Null } }
-    [long]$fullSize = $response.ContentLength
-    [byte[]]$buffer = new-object byte[] 1048576
-    [long]$total = [long]$count = 0
-    $reader = $response.GetResponseStream()
-    $writer = new-object System.IO.FileStream $File, 'Create'
-    do {
-    $count = $reader.Read($buffer, 0, $buffer.Length)
-    $writer.Write($buffer, 0, $count)
-    $total += $count
-    if ($fullSize -gt 0) { Show-Progress -TotalValue $fullSize -CurrentValue $total -ProgressText " $($File.Name)" }
-    } while ($count -gt 0)
+        $request = [System.Net.HttpWebRequest]::Create($URL)
+        $response = $request.GetResponse()
+        if ($response.StatusCode -eq 401 -or $response.StatusCode -eq 403 -or $response.StatusCode -eq 404) { throw "Remote file either doesn't exist, is unauthorized, or is forbidden for '$URL'." }
+        if ($File -match '^\.\\') { $File = Join-Path (Get-Location -PSProvider 'FileSystem') ($File -Split '^\.')[1] }
+        if ($File -and !(Split-Path $File)) { $File = Join-Path (Get-Location -PSProvider 'FileSystem') $File }
+        if ($File) { $fileDirectory = $([System.IO.Path]::GetDirectoryName($File)); if (!(Test-Path($fileDirectory))) { [System.IO.Directory]::CreateDirectory($fileDirectory) | Out-Null } }
+        [long]$fullSize = $response.ContentLength
+        [byte[]]$buffer = new-object byte[] 1048576
+        [long]$total = [long]$count = 0
+        $reader = $response.GetResponseStream()
+        $writer = new-object System.IO.FileStream $File, 'Create'
+        do {
+            $count = $reader.Read($buffer, 0, $buffer.Length)
+            $writer.Write($buffer, 0, $count)
+            $total += $count
+            if ($fullSize -gt 0) { Show-Progress -TotalValue $fullSize -CurrentValue $total -ProgressText " $($File.Name)" }
+        } while ($count -gt 0)
     }
     finally {
-    $reader.Close()
-    $writer.Close()
+        $reader.Close()
+        $writer.Close()
     }
-    }
+}
 
 Write-Host "Installing: MSI Afterburner. Please wait . . ."
 Write-Host ""
@@ -55,7 +56,7 @@ New-Item -Path "$env:SystemDrive\Program Files (x86)\MSI Afterburner" -Name "Pro
 $MultilineComment = @"
 [Settings]
 Views=
-LastUpdateCheck=5CD0B9A5h
+LastUpdateCheck=69553801h
 Skin=MSIMystic.usf
 StartWithWindows=0
 StartMinimized=1
@@ -66,7 +67,7 @@ ShowTooltips=0
 LCDFont=font4x6.dat
 RememberSettings=1
 FirstRun=0
-FirstUserDefineClick=1
+FirstUserDefineClick=0
 FirstServerRun=0
 CurrentGpu=0
 Sync=1
@@ -79,11 +80,11 @@ Profile2Hotkey=00000000h
 Profile3Hotkey=00000000h
 Profile4Hotkey=00000000h
 Profile5Hotkey=00000000h
-OSDToggleHotkey=00000000h
+OSDToggleHotkey=00040070h
 OSDOnHotkey=00000000h
 OSDOffHotkey=00000000h
 OSDServerBlockHotkey=00000000h
-LimiterToggleHotkey=00000000h
+LimiterToggleHotkey=00040071h
 LimiterOnHotkey=00000000h
 LimiterOffHotkey=00000000h
 ScreenCaptureHotkey=00000000h
@@ -91,8 +92,8 @@ VideoCaptureHotkey=00000000h
 VideoPrerecordHotkey=00000000h
 PTTHotkey=00000000h
 PTT2Hotkey=00000000h
-BeginRecordHotkey=00000000h
-EndRecordHotkey=00000000h
+BeginRecordHotkey=00040072h
+EndRecordHotkey=00040074h
 BeginLoggingHotkey=00000000h
 EndLoggingHotkey=00000000h
 ClearHistoryHotkey=00000000h
@@ -114,15 +115,15 @@ VideoCaptureContainer=mkv
 VideoPrerecordSizeLimit=256
 VideoPrerecordTimeLimit=600
 AutoPrerecord=0
-WindowX=561
-WindowY=472
+WindowX=1279
+WindowY=419
 ProfileContents=1
 Profile2D=-1
 Profile3D=-1
-SwAutoFanControl=0
+SwAutoFanControl=1
 SwAutoFanControlFlags=00000000h
-SwAutoFanControlPeriod=5000
-SwAutoFanControlCurve=0000010004000000000000000000F0410000204200004842000048420000A0420000A0420000B4420000C8420000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+SwAutoFanControlPeriod=10000
+SwAutoFanControlCurve=0000010007000000000000000000C84100000000000018420000C841000034420000484200005C4200008C42000080420000B44200008C420000C242000096420000C8420000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 RestoreAfterSuspendedMode=1
 PauseMonitoring=0
 ShowPerformanceProfilerStatus=0
@@ -153,7 +154,7 @@ Language=
 LayeredWindowMode=0
 LayeredWindowAlpha=255
 ScaleFactor=100
-Sources=+RAM usage,+Memory usage,+CPU1 clock,+CPU2 clock,+CPU3 clock,+CPU4 clock,+CPU5 clock,+CPU6 clock,+CPU7 clock,+CPU8 clock,+CPU9 clock,+CPU10 clock,+CPU11 clock,+CPU12 clock,+CPU13 clock,+CPU14 clock,+CPU15 clock,+CPU16 clock,+CPU1 usage,+CPU2 usage,+CPU3 usage,+CPU4 usage,+CPU5 usage,+CPU6 usage,+CPU7 usage,+CPU8 usage,+CPU9 usage,+CPU10 usage,+CPU11 usage,+CPU12 usage,+CPU13 usage,+CPU14 usage,+CPU15 usage,+CPU16 usage,+CPU1 temperature,+CPU2 temperature,+CPU3 temperature,+CPU4 temperature,+CPU5 temperature,+CPU6 temperature,+CPU7 temperature,+CPU8 temperature,+CPU9 temperature,+CPU10 temperature,+CPU11 temperature,+CPU12 temperature,+CPU13 temperature,+CPU14 temperature,+CPU15 temperature,+CPU16 temperature,+CPU power,+CPU usage,+GPU usage,+Core clock,+Memory clock,+GPU temperature,+Framerate,+Framerate Avg,+Framerate 1% Low,+Framerate 0.1% Low,-Power,-Power percent,-GPU voltage,-Fan speed,-CPU temperature,-CPU clock,-FB usage,-Fan tachometer,-Commit charge,-Framerate Min,-Framerate Max,-Frametime,-Memory usage \ process,-RAM usage \ process,-VID usage,-BUS usage,-Fan speed 2,-Fan tachometer 2,-Temp limit,-Power limit,-Voltage limit,-No load limit,-CPU1 power,-CPU2 power,-CPU3 power,-CPU4 power,-CPU5 power,-CPU6 power,-CPU7 power,-CPU8 power,-CPU9 power,-CPU10 power,-CPU11 power,-CPU12 power,-CPU13 power,-CPU14 power,-CPU15 power,-CPU16 power
+Sources=+RAM usage,+Memory usage,+CPU1 clock,+CPU2 clock,+CPU3 clock,+CPU4 clock,+CPU5 clock,+CPU6 clock,+CPU7 clock,+CPU8 clock,+CPU9 clock,+CPU10 clock,+CPU11 clock,+CPU12 clock,+CPU13 clock,+CPU14 clock,+CPU15 clock,+CPU16 clock,+CPU1 usage,+CPU2 usage,+CPU3 usage,+CPU4 usage,+CPU5 usage,+CPU6 usage,+CPU7 usage,+CPU8 usage,+CPU9 usage,+CPU10 usage,+CPU11 usage,+CPU12 usage,+CPU13 usage,+CPU14 usage,+CPU15 usage,+CPU16 usage,+CPU1 temperature,+CPU2 temperature,+CPU3 temperature,+CPU4 temperature,+CPU5 temperature,+CPU6 temperature,+CPU7 temperature,+CPU8 temperature,+CPU9 temperature,+CPU10 temperature,+CPU11 temperature,+CPU12 temperature,+CPU13 temperature,+CPU14 temperature,+CPU15 temperature,+CPU16 temperature,+CPU power,+CPU usage,+GPU usage,+Core clock,+Memory clock,+GPU temperature,+Framerate,+Framerate Avg,+Framerate 1% Low,+Framerate 0.1% Low,+Power,+GPU voltage,-Fan speed,-CPU temperature,-CPU clock,-FB usage,-Fan tachometer,+Commit charge,-Framerate Min,-Framerate Max,+Frametime,-Memory usage \ process,-RAM usage \ process,-CPU1 power,-CPU2 power,-CPU3 power,-CPU4 power,-CPU5 power,-CPU6 power,-CPU7 power,-CPU8 power,-CPU9 power,-CPU10 power,-CPU11 power,-CPU12 power,-CPU13 power,-CPU14 power,-CPU15 power,-CPU16 power,+GPU temperature 2,+CPU17 temperature,+CPU18 temperature,+CPU19 temperature,+CPU20 temperature,+CPU21 temperature,+CPU22 temperature,+CPU23 temperature,+CPU24 temperature,+CPU17 usage,+CPU18 usage,+CPU19 usage,+CPU20 usage,+CPU21 usage,+CPU22 usage,+CPU23 usage,+CPU24 usage,+CPU17 clock,+CPU18 clock,+CPU19 clock,+CPU20 clock,+CPU21 clock,+CPU22 clock,+CPU23 clock,+CPU24 clock,+CPU17 power,+CPU18 power,+CPU19 power,+CPU20 power,+CPU21 power,+CPU22 power,+CPU23 power,+CPU24 power
 MonitoringGraphColumns=2
 ShowProfiles=0
 ShowMonitoring=1
@@ -384,7 +385,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source GPU voltage]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -404,7 +405,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source Fan speed]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1024,7 +1025,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source Commit charge]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1064,7 +1065,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source Frametime]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1634,7 +1635,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU17 temperature]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1654,7 +1655,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU18 temperature]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1674,7 +1675,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU19 temperature]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1694,7 +1695,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU20 temperature]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1714,7 +1715,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU21 temperature]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1734,7 +1735,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU22 temperature]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1754,7 +1755,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU23 temperature]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1774,7 +1775,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU24 temperature]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1874,7 +1875,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU17 usage]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1894,7 +1895,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU18 usage]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1914,7 +1915,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU19 usage]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1934,7 +1935,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU20 usage]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1954,7 +1955,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU21 usage]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1974,7 +1975,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU22 usage]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -1994,7 +1995,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU23 usage]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -2014,7 +2015,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU24 usage]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -2114,7 +2115,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU17 clock]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -2134,7 +2135,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU18 clock]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -2154,7 +2155,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU19 clock]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -2174,7 +2175,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU20 clock]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -2194,7 +2195,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU21 clock]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -2214,7 +2215,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU22 clock]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -2234,7 +2235,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU23 clock]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -2254,7 +2255,7 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 [Source CPU24 clock]
-ShowInOSD=1
+ShowInOSD=0
 ShowInLCD=0
 ShowInTray=0
 AlarmThresholdMin=
@@ -3054,6 +3055,47 @@ OSDItemType=0
 GraphColor=00FF00h
 Formula=
 
+[Source Memory usage \ process]
+ShowInOSD=0
+ShowInLCD=0
+ShowInTray=0
+AlarmThresholdMin=
+AlarmThresholdMax=
+AlarmFlags=0
+AlarmTimeout=5000
+AlarmApp=
+AlarmAppCmdLine=
+EnableDataFiltering=0
+MaxLimit=8192
+MinLimit=0
+Group=
+Name=
+TrayTextColor=FF0000h
+TrayIconType=0
+OSDItemType=0
+GraphColor=00FF00h
+Formula=
+[Source RAM usage \ process]
+ShowInOSD=0
+ShowInLCD=0
+ShowInTray=0
+AlarmThresholdMin=
+AlarmThresholdMax=
+AlarmFlags=0
+AlarmTimeout=5000
+AlarmApp=
+AlarmAppCmdLine=
+EnableDataFiltering=0
+MaxLimit=16384
+MinLimit=0
+Group=
+Name=
+TrayTextColor=FF0000h
+TrayIconType=0
+OSDItemType=0
+GraphColor=00FF00h
+Formula=
+
 "@
 Set-Content -Path "$env:SystemDrive\Program Files (x86)\MSI Afterburner\Profiles\MSIAfterburner.cfg" -Value $MultilineComment -Force
 # new folder
@@ -3062,71 +3104,71 @@ New-Item -Path "$env:SystemDrive\Program Files (x86)\RivaTuner Statistics Server
 $MultilineComment = @"
 [FnOffsetCache64]
 OS=6.2 Build 9200
-DDRAW.DLL=0009A000 6C574D34
-IDirectDrawSurface7::Flip=0002D5F0
-D3D9.DLL=001AC180 045B8775
-IDirect3DDevice9::Present=000B9A70
-IDirect3DDevice9::Release=00040030
-IDirect3DDevice9::Reset=000B9D80
-IDirect3DSwapChain9::Present=0005AE10
-IDirect3DDevice9Ex::PresentEx=00012090
-IDirect3DDevice9Ex::ResetEx=000B9E80
-DXGI.DLL=0012CFB0 0011B835
-IDXGISwapChain::Present=00002A20
-IDXGISwapChain::ResizeBuffers=00040CD0
-IDXGISwapChain::Release=00034320
-IDXGISwapChain1::Present1=00002EC0
-IDXGIFactory::CreateSwapChain=0005A540
-IDXGIFactory2::CreateSwapChainForHwnd=0001D930
-IDXGIFactory2::CreateSwapChainForCoreWindow=0008F2A0
-kernel32.dll=000CA218 38F2A778
+DDRAW.DLL=0009A000 FFA83A1D
+IDirectDrawSurface7::Flip=0002D610
+D3D9.DLL=001B3238 48244F73
+IDirect3DDevice9::Present=00064030
+IDirect3DDevice9::Release=000137C0
+IDirect3DDevice9::Reset=000E1CC0
+IDirect3DSwapChain9::Present=00081A30
+IDirect3DDevice9Ex::PresentEx=0001C6A0
+IDirect3DDevice9Ex::ResetEx=000284A0
+DXGI.DLL=0013C1B0 8A639731
+IDXGISwapChain::Present=00002CA0
+IDXGISwapChain::ResizeBuffers=00038C20
+IDXGISwapChain::Release=00030750
+IDXGISwapChain1::Present1=00003140
+IDXGIFactory::CreateSwapChain=0001F270
+IDXGIFactory2::CreateSwapChainForHwnd=00021110
+IDXGIFactory2::CreateSwapChainForCoreWindow=000928F0
+kernel32.dll=000CC220 33BAE9C1
 LoadLibraryA=00042D80
 LoadLibraryW=0003F7C0
 Version=0000000A
 D3D12.DLL=0001C9E0 E3291474
-ID3D12CommandQueue::ExecuteCommandLists=00026A20
-IDXGISwapChain3::ResizeBuffers1=00097E70
-IDXGISwapChain::SetFullscreenState=000414D0
-D3D12Core.DLL=00272D10 606F3462
+ID3D12CommandQueue::ExecuteCommandLists=00008EB0
+IDXGISwapChain3::ResizeBuffers1=0009CF60
+IDXGISwapChain::SetFullscreenState=00039410
+D3D12Core.DLL=00358D28 FE0F55D1
 IDXGISwapChain1::m_pCommandQueue=00000138
 [FnOffsetCache]
 OS=6.2 Build 9200
-DDRAW.DLL=00083C00 DA66E348
-IDirectDrawSurface7::Flip=00037C50
-D3D8.DLL=000B4000 032E80FD
-IDirect3DDevice8::Present=0002A1E0
-IDirect3DDevice8::Release=00029800
-IDirect3DDevice8::Reset=00029DC0
-D3D9.DLL=00179EE0 7451B2C1
-IDirect3DDevice9::Present=000E58D0
-IDirect3DDevice9::Release=000658D0
-IDirect3DDevice9::Reset=000E5CD0
-IDirect3DSwapChain9::Present=00043DE0
-IDirect3DDevice9Ex::PresentEx=000E5960
-IDirect3DDevice9Ex::ResetEx=000E5DD0
-DXGI.DLL=000F64B0 20EC2F73
-IDXGISwapChain::Present=000A4810
-IDXGISwapChain::ResizeBuffers=00024600
-IDXGISwapChain::Release=000489C0
-IDXGISwapChain1::Present1=00043FE0
-IDXGIFactory::CreateSwapChain=0009B810
-IDXGIFactory2::CreateSwapChainForHwnd=0009BEE0
-IDXGIFactory2::CreateSwapChainForCoreWindow=0009BD60
-kernel32.dll=000A5CF0 C88BD03F
-LoadLibraryA=00031100
+DDRAW.DLL=00084200 CB2ECCCB
+IDirectDrawSurface7::Flip=00037EE0
+D3D8.DLL=000B4E00 A4F247A1
+IDirect3DDevice8::Present=0002AC80
+IDirect3DDevice8::Release=0002A2A0
+IDirect3DDevice8::Reset=0002A860
+D3D9.DLL=00177E98 932DC383
+IDirect3DDevice9::Present=000E32A0
+IDirect3DDevice9::Release=00065930
+IDirect3DDevice9::Reset=000E36A0
+IDirect3DSwapChain9::Present=00043E40
+IDirect3DDevice9Ex::PresentEx=000E3330
+IDirect3DDevice9Ex::ResetEx=000E37A0
+DXGI.DLL=00102460 1238A64C
+IDXGISwapChain::Present=000AECB0
+IDXGISwapChain::ResizeBuffers=00026630
+IDXGISwapChain::Release=0004AF70
+IDXGISwapChain1::Present1=00046360
+IDXGIFactory::CreateSwapChain=000A5BA0
+IDXGIFactory2::CreateSwapChainForHwnd=000A6270
+IDXGIFactory2::CreateSwapChainForCoreWindow=000A60F0
+kernel32.dll=000A6CD0 87BD2874
+LoadLibraryA=00031CF0
 LoadLibraryW=0001D820
 Version=0000000A
 D3D12.DLL=000144C0 DFA0F1A2
-ID3D12CommandQueue::ExecuteCommandLists=00064450
-IDXGISwapChain3::ResizeBuffers1=000A5E50
-IDXGISwapChain::SetFullscreenState=00026130
-D3D12Core.DLL=0020BD78 9350F703
+ID3D12CommandQueue::ExecuteCommandLists=000847C0
+IDXGISwapChain3::ResizeBuffers1=000B02F0
+IDXGISwapChain::SetFullscreenState=00028140
+D3D12Core.DLL=002C8378 7C99E97E
 IDXGISwapChain1::m_pCommandQueue=000000B8
 [Settings]
 LastUpdateCheck=666E98C1h
 Skin=default.usf
-WindowX=1369
-WindowY=473
+WindowX=1086
+WindowY=329
 FirstRun=0
 StartMinimized=1
 StartWithWindows=0
@@ -3145,6 +3187,7 @@ Flags=00000005
 [Plugins]
 OverlayEditor.dll=1
 HotkeyHandler.dll=1
+
 
 "@
 Set-Content -Path "$env:SystemDrive\Program Files (x86)\RivaTuner Statistics Server\Profiles\Config" -Value $MultilineComment -Force
@@ -3179,7 +3222,7 @@ PercentileCalc=0
 FrametimeCalc=0
 PercentileBuffer=0
 [Framerate]
-Limit=0
+Limit=280
 LimitDenominator=1
 LimitTime=0
 LimitTimeDenominator=1
@@ -3227,14 +3270,15 @@ Implementation=2
 Implementation=2
 [Info]
 
-Timestamp=18-03-2025, 09:06:45
+Timestamp=12-01-2026, 17:38:10
+
 
 "@
 Set-Content -Path "$env:SystemDrive\Program Files (x86)\RivaTuner Statistics Server\Profiles\Global" -Value $MultilineComment -Force
 # edit config for rivatuner statistics server
 $MultilineComment = @"
 [Settings]
-Layout=fr33thy.ovl
+Layout=gameshler.ovl
 "@
 Set-Content -Path "$env:SystemDrive\Program Files (x86)\RivaTuner Statistics Server\Plugins\Client\OverlayEditor.cfg" -Value $MultilineComment -Force
 # edit config for rivatuner statistics server
@@ -3316,6 +3360,7 @@ OVM4Message=
 OVM4Layer=
 OVM4Params=
 
+
 "@
 Set-Content -Path "$env:SystemDrive\Program Files (x86)\RivaTuner Statistics Server\Plugins\Client\HotkeyHandler.cfg" -Value $MultilineComment -Force
 # create overlay for rivatuner statistics server
@@ -3330,12 +3375,13 @@ ZoomRatio=2
 Name=
 EnvVars=
 RefreshPeriod=1000
+LockUserSettings=0
 EmbeddedImage=
 PingAddr=
 [General]
-Sources=66
+Sources=93
 Tables=0
-Layers=73
+Layers=85
 [Source0]
 Name=RAM usage
 Units=MB
@@ -3918,11 +3964,252 @@ Format=
 Formula=(msGpuActive / msBetweenPresents) >= 0.75
 Provider=HAL
 ID=Stub
+[Source66]
+Name=CPU17 temperature
+Units=°C
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000080
+Gpu=00000010
+SrcName=
+[Source67]
+Name=CPU18 temperature
+Units=°C
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000080
+Gpu=00000011
+SrcName=
+[Source68]
+Name=CPU19 temperature
+Units=°C
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000080
+Gpu=00000012
+SrcName=
+[Source69]
+Name=CPU20 temperature
+Units=°C
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000080
+Gpu=00000013
+SrcName=
+[Source70]
+Name=CPU21 temperature
+Units=°C
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000080
+Gpu=00000014
+SrcName=
+[Source71]
+Name=CPU22 temperature
+Units=°C
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000080
+Gpu=00000015
+SrcName=
+[Source72]
+Name=CPU23 temperature
+Units=°C
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000080
+Gpu=00000016
+SrcName=
+[Source73]
+Name=CPU24 temperature
+Units=°C
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000080
+Gpu=00000017
+SrcName=
+[Source74]
+Name=CPU17 usage
+Units=%
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000090
+Gpu=00000010
+SrcName=
+[Source75]
+Name=CPU18 usage
+Units=%
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000090
+Gpu=00000011
+SrcName=
+[Source76]
+Name=CPU19 usage
+Units=%
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000090
+Gpu=00000012
+SrcName=
+[Source77]
+Name=CPU20 usage
+Units=%
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000090
+Gpu=00000013
+SrcName=
+[Source78]
+Name=CPU21 usage
+Units=%
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000090
+Gpu=00000014
+SrcName=
+[Source79]
+Name=CPU22 usage
+Units=%
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000090
+Gpu=00000015
+SrcName=
+[Source80]
+Name=CPU23 usage
+Units=%
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000090
+Gpu=00000016
+SrcName=
+[Source81]
+Name=CPU24 usage
+Units=%
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000090
+Gpu=00000017
+SrcName=
+[Source82]
+Name=CPU17 clock
+Units=MHz
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=000000A0
+Gpu=00000010
+SrcName=
+[Source83]
+Name=CPU18 clock
+Units=MHz
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=000000A0
+Gpu=00000011
+SrcName=
+[Source84]
+Name=CPU19 clock
+Units=MHz
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=000000A0
+Gpu=00000012
+SrcName=
+[Source85]
+Name=CPU20 clock
+Units=MHz
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=000000A0
+Gpu=00000013
+SrcName=
+[Source86]
+Name=CPU21 clock
+Units=MHz
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=000000A0
+Gpu=00000014
+SrcName=
+[Source87]
+Name=CPU22 clock
+Units=MHz
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=000000A0
+Gpu=00000015
+SrcName=
+[Source88]
+Name=CPU23 clock
+Units=MHz
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=000000A0
+Gpu=00000016
+SrcName=
+[Source89]
+Name=CPU24 clock
+Units=MHz
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=000000A0
+Gpu=00000017
+SrcName=
+[Source90]
+Name=Power
+Units=W
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000061
+Gpu=00000000
+SrcName=
+[Source91]
+Name=GPU1 fan speed
+Units=%
+Format=
+Formula=
+Provider=HAL
+ID=GPU1 fan speed
+[Source92]
+Name=Frametime
+Units=ms
+Format=
+Formula=
+Provider=MSI Afterburner
+SrcId=00000051
+Gpu=FFFFFFFF
+SrcName=
 [Layer0]
 Name=Box Game
 Text=
-PositionX=48
-PositionY=49
+PositionX=0
+PositionY=2
 ExtentX=161
 ExtentY=8
 ExtentOrigin=0
@@ -3932,8 +4219,8 @@ BgndColor=822B2B2B
 [Layer1]
 Name=Box Header Game
 Text=
-PositionX=48
-PositionY=49
+PositionX=0
+PositionY=2
 ExtentX=161
 ExtentY=8
 ExtentOrigin=0
@@ -3943,8 +4230,8 @@ BgndColor=DB2B2B2B
 [Layer2]
 Name=Game Text
 Text=GAME
-PositionX=49
-PositionY=50
+PositionX=0
+PositionY=3
 ExtentX=-1
 ExtentY=-1
 ExtentOrigin=0
@@ -3953,18 +4240,18 @@ TextColor=FFFFFF
 [Layer3]
 Name=Game Title
 Text=<EXE>
-PositionX=69
-PositionY=50
+PositionX=20
+PositionY=3
 ExtentX=140
 ExtentY=9
 ExtentOrigin=0
-Size=70
-TextColor=11C511
+Size=65
+TextColor=FF0080
 [Layer4]
 Name=Box Info
 Text=
 PositionX=106
-PositionY=58
+PositionY=11
 ExtentX=103
 ExtentY=147
 ExtentOrigin=0
@@ -3975,7 +4262,7 @@ BgndColor=822B2B2B
 Name=Box Header Info Config
 Text=
 PositionX=106
-PositionY=58
+PositionY=11
 ExtentX=103
 ExtentY=10
 ExtentOrigin=0
@@ -3986,7 +4273,7 @@ BgndColor=DB2B2B2B
 Name=Config Text
 Text=CONFIG
 PositionX=107
-PositionY=60
+PositionY=12
 ExtentX=24
 ExtentY=1
 ExtentOrigin=0
@@ -3994,9 +4281,9 @@ Size=70
 TextColor=FFFFFF
 [Layer7]
 Name=Config
-Text=<RES>\n%Display1 refresh rate%hz\n<APP>\n<SWITCH PresentMode><CASE 1>HW:Legacy Flip<CASE 2>HW:Legacy Copy<CASE 3>HW:Independent Flip<CASE 4>COMP:Flip<CASE 5>COMP:CPU Copy<CASE 6>COMP:GPU Copy<CASE 8>HW COMP:Independent Flip
-PositionX=107
-PositionY=70
+Text=<RES>\n%IsBenchmarkActive%\n<APP>\n<SWITCH PresentMode><CASE 1>HW:Legacy Flip<CASE 2>HW:Legacy Copy<CASE 3>HW:Independent Flip<CASE 4>COMP:Flip<CASE 5>COMP:CPU Copy<CASE 6>COMP:GPU Copy<CASE 8>HW COMP:Independent Flip
+PositionX=106
+PositionY=21
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4007,7 +4294,7 @@ TextColor=11C511
 Name=Box Header Info Driver
 Text=
 PositionX=106
-PositionY=100
+PositionY=53
 ExtentX=103
 ExtentY=10
 ExtentOrigin=0
@@ -4017,8 +4304,8 @@ BgndColor=DB2B2B2B
 [Layer9]
 Name=Driver Text
 Text=DRIVER
-PositionX=107
-PositionY=101
+PositionX=106
+PositionY=53
 ExtentX=12
 ExtentY=7
 ExtentOrigin=0
@@ -4028,19 +4315,19 @@ TextColor=FFFFFF
 [Layer10]
 Name=Driver
 Text=%Driver%
-PositionX=107
-PositionY=112
-ExtentX=0
-ExtentY=0
+PositionX=106
+PositionY=64
+ExtentX=-16
+ExtentY=-1
 ExtentOrigin=0
 FixedAlignment=1
-Size=70
+Size=50
 TextColor=11C511
 [Layer11]
 Name=Box Header Info Windows
 Text=
 PositionX=106
-PositionY=120
+PositionY=74
 ExtentX=103
 ExtentY=10
 ExtentOrigin=0
@@ -4050,8 +4337,8 @@ BgndColor=DB2B2B2B
 [Layer12]
 Name=Windows Text
 Text=WINDOWS
-PositionX=107
-PositionY=121
+PositionX=106
+PositionY=75
 ExtentX=12
 ExtentY=6
 ExtentOrigin=0
@@ -4060,9 +4347,9 @@ Size=70
 TextColor=FFFFFF
 [Layer13]
 Name=Windows
-Text=W11 24H2
-PositionX=107
-PositionY=131
+Text=Windows 11 25H2
+PositionX=106
+PositionY=84
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4073,18 +4360,18 @@ TextColor=11C511
 Name=Box Header Info Time
 Text=
 PositionX=106
-PositionY=140
+PositionY=95
 ExtentX=103
 ExtentY=10
 ExtentOrigin=0
-Size=70
+Size=65
 TextColor=FFFFFF
 BgndColor=DB2B2B2B
 [Layer15]
 Name=Time Text
 Text=TIME
-PositionX=107
-PositionY=141
+PositionX=106
+PositionY=95
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4093,20 +4380,20 @@ Size=70
 TextColor=FFFFFF
 [Layer16]
 Name=Time
-Text=%Time12%\n%Date%
-PositionX=107
-PositionY=151
+Text=%Time12% %Date%
+PositionX=106
+PositionY=107
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
 FixedAlignment=1
 Size=70
-TextColor=11C511
+TextColor=FF0080
 [Layer17]
 Name=Box Header Info Limit
 Text=
 PositionX=106
-PositionY=166
+PositionY=116
 ExtentX=103
 ExtentY=10
 ExtentOrigin=0
@@ -4117,7 +4404,7 @@ BgndColor=DB2B2B2B
 Name=Limit Text
 Text=LIMIT
 PositionX=107
-PositionY=167
+PositionY=118
 ExtentX=20
 ExtentY=6
 ExtentOrigin=0
@@ -4128,18 +4415,18 @@ TextColor=FFFFFF
 Name=Limit
 Text=<IF IsGpuLimited>GPU<ELSE>CPU
 PositionX=107
-PositionY=178
+PositionY=128
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
 FixedAlignment=1
 Size=70
-TextColor=11C511
+TextColor=FF0080
 [Layer20]
 Name=Box Header Info FPS
 Text=
 PositionX=106
-PositionY=186
+PositionY=137
 ExtentX=103
 ExtentY=10
 ExtentOrigin=0
@@ -4150,7 +4437,7 @@ BgndColor=DB2B2B2B
 Name=FPS Text
 Text=FPS
 PositionX=107
-PositionY=187
+PositionY=138
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4161,20 +4448,20 @@ TextColor=FFFFFF
 Name=FPS
 Text=<FR> fps
 PositionX=107
-PositionY=197
+PositionY=149
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
 FixedAlignment=1
 Size=70
-TextColor=11C511
+TextColor=FF0080
 [Layer23]
 Name=Box CPU
 Text=
-PositionX=2
-PositionY=58
-ExtentX=103
-ExtentY=147
+PositionX=0
+PositionY=21
+ExtentX=104
+ExtentY=228
 ExtentOrigin=0
 Size=70
 TextColor=FFFFFF
@@ -4182,8 +4469,8 @@ BgndColor=822B2B2B
 [Layer24]
 Name=Box Header CPU
 Text=
-PositionX=2
-PositionY=58
+PositionX=1
+PositionY=11
 ExtentX=103
 ExtentY=10
 ExtentOrigin=0
@@ -4193,8 +4480,8 @@ BgndColor=DB2B2B2B
 [Layer25]
 Name=CPU Text
 Text=%CPUShort% %RAM%
-PositionX=3
-PositionY=59
+PositionX=1
+PositionY=12
 ExtentX=60
 ExtentY=6
 ExtentOrigin=0
@@ -4204,8 +4491,8 @@ TextColor=FFFFFF
 [Layer26]
 Name=CPU
 Text=%RAM usage%mb
-PositionX=36
-PositionY=69
+PositionX=34
+PositionY=21
 ExtentX=60
 ExtentY=7
 ExtentOrigin=0
@@ -4214,8 +4501,8 @@ TextColor=11C511
 [Layer27]
 Name=CPU Power
 Text=%CPU power%w
-PositionX=68
-PositionY=69
+PositionX=67
+PositionY=21
 ExtentX=5
 ExtentY=7
 ExtentOrigin=0
@@ -4224,8 +4511,8 @@ TextColor=11C511
 [Layer28]
 Name=CPU Usage
 Text=%CPU usage%%
-PositionX=88
-PositionY=69
+PositionX=89
+PositionY=21
 ExtentX=1
 ExtentY=7
 ExtentOrigin=0
@@ -4234,8 +4521,8 @@ TextColor=11C511
 [Layer29]
 Name=CPU 1 Text
 Text=CPU 1
-PositionX=3
-PositionY=77
+PositionX=1
+PositionY=32
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4245,8 +4532,8 @@ TextColor=FFFFFF
 [Layer30]
 Name=CPU 1
 Text=%CPU1 clock%mhz %CPU1 temperature%°C %CPU1 usage%%
-PositionX=36
-PositionY=77
+PositionX=34
+PositionY=31
 ExtentX=60
 ExtentY=8
 ExtentOrigin=0
@@ -4256,8 +4543,8 @@ TextColor=11C511
 [Layer31]
 Name=CPU 2 Text
 Text=CPU 2
-PositionX=3
-PositionY=85
+PositionX=1
+PositionY=41
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4267,8 +4554,8 @@ TextColor=FFFFFF
 [Layer32]
 Name=CPU 2
 Text=%CPU2 clock%mhz %CPU2 temperature%°C %CPU2 usage%%
-PositionX=36
-PositionY=85
+PositionX=34
+PositionY=40
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4278,8 +4565,8 @@ TextColor=11C511
 [Layer33]
 Name=CPU 3 Text
 Text=CPU 3
-PositionX=3
-PositionY=93
+PositionX=1
+PositionY=50
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4289,8 +4576,8 @@ TextColor=FFFFFF
 [Layer34]
 Name=CPU 3
 Text=%CPU3 clock%mhz %CPU3 temperature%°C %CPU3 usage%%
-PositionX=36
-PositionY=93
+PositionX=34
+PositionY=49
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4300,8 +4587,8 @@ TextColor=11C511
 [Layer35]
 Name=CPU 4 Text
 Text=CPU 4
-PositionX=3
-PositionY=101
+PositionX=1
+PositionY=59
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4311,8 +4598,8 @@ TextColor=FFFFFF
 [Layer36]
 Name=CPU 4
 Text=%CPU4 clock%mhz %CPU4 temperature%°C %CPU4 usage%%
-PositionX=36
-PositionY=101
+PositionX=34
+PositionY=58
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4322,8 +4609,8 @@ TextColor=11C511
 [Layer37]
 Name=CPU 5 Text
 Text=CPU 5
-PositionX=3
-PositionY=109
+PositionX=1
+PositionY=68
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4333,8 +4620,8 @@ TextColor=FFFFFF
 [Layer38]
 Name=CPU 5
 Text=%CPU5 clock%mhz %CPU5 temperature%°C %CPU5 usage%%
-PositionX=36
-PositionY=109
+PositionX=34
+PositionY=67
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4344,8 +4631,8 @@ TextColor=11C511
 [Layer39]
 Name=CPU 6 Text
 Text=CPU 6
-PositionX=3
-PositionY=117
+PositionX=1
+PositionY=77
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4355,8 +4642,8 @@ TextColor=FFFFFF
 [Layer40]
 Name=CPU 6
 Text=%CPU6 clock%mhz %CPU6 temperature%°C %CPU6 usage%%
-PositionX=36
-PositionY=117
+PositionX=34
+PositionY=76
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4366,8 +4653,8 @@ TextColor=11C511
 [Layer41]
 Name=CPU 7 Text
 Text=CPU 7
-PositionX=3
-PositionY=125
+PositionX=1
+PositionY=86
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4377,8 +4664,8 @@ TextColor=FFFFFF
 [Layer42]
 Name=CPU 7
 Text=%CPU7 clock%mhz %CPU7 temperature%°C %CPU7 usage%%
-PositionX=36
-PositionY=125
+PositionX=34
+PositionY=85
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4388,8 +4675,8 @@ TextColor=11C511
 [Layer43]
 Name=CPU 8 Text
 Text=CPU 8
-PositionX=3
-PositionY=133
+PositionX=1
+PositionY=95
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4399,8 +4686,8 @@ TextColor=FFFFFF
 [Layer44]
 Name=CPU 8
 Text=%CPU8 clock%mhz %CPU8 temperature%°C %CPU8 usage%%
-PositionX=36
-PositionY=133
+PositionX=34
+PositionY=94
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4410,8 +4697,8 @@ TextColor=11C511
 [Layer45]
 Name=CPU 9 Text
 Text=CPU 9
-PositionX=3
-PositionY=141
+PositionX=1
+PositionY=104
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4421,8 +4708,8 @@ TextColor=FFFFFF
 [Layer46]
 Name=CPU 9
 Text=%CPU9 clock%mhz %CPU9 temperature%°C %CPU9 usage%%
-PositionX=36
-PositionY=141
+PositionX=34
+PositionY=103
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4432,8 +4719,8 @@ TextColor=11C511
 [Layer47]
 Name=CPU 10 Text
 Text=CPU 10
-PositionX=3
-PositionY=149
+PositionX=1
+PositionY=113
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4443,8 +4730,8 @@ TextColor=FFFFFF
 [Layer48]
 Name=CPU 10
 Text=%CPU10 clock%mhz %CPU10 temperature%°C %CPU10 usage%%
-PositionX=36
-PositionY=149
+PositionX=34
+PositionY=112
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4454,8 +4741,8 @@ TextColor=11C511
 [Layer49]
 Name=CPU 11 Text
 Text=CPU 11
-PositionX=3
-PositionY=157
+PositionX=1
+PositionY=122
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4465,8 +4752,8 @@ TextColor=FFFFFF
 [Layer50]
 Name=CPU 11
 Text=%CPU11 clock%mhz %CPU11 temperature%°C %CPU11 usage%%
-PositionX=36
-PositionY=157
+PositionX=34
+PositionY=121
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4476,8 +4763,8 @@ TextColor=11C511
 [Layer51]
 Name=CPU 12 Text
 Text=CPU 12
-PositionX=3
-PositionY=165
+PositionX=1
+PositionY=131
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4487,8 +4774,8 @@ TextColor=FFFFFF
 [Layer52]
 Name=CPU 12
 Text=%CPU12 clock%mhz %CPU12 temperature%°C %CPU12 usage%%
-PositionX=36
-PositionY=165
+PositionX=34
+PositionY=130
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4498,8 +4785,8 @@ TextColor=11C511
 [Layer53]
 Name=CPU 13 Text
 Text=CPU 13
-PositionX=3
-PositionY=173
+PositionX=1
+PositionY=140
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4509,8 +4796,8 @@ TextColor=FFFFFF
 [Layer54]
 Name=CPU 13
 Text=%CPU13 clock%mhz %CPU13 temperature%°C %CPU13 usage%%
-PositionX=36
-PositionY=173
+PositionX=34
+PositionY=139
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4520,8 +4807,8 @@ TextColor=11C511
 [Layer55]
 Name=CPU 14 Text
 Text=CPU 14
-PositionX=3
-PositionY=181
+PositionX=1
+PositionY=149
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4531,8 +4818,8 @@ TextColor=FFFFFF
 [Layer56]
 Name=CPU 14
 Text=%CPU14 clock%mhz %CPU14 temperature%°C %CPU14 usage%%
-PositionX=36
-PositionY=181
+PositionX=34
+PositionY=148
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4542,8 +4829,8 @@ TextColor=11C511
 [Layer57]
 Name=CPU 15 Text
 Text=CPU 15
-PositionX=3
-PositionY=189
+PositionX=1
+PositionY=158
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4553,8 +4840,8 @@ TextColor=FFFFFF
 [Layer58]
 Name=CPU 15
 Text=%CPU15 clock%mhz %CPU15 temperature%°C %CPU15 usage%%
-PositionX=36
-PositionY=189
+PositionX=34
+PositionY=157
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4564,8 +4851,8 @@ TextColor=11C511
 [Layer59]
 Name=CPU 16 Text
 Text=CPU 16
-PositionX=3
-PositionY=197
+PositionX=1
+PositionY=167
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4575,8 +4862,8 @@ TextColor=FFFFFF
 [Layer60]
 Name=CPU 16
 Text=%CPU16 clock%mhz %CPU16 temperature%°C %CPU16 usage%%
-PositionX=36
-PositionY=197
+PositionX=34
+PositionY=166
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4586,8 +4873,8 @@ TextColor=11C511
 [Layer61]
 Name=Box GPU
 Text=
-PositionX=2
-PositionY=206
+PositionX=106
+PositionY=160
 ExtentX=103
 ExtentY=38
 ExtentOrigin=0
@@ -4597,8 +4884,8 @@ BgndColor=822B2B2B
 [Layer62]
 Name=Box Header GPU
 Text=
-PositionX=2
-PositionY=206
+PositionX=106
+PositionY=160
 ExtentX=103
 ExtentY=10
 ExtentOrigin=0
@@ -4608,8 +4895,8 @@ BgndColor=DB2B2B2B
 [Layer63]
 Name=GPU Text
 Text=%GPU% %VRAM%
-PositionX=3
-PositionY=207
+PositionX=106
+PositionY=160
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4619,8 +4906,8 @@ TextColor=FFFFFF
 [Layer64]
 Name=GPU Text
 Text=GPU
-PositionX=3
-PositionY=227
+PositionX=106
+PositionY=181
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4630,8 +4917,8 @@ TextColor=FFFFFF
 [Layer65]
 Name=GPU
 Text=%Memory usage%mb
-PositionX=36
-PositionY=219
+PositionX=139
+PositionY=170
 ExtentX=48
 ExtentY=7
 ExtentOrigin=0
@@ -4640,8 +4927,8 @@ TextColor=11C511
 [Layer66]
 Name=GPU Usage
 Text=%GPU usage%%
-PositionX=68
-PositionY=219
+PositionX=172
+PositionY=170
 ExtentX=2
 ExtentY=7
 ExtentOrigin=0
@@ -4649,45 +4936,42 @@ Size=70
 TextColor=11C511
 [Layer67]
 Name=GPU Clocks
-Text=%Core clock%mhz %GPU temperature%°C\n%Memory clock%mhz
-PositionX=36
-PositionY=227
-ExtentX=0
-ExtentY=0
+Text=%Core clock%mhz %GPU temperature%°C\n%Memory clock%mhz %Power%w %GPU1 fan speed%%
+PositionX=139
+PositionY=181
+ExtentX=67
+ExtentY=15
 ExtentOrigin=0
 FixedAlignment=1
 Size=70
 TextColor=11C511
 [Layer68]
-Name=Box Benchmark
-VisibilitySource=IsBenchmarkActive
-Text=
-PositionX=106
-PositionY=206
-ExtentX=67
-ExtentY=64
+Name=CPU 17 Text
+Text=CPU 17
+PositionX=1
+PositionY=176
+ExtentX=0
+ExtentY=0
 ExtentOrigin=0
+FixedAlignment=1
 Size=70
 TextColor=FFFFFF
-BgndColor=822B2B2B
 [Layer69]
-Name=Box Header Benchmark
-VisibilitySource=IsBenchmarkActive
-Text=
-PositionX=106
-PositionY=206
-ExtentX=67
-ExtentY=17
+Name=CPU 18 Text
+Text=CPU 18
+PositionX=1
+PositionY=185
+ExtentX=0
+ExtentY=0
 ExtentOrigin=0
+FixedAlignment=1
 Size=70
 TextColor=FFFFFF
-BgndColor=DB2B2B2B
 [Layer70]
-Name=Benchmark Time Text
-VisibilitySource=IsBenchmarkActive
-Text="   Benchmark\n    <BTIME>"
-PositionX=109
-PositionY=208
+Name=CPU 19 Text
+Text=CPU 19
+PositionX=1
+PositionY=194
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4695,11 +4979,10 @@ FixedAlignment=1
 Size=70
 TextColor=FFFFFF
 [Layer71]
-Name=Benchmark Text
-VisibilitySource=IsBenchmarkActive
-Text=FPS\nAVG\nMAX\nMIN\n1%\n0.1%
-PositionX=107
-PositionY=225
+Name=CPU 20 Text
+Text=CPU 20
+PositionX=1
+PositionY=203
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
@@ -4707,20 +4990,150 @@ FixedAlignment=1
 Size=70
 TextColor=FFFFFF
 [Layer72]
-Name=Benchmark
-VisibilitySource=IsBenchmarkActive
-Text=<FR> fps\n<FRAVG> fps\n<FRMAX> fps\n<FRMIN> fps\n<FR10L>  %\n<FR01L>  %
-PositionX=140
-PositionY=225
+Name=CPU 21 Text
+Text=CPU 21
+PositionX=1
+PositionY=212
+ExtentX=0
+ExtentY=0
+ExtentOrigin=0
+FixedAlignment=1
+Size=70
+TextColor=FFFFFF
+[Layer73]
+Name=CPU 22 Text
+Text=CPU 22
+PositionX=1
+PositionY=221
+ExtentX=0
+ExtentY=0
+ExtentOrigin=0
+FixedAlignment=1
+Size=70
+TextColor=FFFFFF
+[Layer74]
+Name=CPU 23 Text
+Text=CPU 23
+PositionX=1
+PositionY=230
+ExtentX=0
+ExtentY=0
+ExtentOrigin=0
+FixedAlignment=1
+Size=70
+TextColor=FFFFFF
+[Layer75]
+Name=CPU 24 Text
+Text=CPU 24
+PositionX=1
+PositionY=239
+ExtentX=0
+ExtentY=0
+ExtentOrigin=0
+FixedAlignment=1
+Size=70
+TextColor=FFFFFF
+[Layer76]
+Name=CPU 17
+Text=%CPU17 clock%mhz %CPU17 temperature%°C %CPU17 usage%%
+PositionX=34
+PositionY=175
 ExtentX=0
 ExtentY=0
 ExtentOrigin=0
 FixedAlignment=1
 Size=70
 TextColor=11C511
+[Layer77]
+Name=CPU 18
+Text=%CPU18 clock%mhz %CPU18 temperature%°C %CPU18 usage%%
+PositionX=34
+PositionY=184
+ExtentX=0
+ExtentY=0
+ExtentOrigin=0
+FixedAlignment=1
+Size=70
+TextColor=11C511
+[Layer78]
+Name=CPU 19
+Text=%CPU19 clock%mhz %CPU19 temperature%°C %CPU19 usage%%
+PositionX=34
+PositionY=193
+ExtentX=0
+ExtentY=0
+ExtentOrigin=0
+FixedAlignment=1
+Size=70
+TextColor=11C511
+[Layer79]
+Name=CPU 20
+Text=%CPU20 clock%mhz %CPU20 temperature%°C %CPU20 usage%%
+PositionX=34
+PositionY=202
+ExtentX=0
+ExtentY=0
+ExtentOrigin=0
+FixedAlignment=1
+Size=70
+TextColor=11C511
+[Layer80]
+Name=CPU 21
+Text=%CPU21 clock%mhz %CPU21 temperature%°C %CPU21 usage%%
+PositionX=34
+PositionY=211
+ExtentX=0
+ExtentY=0
+ExtentOrigin=0
+FixedAlignment=1
+Size=70
+TextColor=11C511
+[Layer81]
+Name=CPU 22
+Text=%CPU22 clock%mhz %CPU22 temperature%°C %CPU22 usage%%
+PositionX=34
+PositionY=220
+ExtentX=0
+ExtentY=0
+ExtentOrigin=0
+FixedAlignment=1
+Size=70
+TextColor=11C511
+[Layer82]
+Name=CPU 23
+Text=%CPU23 clock%mhz %CPU23 temperature%°C %CPU23 usage%%
+PositionX=34
+PositionY=229
+ExtentX=0
+ExtentY=0
+ExtentOrigin=0
+FixedAlignment=1
+Size=70
+TextColor=11C511
+[Layer83]
+Name=CPU 24
+Text=%CPU24 clock%mhz %CPU24 temperature%°C %CPU24 usage%%
+PositionX=34
+PositionY=238
+ExtentX=0
+ExtentY=0
+ExtentOrigin=0
+FixedAlignment=1
+Size=70
+TextColor=11C511
+[Layer84]
+Name=Frametime
+Text=%Frametime%ms
+PositionX=190
+PositionY=149
+ExtentX=0
+ExtentY=0
+ExtentOrigin=0
+Size=70
+TextColor=FFFFFF
 
 "@
-Set-Content -Path "$env:SystemDrive\Program Files (x86)\RivaTuner Statistics Server\Plugins\Client\Overlays\fr33thy.ovl" -Value $MultilineComment -Force
+Set-Content -Path "$env:SystemDrive\Program Files (x86)\RivaTuner Statistics Server\Plugins\Client\Overlays\gameshler.ovl" -Value $MultilineComment -Force
 # edit config for rivatuner statistics server
 $MultilineComment = @"
 [Settings]

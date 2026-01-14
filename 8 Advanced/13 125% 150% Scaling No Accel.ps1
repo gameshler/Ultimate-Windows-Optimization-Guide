@@ -1,26 +1,27 @@
-    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator"))
-    {Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-    Exit}
-    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
-    $Host.UI.RawUI.BackgroundColor = "Black"
-	$Host.PrivateData.ProgressBackgroundColor = "Black"
-    $Host.PrivateData.ProgressForegroundColor = "White"
-    Clear-Host
-
-    Write-Host "No desktop mouse acceleration with higher scaling"
-    Write-Host ""
-    Write-Host "1. 100% (1080p-1440p)"
-    Write-Host "2. 125% (1440p)"
-    Write-Host "3. 150% (4k)"
-    while ($true) {
-    $choice = Read-Host " "
-    if ($choice -match '^[1-3]$') {
-    switch ($choice) {
-    1 {
-
+If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
+	Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
+	Exit
+}
+$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
+$Host.UI.RawUI.BackgroundColor = "Black"
+$Host.PrivateData.ProgressBackgroundColor = "Black"
+$Host.PrivateData.ProgressForegroundColor = "White"
 Clear-Host
-# create reg file
-$MultilineComment = @"
+
+Write-Host "No desktop mouse acceleration with higher scaling"
+Write-Host ""
+Write-Host "1. 100% (1080p-1440p)"
+Write-Host "2. 125% (1440p)"
+Write-Host "3. 150% (4k)"
+while ($true) {
+	$choice = Read-Host " "
+	if ($choice -match '^[1-3]$') {
+		switch ($choice) {
+			1 {
+
+				Clear-Host
+				# create reg file
+				$MultilineComment = @"
 Windows Registry Editor Version 5.00
 
 ; 6-11 pointer speed
@@ -57,20 +58,20 @@ Windows Registry Editor Version 5.00
 [HKEY_CURRENT_USER\Control Panel\Desktop]
 "EnablePerProcessSystemDPI"=dword:00000000
 "@
-Set-Content -Path "$env:TEMP\100%.reg" -Value $MultilineComment -Force
-# import reg file
-Regedit.exe /S "$env:TEMP\100%.reg"
-Timeout /T 5 | Out-Null
-Write-Host "Restart to apply . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-exit
+				Set-Content -Path "$env:TEMP\100%.reg" -Value $MultilineComment -Force
+				# import reg file
+				Regedit.exe /S "$env:TEMP\100%.reg"
+				Timeout /T 5 | Out-Null
+				Write-Host "Restart to apply . . ."
+				$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+				exit
 
-      }
-    2 {
+			}
+			2 {
 
-Clear-Host
-# create reg file
-$MultilineComment = @"
+				Clear-Host
+				# create reg file
+				$MultilineComment = @"
 Windows Registry Editor Version 5.00
 
 ; 6-11 pointer speed
@@ -107,20 +108,20 @@ Windows Registry Editor Version 5.00
 [HKEY_CURRENT_USER\Control Panel\Desktop]
 "EnablePerProcessSystemDPI"=dword:00000001
 "@
-Set-Content -Path "$env:TEMP\125%.reg" -Value $MultilineComment -Force
-# import reg file
-Regedit.exe /S "$env:TEMP\125%.reg"
-Timeout /T 5 | Out-Null
-Write-Host "Restart to apply . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-exit
+				Set-Content -Path "$env:TEMP\125%.reg" -Value $MultilineComment -Force
+				# import reg file
+				Regedit.exe /S "$env:TEMP\125%.reg"
+				Timeout /T 5 | Out-Null
+				Write-Host "Restart to apply . . ."
+				$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+				exit
 
-      }
-    3 {
+			}
+			3 {
 
-Clear-Host
-# create reg file
-$MultilineComment = @"
+				Clear-Host
+				# create reg file
+				$MultilineComment = @"
 Windows Registry Editor Version 5.00
 
 ; 6-11 pointer speed
@@ -157,13 +158,16 @@ Windows Registry Editor Version 5.00
 [HKEY_CURRENT_USER\Control Panel\Desktop]
 "EnablePerProcessSystemDPI"=dword:00000001
 "@
-Set-Content -Path "$env:TEMP\150%.reg" -Value $MultilineComment -Force
-# import reg file
-Regedit.exe /S "$env:TEMP\150%.reg"
-Timeout /T 5 | Out-Null
-Write-Host "Restart to apply . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-exit
+				Set-Content -Path "$env:TEMP\150%.reg" -Value $MultilineComment -Force
+				# import reg file
+				Regedit.exe /S "$env:TEMP\150%.reg"
+				Timeout /T 5 | Out-Null
+				Write-Host "Restart to apply . . ."
+				$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+				exit
 
-      }
-    } } else { Write-Host "Invalid input. Please select a valid option (1-3)." } }
+			}
+		} 
+	}
+ else { Write-Host "Invalid input. Please select a valid option (1-3)." } 
+}

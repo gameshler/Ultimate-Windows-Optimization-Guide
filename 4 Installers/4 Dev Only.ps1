@@ -16,7 +16,7 @@ $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIde
 if (-not ($isAdmin)) {
     Write-Host "This script requires administrator privileges. Restarting with elevated permissions..." -ForegroundColor Yellow
 
-        $arguments = @(
+    $arguments = @(
         "-NoProfile"
         "-ExecutionPolicy"
         "Bypass"
@@ -81,7 +81,7 @@ function Install-Chocolatey {
         Start-Sleep -Seconds 5
 
         # Refresh environment variables
-        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 
         Write-Log "Chocolatey installed successfully" -Color Green
         return $true
@@ -114,7 +114,8 @@ function Install-ChocoApps {
             choco install $app -y --no-progress
             if ($LASTEXITCODE -eq 0) {
                 Write-Log "Successfully installed $app" -Color Green
-            } else {
+            }
+            else {
                 throw "Exit code: $LASTEXITCODE"
             }
         }
@@ -154,7 +155,8 @@ function Install-WingetApps {
             winget install --id $app -e --silent --accept-package-agreements --accept-source-agreements
             if ($LASTEXITCODE -eq 0) {
                 Write-Log "Successfully installed $app" -Color Green
-            } else {
+            }
+            else {
                 throw "Exit code: $LASTEXITCODE"
             }
         }
@@ -177,7 +179,7 @@ try {
         "revo-uninstaller", "slack", "gpu-z", "vlc", "vscode",
         "winscp", "zoom", "nodejs-lts", "cypress", "pnpm"
     )
-# Add winget apps here
+    # Add winget apps here
     $wingetApps = @()
 
     # Install Chocolatey if not skipped

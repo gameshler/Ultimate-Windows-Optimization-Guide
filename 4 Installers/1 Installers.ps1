@@ -55,28 +55,240 @@ function show-menu {
     Write-Host ""
     Write-Host " 1. Exit" -ForegroundColor Red
     Write-Host " 2. 7-Zip" -ForegroundColor Cyan
-    Write-Host " 3. Battle.net"  -ForegroundColor Cyan
-    Write-Host " 4. Discord"  -ForegroundColor Cyan
-    Write-Host " 5. Electronic Arts"  -ForegroundColor Cyan
-    Write-Host " 6. Epic Games"  -ForegroundColor Cyan
-    Write-Host " 7. Escape From Tarkov"  -ForegroundColor Cyan
-    Write-Host " 8. GOG launcher"  -ForegroundColor Cyan
-    Write-Host " 9. Google Chrome"  -ForegroundColor Cyan
-    Write-Host "10. League Of Legends"  -ForegroundColor Cyan
-    Write-Host "11. Notepad ++"  -ForegroundColor Cyan
-    Write-Host "12. OBS Studio"  -ForegroundColor Cyan
-    Write-Host "13. Roblox"  -ForegroundColor Cyan
-    Write-Host "14. Rockstar Games"  -ForegroundColor Cyan
-    Write-Host "15. Steam"  -ForegroundColor Cyan
-    Write-Host "16. Ubisoft Connect"  -ForegroundColor Cyan
-    Write-Host "17. Valorant"  -ForegroundColor Cyan
-    Write-Host "18. Plutonium"  -ForegroundColor Cyan
-    Write-Host "19. Faceit Launcher"  -ForegroundColor Cyan
-    Write-Host "20. Firefox"  -ForegroundColor Cyan
-    Write-Host "21. Thorium"  -ForegroundColor Cyan
-    Write-Host "22. Brave"  -ForegroundColor Cyan
-    Write-Host "23. Microsoft Office 2024 LSTC Edition"  -ForegroundColor Cyan
-    Write-Host "24. Activate Microsoft Office"  -ForegroundColor Cyan
+    Write-Host " 3. Discord"  -ForegroundColor Cyan
+    Write-Host " 4. Escape From Tarkov"  -ForegroundColor Cyan
+    Write-Host " 5. League Of Legends"  -ForegroundColor Cyan
+    Write-Host " 6. Notepad ++"  -ForegroundColor Cyan
+    Write-Host " 7. OBS Studio"  -ForegroundColor Cyan
+    Write-Host " 8. Roblox"  -ForegroundColor Cyan
+    Write-Host " 9. Valorant"  -ForegroundColor Cyan
+    Write-Host "10. Plutonium"  -ForegroundColor Cyan
+    Write-Host "11. Faceit Launcher"  -ForegroundColor Cyan
+    Write-Host "12. Microsoft Office 2024 LSTC Edition"  -ForegroundColor Cyan
+    Write-Host "13. Web Browsers" -ForegroundColor Cyan
+    Write-Host "14. Game Platforms" -ForegroundColor Cyan
+}
+function show-browser-menu {
+    Clear-Host
+    Write-Host "1. Exit" -ForegroundColor Red
+    Write-Host "2. Google Chrome" -ForegroundColor Cyan
+    Write-Host "3. Firefox" -ForegroundColor Cyan
+    Write-Host "4. Thorium" -ForegroundColor Cyan
+    Write-Host "5. Brave" -ForegroundColor Cyan
+    Write-Host "6. LibreWolf" -ForegroundColor Cyan
+
+    while ($true) {
+        $choice = Read-Host " "
+        $chromiumExtensions = @(
+            "https://chromewebstore.google.com/detail/context-menu-search/ocpcmghnefmdhljkoiapafejjohldoga",
+            "https://chromewebstore.google.com/detail/dark-reader/eimadpbcbfnmbkopoojfekhnkhdbieeh",
+            "https://chromewebstore.google.com/detail/decentraleyes/ldpochfccmkkmhdbclfhpagapcfdljkj",
+            "https://chromewebstore.google.com/detail/enhancer-for-youtube/ponfpcnoihfmfllpaingbgckeeldkhle",
+            "https://chromewebstore.google.com/detail/extensity/jjmflmamggggndanpgfnpelongoepncg",
+            "https://chromewebstore.google.com/detail/https-everywhere/ikclbgejgcbdlhjmckecmdljlpbhmbmf",
+            "https://chromewebstore.google.com/detail/privacy-badger/pkehgijcmpdhfbdbbnkijodmdjhbjlgp",
+            "https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi",
+            "https://chromewebstore.google.com/detail/search-by-image/cnojnbdhbhnkbcieeekonklommdnndci",
+            "https://chromewebstore.google.com/detail/ublock-origin-lite/ddkjiahejlhfcafbddmgiahcphecmpfh"
+        )
+        $firefoxExtensions = @(
+            "https://addons.mozilla.org/en-GB/firefox/addon/decentraleyes/",
+            "https://addons.mozilla.org/en-GB/firefox/addon/ublock-origin/",
+            "https://addons.mozilla.org/en-GB/firefox/addon/privacy-badger17/",
+            "https://addons.mozilla.org/en-GB/firefox/addon/react-devtools/",
+            "https://addons.mozilla.org/en-GB/firefox/addon/search_by_image/",
+            "https://addons.mozilla.org/en-GB/firefox/addon/darkreader/"
+        )
+        if ($choice -match '^(1[0-9]|2[0-4]|[1-9])$') {
+            switch ($choice) {
+                1 {
+                    Clear-Host
+                    return 
+                }
+                2 {
+                    
+                    Clear-Host
+                    Write-Host "Installing: Google Chrome . . ."
+                    # download google chrome
+                    Get-FileFromWeb -URL "https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi" -File "$env:TEMP\Chrome.msi"
+                    # install google chrome
+                    Start-Process -wait "$env:TEMP\Chrome.msi" -ArgumentList "/quiet"
+                    # open ublock origin in web browser
+                    $chromePath = "C:\Program Files\Google\Chrome\Application\chrome.exe" | Where-Object { Test-Path $_ } | Select-Object -First 1
+                    if ($chromePath) {
+                        Start-Process -FilePath $chromePath -ArgumentList $chromiumExtensions
+                    }
+                    return
+                }
+                3 {
+                    Clear-Host
+                    Write-Host "Installing: Firefox . . ."
+                    # download firefox
+                    Get-FileFromWeb -URL "https://download.mozilla.org/?product=firefox-latest-ssl&os=win&lang=en-US" -File "$env:TEMP\Firefox Installer.exe"
+                    # install firefox
+                    Start-Process -wait "$env:TEMP\Firefox Installer.exe" -ArgumentList "/S"
+                    $firefoxPaths = @(
+                        "C:\Program Files\Mozilla Firefox\firefox.exe",
+                        "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
+                    )
+                    
+                    $firefoxPath = $firefoxPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+                    if ($firefoxPath) {
+                        Start-Process -FilePath $firefoxPath -ArgumentList $firefoxExtensions
+                    }
+                    return
+                }
+                4 {
+                    Clear-Host
+                    Write-Host "Installing: Thorium Browser . . ."
+                    # download thorium browser
+                    Get-FileFromWeb -URL "https://github.com/Alex313031/Thorium-Win/releases/download/M138.0.7204.300/thorium_AVX2_mini_installer.exe" -File "$env:TEMP\Thorium Browser.exe"
+                    # install thorium browser
+                    Start-Process -wait "$env:TEMP\Thorium Browser.exe" -ArgumentList "/S"
+                    $thoriumPaths = @(
+                        "$env:LOCALAPPDATA\Thorium\Application\thorium.exe"
+                    )
+                    $thoriumPath = $thoriumPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+                    if ($thoriumPath) {
+                        Start-Process -FilePath $thoriumPath -ArgumentList $chromiumExtensions
+                    }
+                    return
+                }
+                5 {
+                    Clear-Host
+                    Write-Host "Installing: Brave Browser . . ."
+                    # download brave browser
+                    Get-FileFromWeb -URL "https://laptop-updates.brave.com/latest/winx64" -File "$env:TEMP\BraveBrowserSetup.exe"
+                    # install brave browser
+                    Start-Process -wait "$env:TEMP\BraveBrowserSetup.exe" -ArgumentList "/silent", "/install"
+                    $bravePaths = @(
+                        "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\Application\brave.exe",
+                        "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
+                    )
+                    $bravePath = $bravePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+                    if ($bravePath) {
+                        Start-Process -FilePath $bravePath -ArgumentList $chromiumExtensions
+                    }
+                    return
+                }
+                6 {
+                    Clear-Host
+                    Write-Host "Installing: LibreWolf . . ."
+                    #download librewolf browser 
+                    Get-FileFromWeb -URL "https://codeberg.org/api/packages/librewolf/generic/librewolf/147.0-1/librewolf-147.0-1-windows-x86_64-setup.exe" -File "$env:TEMP\LibreWolf.exe"
+                    Start-Process -wait "$env:TEMP\LibreWolf.exe" -ArgumentList "/S"
+                    $librePath = "C:\Program Files\LibreWolf\librewolf.exe" | Where-Object { Test-Path $_ } | Select-Object -First 1
+                    if ($librePath) {
+                        Start-Process -FilePath $librePath -ArgumentList $firefoxExtensions
+                    }
+                    return
+                }
+
+            }
+        }
+    }
+}
+function show-game-platforms-menu {
+    Clear-Host
+    Write-Host "1. Exit" -ForegroundColor Red
+    Write-Host "2. Battle.net" -ForegroundColor Cyan
+    Write-Host "3. Electronic Arts" -ForegroundColor Cyan
+    Write-Host "4. Epic Games" -ForegroundColor Cyan
+    Write-Host "5. GOG launcher" -ForegroundColor Cyan
+    Write-Host "6. Rockstar Games" -ForegroundColor Cyan
+    Write-Host "7. Steam" -ForegroundColor Cyan
+    Write-Host "8. Ubisoft Connect" -ForegroundColor Cyan
+    while ($true) {
+        $choice = Read-Host " "
+        if ($choice -match '^(1[0-9]|2[0-4]|[1-9])$') {
+            switch ($choice) {
+                1 {
+                    Clear-Host
+                    return 
+                }
+                2 {
+                    Clear-Host
+                    Write-Host "Installing: Battle.net . . ."
+                    # download battle.net
+                    Get-FileFromWeb -URL "https://downloader.battle.net/download/getInstaller?os=win&installer=Battle.net-Setup.exe" -File "$env:TEMP\Battle.net.exe"
+                    # install battle.net
+                    Start-Process "$env:TEMP\Battle.net.exe" -ArgumentList '--lang=enUS --installpath="C:\Program Files (x86)\Battle.net"'
+                    # create battle.net shortcut
+                    $WshShell = New-Object -comObject WScript.Shell
+                    $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Battle.net.lnk")
+                    $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Battle.net\Battle.net Launcher.exe"
+                    $Shortcut.Save()
+                    return 
+                }
+                3 {
+                    Clear-Host
+                    Write-Host "Installing: Electronic Arts . . ."
+                    # download electronic arts
+                    Get-FileFromWeb -URL "https://origin-a.akamaihd.net/EA-Desktop-Client-Download/installer-releases/EAappInstaller.exe" -File "$env:TEMP\Electronic Arts.exe"
+                    # install electronic arts
+                    Start-Process "$env:TEMP\Electronic Arts.exe"
+                    Clear-Host
+                    Write-Host "Installing: Punkbuster Service Updater . . . (Add Games to Punkbuster)"
+                    # download punkbuster service updater
+                    Get-FileFromWeb -URL "https://www.evenbalance.com/downloads/W/gui/pbsetup.zip" -File "$env:TEMP\pbsetup.zip"
+                    # extract punkbuster service updater
+                    Expand-Archive "$env:TEMP\pbsetup.zip" -DestinationPath "$env:TEMP\pbsetup" -ErrorAction SilentlyContinue
+                    # install punkbuster service updater
+                    Start-Process -wait "$env:TEMP\pbsetup\pbsetup.exe"
+                    return 
+                }
+                4 {
+                    Clear-Host
+                    Write-Host "Installing: Epic Games . . ."
+                    # download epic games
+                    Get-FileFromWeb -URL "https://epicgames-download1.akamaized.net/Builds/UnrealEngineLauncher/Installers/Win32/EpicInstaller-15.17.1.msi?launcherfilename=EpicInstaller-15.17.1.msi" -File "$env:TEMP\Epic Games.msi"
+                    # install epic games
+                    Start-Process -wait "$env:TEMP\Epic Games.msi" -ArgumentList "/quiet"
+                    Clear-Host
+                    Write-Host "Uninstall: Epic Online Services . . ."
+                    # uninstall epic online services
+                    cmd /c "msiexec.exe /x {57A956AB-4BCC-45C6-9B40-957E4E125568} /qn >nul 2>&1"
+                    return 
+                }
+                5 {
+                    Clear-Host
+                    Write-Host "Installing: GOG launcher . . ."
+                    # download gog launcher
+                    Get-FileFromWeb -URL "https://webinstallers.gog-statics.com/download/GOG_Galaxy_2.0.exe" -File "$env:TEMP\GOG launcher.exe"
+                    # install gog launcher
+                    Start-Process "$env:TEMP\GOG launcher.exe"
+                    return 
+                }
+                6 {
+                    Clear-Host
+                    Write-Host "Installing: Rockstar Games . . ."
+                    # download rockstar games
+                    Get-FileFromWeb -URL "https://gamedownloads.rockstargames.com/public/installer/Rockstar-Games-Launcher.exe" -File "$env:TEMP\Rockstar Games.exe"
+                    # install rockstar games
+                    Start-Process "$env:TEMP\Rockstar Games.exe"
+                    return 
+                }
+                7 {
+                    Clear-Host
+                    Write-Host "Installing: Steam . . ."
+                    # download steam
+                    Get-FileFromWeb -URL "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe" -File "$env:TEMP\Steam.exe"
+                    # install steam
+                    Start-Process -wait "$env:TEMP\Steam.exe" -ArgumentList "/S"
+                    return 
+                }
+                8 {
+                    Clear-Host
+                    Write-Host "Installing: Ubisoft Connect . . ."
+                    # download ubisoft connect
+                    Get-FileFromWeb -URL "https://static3.cdn.ubi.com/orbit/launcher_installer/UbisoftConnectInstaller.exe" -File "$env:TEMP\Ubisoft Connect.exe"
+                    # install ubisoft connect
+                    Start-Process -wait "$env:TEMP\Ubisoft Connect.exe" -ArgumentList "/S"
+                    return 
+                }
+            }
+        }
+    }
 }
 show-menu
 while ($true) {
@@ -100,23 +312,8 @@ while ($true) {
                 show-menu
 
             }
+            
             3 {
-
-                Clear-Host
-                Write-Host "Installing: Battle.net . . ."
-                # download battle.net
-                Get-FileFromWeb -URL "https://downloader.battle.net/download/getInstaller?os=win&installer=Battle.net-Setup.exe" -File "$env:TEMP\Battle.net.exe"
-                # install battle.net
-                Start-Process "$env:TEMP\Battle.net.exe" -ArgumentList '--lang=enUS --installpath="C:\Program Files (x86)\Battle.net"'
-                # create battle.net shortcut
-                $WshShell = New-Object -comObject WScript.Shell
-                $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Battle.net.lnk")
-                $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Battle.net\Battle.net Launcher.exe"
-                $Shortcut.Save()
-                show-menu
-
-            }
-            4 {
 
                 Clear-Host
                 Write-Host "Installing: Discord . . ."
@@ -127,39 +324,8 @@ while ($true) {
                 show-menu
 
             }
-            5 {
-                Clear-Host
-                Write-Host "Installing: Electronic Arts . . ."
-                # download electronic arts
-                Get-FileFromWeb -URL "https://origin-a.akamaihd.net/EA-Desktop-Client-Download/installer-releases/EAappInstaller.exe" -File "$env:TEMP\Electronic Arts.exe"
-                # install electronic arts
-                Start-Process "$env:TEMP\Electronic Arts.exe"
-                Clear-Host
-                Write-Host "Installing: Punkbuster Service Updater . . . (Add Games to Punkbuster)"
-                # download punkbuster service updater
-                Get-FileFromWeb -URL "https://www.evenbalance.com/downloads/W/gui/pbsetup.zip" -File "$env:TEMP\pbsetup.zip"
-                # extract punkbuster service updater
-                Expand-Archive "$env:TEMP\pbsetup.zip" -DestinationPath "$env:TEMP\pbsetup" -ErrorAction SilentlyContinue
-                # install punkbuster service updater
-                Start-Process -wait "$env:TEMP\pbsetup\pbsetup.exe"
-                show-menu
-            }
-            6 {
-
-                Clear-Host
-                Write-Host "Installing: Epic Games . . ."
-                # download epic games
-                Get-FileFromWeb -URL "https://epicgames-download1.akamaized.net/Builds/UnrealEngineLauncher/Installers/Win32/EpicInstaller-15.17.1.msi?launcherfilename=EpicInstaller-15.17.1.msi" -File "$env:TEMP\Epic Games.msi"
-                # install epic games
-                Start-Process -wait "$env:TEMP\Epic Games.msi" -ArgumentList "/quiet"
-                Clear-Host
-                Write-Host "Uninstall: Epic Online Services . . ."
-                # uninstall epic online services
-                cmd /c "msiexec.exe /x {57A956AB-4BCC-45C6-9B40-957E4E125568} /qn >nul 2>&1"
-                show-menu
-
-            }
-            7 {
+            
+            4 {
 
                 Clear-Host
                 Write-Host "Installing: Escape From Tarkov . . ."
@@ -170,31 +336,9 @@ while ($true) {
                 show-menu
 
             }
-            8 {
-
-                Clear-Host
-                Write-Host "Installing: GOG launcher . . ."
-                # download gog launcher
-                Get-FileFromWeb -URL "https://webinstallers.gog-statics.com/download/GOG_Galaxy_2.0.exe" -File "$env:TEMP\GOG launcher.exe"
-                # install gog launcher
-                Start-Process "$env:TEMP\GOG launcher.exe"
-                show-menu
-
-            }
-            9 {
-
-                Clear-Host
-                Write-Host "Installing: Google Chrome . . ."
-                # download google chrome
-                Get-FileFromWeb -URL "https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi" -File "$env:TEMP\Chrome.msi"
-                # install google chrome
-                Start-Process -wait "$env:TEMP\Chrome.msi" -ArgumentList "/quiet"
-                # open ublock origin in web browser
-                Start-Process "C:\Program Files\Google\Chrome\Application\chrome.exe" "https://chromewebstore.google.com/detail/ublock-origin-lite/ddkjiahejlhfcafbddmgiahcphecmpfh?hl=en"
-                show-menu
-
-            }
-            10 {
+            
+            
+            5 {
 
                 Clear-Host
                 Write-Host "Installing: League Of Legends . . ."
@@ -205,7 +349,7 @@ while ($true) {
                 show-menu
 
             }
-            11 {
+            6 {
 
                 Clear-Host
                 Write-Host "Installing: Notepad ++ . . ."
@@ -298,7 +442,7 @@ while ($true) {
                 show-menu
 
             }
-            12 {
+            7 {
 
                 Clear-Host
                 Write-Host "Installing: OBS Studio . . ."
@@ -309,7 +453,7 @@ while ($true) {
                 show-menu
 
             }
-            13 {
+            8 {
 
                 Clear-Host
                 Write-Host "Installing: Roblox . . ."
@@ -320,40 +464,8 @@ while ($true) {
                 show-menu
 
             }
-            14 {
-
-                Clear-Host
-                Write-Host "Installing: Rockstar Games . . ."
-                # download rockstar games
-                Get-FileFromWeb -URL "https://gamedownloads.rockstargames.com/public/installer/Rockstar-Games-Launcher.exe" -File "$env:TEMP\Rockstar Games.exe"
-                # install rockstar games
-                Start-Process "$env:TEMP\Rockstar Games.exe"
-                show-menu
-
-            }
-            15 {
-
-                Clear-Host
-                Write-Host "Installing: Steam . . ."
-                # download steam
-                Get-FileFromWeb -URL "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe" -File "$env:TEMP\Steam.exe"
-                # install steam
-                Start-Process -wait "$env:TEMP\Steam.exe" -ArgumentList "/S"
-                show-menu
-
-            }
-            16 {
-
-                Clear-Host
-                Write-Host "Installing: Ubisoft Connect . . ."
-                # download ubisoft connect
-                Get-FileFromWeb -URL "https://static3.cdn.ubi.com/orbit/launcher_installer/UbisoftConnectInstaller.exe" -File "$env:TEMP\Ubisoft Connect.exe"
-                # install ubisoft connect
-                Start-Process -wait "$env:TEMP\Ubisoft Connect.exe" -ArgumentList "/S"
-                show-menu
-
-            }
-            17 {
+            
+            9 {
 
                 Clear-Host
                 Write-Host "Installing: Valorant . . ."
@@ -364,7 +476,7 @@ while ($true) {
                 show-menu
 
             }
-            18 {
+            10 {
                 Clear-Host
                 Write-Host "Installing: Plutonium . . ."
                 # download plutonium
@@ -384,7 +496,7 @@ while ($true) {
                 Start-Process "$plutoniumFolderPath\Plutonium.exe"
                 show-menu
             }
-            19 {
+            11 {
                 Clear-Host
                 Write-Host "Installing FaceIt Launcher . . ."
                 #download faceit launcher
@@ -400,87 +512,9 @@ while ($true) {
                 Start-Process -wait "$env:TEMP\FACEITInstaller_64.exe" -ArgumentList "/S"
                 show-menu
             }
-            20 {
+            
+            12 {
                 Clear-Host
-                Write-Host "Installing: Firefox . . ."
-                # download firefox
-                Get-FileFromWeb -URL "https://download.mozilla.org/?product=firefox-latest-ssl&os=win&lang=en-US" -File "$env:TEMP\Firefox Installer.exe"
-                # install firefox
-                Start-Process -wait "$env:TEMP\Firefox Installer.exe" -ArgumentList "/S"
-                $firefoxPaths = @(
-                    "C:\Program Files\Mozilla Firefox\firefox.exe",
-                    "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
-                )
-                $firefoxExtensions = @(
-                    "https://addons.mozilla.org/en-US/firefox/addon/decentraleyes/",
-                    "https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/",
-                    "https://addons.mozilla.org/en-US/firefox/addon/privacy-badger17/",
-                    "https://addons.mozilla.org/en-US/firefox/addon/react-devtools/",
-                    "https://addons.mozilla.org/en-US/firefox/addon/search_by_image/"
-                )
-                $firefoxPath = $firefoxPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
-                if ($firefoxPath) {
-                    foreach ($extension in $firefoxExtensions) {
-                        Start-Process $firefoxPath $extension
-                    }
-                }
-                show-menu
-            }
-            21 {
-                Clear-Host
-                Write-Host "Installing: Thorium Browser . . ."
-                # download thorium browser
-                Get-FileFromWeb -URL "https://github.com/Alex313031/Thorium-Win/releases/download/M130.0.6723.174/thorium_AVX2_mini_installer.exe" -File "$env:TEMP\Thorium Browser.exe"
-                # install thorium browser
-                Start-Process -wait "$env:TEMP\Thorium Browser.exe" -ArgumentList "/S"
-                $thoriumPaths = @(
-                    "$env:LOCALAPPDATA\Thorium\Application\thorium.exe"
-                )
-                $chromiumExtensions = @(
-                    "https://chromewebstore.google.com/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm",
-                    "https://chromewebstore.google.com/detail/privacy-badger/pkehgijcmpdhfbdbbnkijodmdjhbjlgp",
-                    "https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi",
-                    "https://chromewebstore.google.com/detail/search-by-image/cnojnbdhbhnkbcieeekonklommdnndci",
-                    "https://chromewebstore.google.com/detail/decentraleyes/ldpochfccmkkmhdbclfhpagapcfdljkj",
-                    "https://chromewebstore.google.com/detail/enhancer-for-youtube/ponfpcnoihfmfllpaingbgckeeldkhle"
-                )
-                $thoriumPath = $thoriumPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
-                if ($thoriumPath) {
-                    foreach ($extension in $chromiumExtensions) {
-                        Start-Process $thoriumPath $extension
-                    }
-                }
-                show-menu
-            }
-            22 {
-                Clear-Host
-                Write-Host "Installing: Brave Browser . . ."
-                # download brave browser
-                Get-FileFromWeb -URL "https://laptop-updates.brave.com/latest/winx64" -File "$env:TEMP\BraveBrowserSetup.exe"
-                # install brave browser
-                Start-Process -wait "$env:TEMP\BraveBrowserSetup.exe" -ArgumentList "/silent", "/install"
-                $bravePaths = @(
-                    "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\Application\brave.exe",
-                    "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
-                )
-                $chromiumExtensions = @(
-                    "https://chromewebstore.google.com/detail/ublock-origin/cjpalhdlnbpafiamejdnhcphjbkeiagm",
-                    "https://chromewebstore.google.com/detail/privacy-badger/pkehgijcmpdhfbdbbnkijodmdjhbjlgp",
-                    "https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi",
-                    "https://chromewebstore.google.com/detail/search-by-image/cnojnbdhbhnkbcieeekonklommdnndci",
-                    "https://chromewebstore.google.com/detail/decentraleyes/ldpochfccmkkmhdbclfhpagapcfdljkj",
-                    "https://chromewebstore.google.com/detail/enhancer-for-youtube/ponfpcnoihfmfllpaingbgckeeldkhle"
-                )
-                $bravePath = $bravePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
-                if ($bravePath) {
-                    foreach ($extension in $chromiumExtensions) {
-                        Start-Process $bravePath $extension
-                    }
-                }
-                show-menu
-            }
-            23 {
-                 Clear-Host
                 Write-Host "Installing: Microsoft Office 2024 LSTC Edition . . ."
                 $toolPath = "$env:TEMP\officedeploymenttool_19029-20136.exe"
                 $configurationPath = "$env:TEMP\OfficeDeployment\configuration-Office365-x64.xml"
@@ -519,28 +553,13 @@ while ($true) {
                 Start-Process -FilePath "$env:TEMP\OfficeDeployment\setup.exe" -ArgumentList "/configure $configurationPath" -Wait
                 show-menu
             }
-            24{
-               # activating microsoft office
-                Write-Host "Activating Microsoft Office . . ."
-                $officePaths = @(
-                    "$env:ProgramFiles(x86)\Microsoft Office\Office16",
-                    "$env:ProgramFiles\Microsoft Office\Office16"
-                )
-
-                foreach ($path in $officePaths) {
-                    if (Test-Path $path) {
-                        Set-Location -Path $path
-                        $licenseFiles = Get-ChildItem -Path "..\root\Licenses16\ProPlus2021VL_KMS*.xrm-ms"
-                        foreach ($file in $licenseFiles) {
-                            Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /inslic:`"$file`"" -Wait
-                        }
-                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /setprt:1688" -Wait
-                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /unpkey:6F7TH >nul" -Wait
-                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /inpkey:FXYTK-NJJ8C-GB6DW-3DYQT-6F7TH" -Wait
-                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /sethst:107.175.77.7" -Wait
-                        Start-Process -FilePath "cscript.exe" -ArgumentList "ospp.vbs /act" -Wait
-                    }
-                }
+            13 {
+                show-browser-menu
+                show-menu
+            }
+            14 {
+                show-game-platforms-menu
+                show-menu
             }
         }
     }

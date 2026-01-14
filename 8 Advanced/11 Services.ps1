@@ -1,13 +1,14 @@
-    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator"))
-    {Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-    Exit}
-    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
-    $Host.UI.RawUI.BackgroundColor = "Black"
-	$Host.PrivateData.ProgressBackgroundColor = "Black"
-    $Host.PrivateData.ProgressForegroundColor = "White"
-    Clear-Host
+If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
+    Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
+    Exit
+}
+$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
+$Host.UI.RawUI.BackgroundColor = "Black"
+$Host.PrivateData.ProgressBackgroundColor = "Black"
+$Host.PrivateData.ProgressForegroundColor = "White"
+Clear-Host
 
-    function RunAsTI($cmd, $arg) {
+function RunAsTI($cmd, $arg) {
     $id = 'RunAsTI'; $key = "Registry::HKU\$(((whoami /user)-split' ')[-1])\Volatile Environment"; $code = @'
     $I=[int32]; $M=$I.module.gettype("System.Runtime.Interop`Services.Mar`shal"); $P=$I.module.gettype("System.Int`Ptr"); $S=[string]
     $D=@(); $T=@(); $DM=[AppDomain]::CurrentDomain."DefineDynami`cAssembly"(1,1)."DefineDynami`cModule"(1); $Z=[uintptr]::size
@@ -37,65 +38,67 @@
     if ($11bug) {[Windows.Forms.SendKeys]::SendWait($path)}; do {sleep 7} while(Q); L '.Default' $LNK 'Interactive User'
 '@; $V = ''; 'cmd', 'arg', 'id', 'key' | ForEach-Object { $V += "`n`$$_='$($(Get-Variable $_ -val)-replace"'","''")';" }; Set-ItemProperty $key $id $($V, $code) -type 7 -force -ea 0
     Start-Process powershell -args "-win 1 -nop -c `n$V `$env:R=(gi `$key -ea 0).getvalue(`$id)-join''; iex `$env:R" -verb runas -Wait
-    }
+}
 
 try {
-$safeBoot = Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SafeBoot\Option" -ErrorAction Stop
-} catch {
-# check if the volume shadow copy service (vss) is set to manual
-$service = Get-Service -Name VSS
-if ($service.StartType -eq "Manual") {
-Write-Host "Create a restore point . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-# open system protection
-Start-Process "C:\Windows\System32\control.exe" -ArgumentList "sysdm.cpl ,4"
-Write-Host ""
-Pause
-Clear-Host
-Write-Host "Restarting To Safe Mode: Press any key to restart . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-# Toggle safe boot
-cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"
-# Restart
-shutdown -r -t 00
-exit
-} else {
-Clear-Host
-Write-Host "Restarting To Safe Mode: Press any key to restart . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-# Toggle safe boot
-cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"
-# Restart
-shutdown -r -t 00
-exit
+    $safeBoot = Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\SafeBoot\Option" -ErrorAction Stop
 }
+catch {
+    # check if the volume shadow copy service (vss) is set to manual
+    $service = Get-Service -Name VSS
+    if ($service.StartType -eq "Manual") {
+        Write-Host "Create a restore point . . ."
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        # open system protection
+        Start-Process "C:\Windows\System32\control.exe" -ArgumentList "sysdm.cpl ,4"
+        Write-Host ""
+        Pause
+        Clear-Host
+        Write-Host "Restarting To Safe Mode: Press any key to restart . . ."
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        # Toggle safe boot
+        cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"
+        # Restart
+        shutdown -r -t 00
+        exit
+    }
+    else {
+        Clear-Host
+        Write-Host "Restarting To Safe Mode: Press any key to restart . . ."
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        # Toggle safe boot
+        cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"
+        # Restart
+        shutdown -r -t 00
+        exit
+    }
 }
 
-    Clear-Host
-    Write-Host "1. Services: Off"
-    Write-Host "2. Services: Default"
-    while ($true) {
+Clear-Host
+Write-Host "1. Services: Off"
+Write-Host "2. Services: Default"
+while ($true) {
     $choice = Read-Host " "
     if ($choice -match '^[1-2]$') {
-    switch ($choice) {
-    1 {
+        switch ($choice) {
+            1 {
 
-Clear-Host
-Write-Host "This script does not support Wi-Fi & Bluetooth." -ForegroundColor Red
-Write-Host "If your PC depends on Wi-Fi or Bluetooth, please close this window!" -ForegroundColor Red
-Write-Host ""
-Write-Host "This script will intentionally run minimal services." -ForegroundColor Red
-Write-Host "Certain programs, settings and options may encounter issues or fail to run." -ForegroundColor Red
-Write-Host "If you experience any problems, please switch back to (Services: Default)." -ForegroundColor Red
-Write-Host ""
-Write-Host "If Windows fails to boot or log in after applying this script," -ForegroundColor Red
-Write-Host "please access your restore point from the advanced setup recovery menu." -ForegroundColor Red
-Write-Host ""
-Pause
-Clear-Host
-Write-Host "Services: Off . . ."
-# create reg file
-$MultilineComment = @"
+                Clear-Host
+                Write-Host "This script does not support Wi-Fi & Bluetooth." -ForegroundColor Red
+                Write-Host "If your PC depends on Wi-Fi or Bluetooth, please close this window!" -ForegroundColor Red
+                Write-Host ""
+                Write-Host "This script will intentionally run minimal services." -ForegroundColor Red
+                Write-Host "Certain programs, settings and options may encounter issues or fail to run." -ForegroundColor Red
+                Write-Host "If you experience any problems, please switch back to (Services: Default)." -ForegroundColor Red
+                Write-Host ""
+                Write-Host "If Windows fails to boot or log in after applying this script," -ForegroundColor Red
+                Write-Host "please access your restore point from the advanced setup recovery menu." -ForegroundColor Red
+                Write-Host ""
+                Pause
+                Clear-Host
+                Write-Host "Services: Off . . ."
+                # create reg file
+                $MultilineComment = @"
 Windows Registry Editor Version 5.00
 
 ; W10 & W11 SERVICES OFF
@@ -955,29 +958,29 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\ZTHELPER]
 "Start"=dword:00000004
 "@
-Set-Content -Path "$env:TEMP\ServicesOff.reg" -Value $MultilineComment -Force
-# disable services RunAsTI
-$ServicesOff = @'
+                Set-Content -Path "$env:TEMP\ServicesOff.reg" -Value $MultilineComment -Force
+                # disable services RunAsTI
+                $ServicesOff = @'
 Regedit.exe /S "$env:TEMP\ServicesOff.reg"
 '@
-RunAsTI powershell "-nologo -windowstyle hidden -command $ServicesOff"
-Timeout /T 5 | Out-Null
-Clear-Host
-Write-Host "Press any key to restart . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-# toggle normal boot
-cmd /c "bcdedit /deletevalue safeboot >nul 2>&1"
-# restart
-shutdown -r -t 00
-exit
+                RunAsTI powershell "-nologo -windowstyle hidden -command $ServicesOff"
+                Timeout /T 5 | Out-Null
+                Clear-Host
+                Write-Host "Press any key to restart . . ."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+                # toggle normal boot
+                cmd /c "bcdedit /deletevalue safeboot >nul 2>&1"
+                # restart
+                shutdown -r -t 00
+                exit
 
-      }
-    2 {
+            }
+            2 {
 
-Clear-Host
-Write-Host "Services: Default . . ."
-# create reg file
-$MultilineComment = @"
+                Clear-Host
+                Write-Host "Services: Default . . ."
+                # create reg file
+                $MultilineComment = @"
 Windows Registry Editor Version 5.00
 
 ; W10 & W11 SERVICES ON
@@ -1829,21 +1832,24 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\ZTHELPER]
 "Start"=dword:00000003
 "@
-Set-Content -Path "$env:TEMP\ServicesOn.reg" -Value $MultilineComment -Force
-# enable services RunAsTI
-$ServicesOn = @'
+                Set-Content -Path "$env:TEMP\ServicesOn.reg" -Value $MultilineComment -Force
+                # enable services RunAsTI
+                $ServicesOn = @'
 Regedit.exe /S "$env:TEMP\ServicesOn.reg"
 '@
-RunAsTI powershell "-nologo -windowstyle hidden -command $ServicesOn"
-Timeout /T 5 | Out-Null
-Clear-Host
-Write-Host "Press any key to restart . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-# toggle normal boot
-cmd /c "bcdedit /deletevalue safeboot >nul 2>&1"
-# restart
-shutdown -r -t 00
-exit
+                RunAsTI powershell "-nologo -windowstyle hidden -command $ServicesOn"
+                Timeout /T 5 | Out-Null
+                Clear-Host
+                Write-Host "Press any key to restart . . ."
+                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+                # toggle normal boot
+                cmd /c "bcdedit /deletevalue safeboot >nul 2>&1"
+                # restart
+                shutdown -r -t 00
+                exit
 
-      }
-    } } else { Write-Host "Invalid input. Please select a valid option (1-2)." } }
+            }
+        } 
+    }
+    else { Write-Host "Invalid input. Please select a valid option (1-2)." } 
+}

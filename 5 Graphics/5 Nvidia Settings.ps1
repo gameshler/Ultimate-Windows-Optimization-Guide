@@ -1,22 +1,23 @@
-    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator"))
-    {Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-    Exit}
-    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
-    $Host.UI.RawUI.BackgroundColor = "Black"
-	$Host.PrivateData.ProgressBackgroundColor = "Black"
-    $Host.PrivateData.ProgressForegroundColor = "White"
-    Clear-Host
+If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
+  Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
+  Exit
+}
+$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
+$Host.UI.RawUI.BackgroundColor = "Black"
+$Host.PrivateData.ProgressBackgroundColor = "Black"
+$Host.PrivateData.ProgressForegroundColor = "White"
+Clear-Host
 
-    function Get-FileFromWeb {
-    param ([Parameter(Mandatory)][string]$URL, [Parameter(Mandatory)][string]$File)
-    function Show-Progress {
+function Get-FileFromWeb {
+  param ([Parameter(Mandatory)][string]$URL, [Parameter(Mandatory)][string]$File)
+  function Show-Progress {
     param ([Parameter(Mandatory)][Single]$TotalValue, [Parameter(Mandatory)][Single]$CurrentValue, [Parameter(Mandatory)][string]$ProgressText, [Parameter()][int]$BarSize = 10, [Parameter()][switch]$Complete)
     $percent = $CurrentValue / $TotalValue
     $percentComplete = $percent * 100
     if ($psISE) { Write-Progress "$ProgressText" -id 0 -percentComplete $percentComplete }
     else { Write-Host -NoNewLine "`r$ProgressText $(''.PadRight($BarSize * $percent, [char]9608).PadRight($BarSize, [char]9617)) $($percentComplete.ToString('##0.00').PadLeft(6)) % " }
-    }
-    try {
+  }
+  try {
     $request = [System.Net.HttpWebRequest]::Create($URL)
     $response = $request.GetResponse()
     if ($response.StatusCode -eq 401 -or $response.StatusCode -eq 403 -or $response.StatusCode -eq 404) { throw "Remote file either doesn't exist, is unauthorized, or is forbidden for '$URL'." }
@@ -29,35 +30,35 @@
     $reader = $response.GetResponseStream()
     $writer = new-object System.IO.FileStream $File, 'Create'
     do {
-    $count = $reader.Read($buffer, 0, $buffer.Length)
-    $writer.Write($buffer, 0, $count)
-    $total += $count
-    if ($fullSize -gt 0) { Show-Progress -TotalValue $fullSize -CurrentValue $total -ProgressText " $($File.Name)" }
+      $count = $reader.Read($buffer, 0, $buffer.Length)
+      $writer.Write($buffer, 0, $count)
+      $total += $count
+      if ($fullSize -gt 0) { Show-Progress -TotalValue $fullSize -CurrentValue $total -ProgressText " $($File.Name)" }
     } while ($count -gt 0)
-    }
-    finally {
+  }
+  finally {
     $reader.Close()
     $writer.Close()
-    }
-    }
+  }
+}
 
-    Write-Host "1. NVIDIA Settings: On (Recommended)"
-    Write-Host "2. NVIDIA Settings: Default"
-    while ($true) {
-    $choice = Read-Host " "
-    if ($choice -match '^[1-2]$') {
+Write-Host "1. NVIDIA Settings: On (Recommended)"
+Write-Host "2. NVIDIA Settings: Default"
+while ($true) {
+  $choice = Read-Host " "
+  if ($choice -match '^[1-2]$') {
     switch ($choice) {
-    1 {
+      1 {
 
-Clear-Host
-Write-Host "Installing: NvidiaProfileInspector . . ."
-# unblock drs files
-$path = "C:\ProgramData\NVIDIA Corporation\Drs"
-Get-ChildItem -Path $path -Recurse | Unblock-File
-# download inspector
-Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/main/Inspector.exe" -File "$env:TEMP\Inspector.exe"
-# create config for inspector
-$MultilineComment = @"
+        Clear-Host
+        Write-Host "Installing: NvidiaProfileInspector . . ."
+        # unblock drs files
+        $path = "C:\ProgramData\NVIDIA Corporation\Drs"
+        Get-ChildItem -Path $path -Recurse | Unblock-File
+        # download inspector
+        Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/main/Inspector.exe" -File "$env:TEMP\Inspector.exe"
+        # create config for inspector
+        $MultilineComment = @"
 <?xml version="1.0" encoding="utf-16"?>
 <ArrayOfProfile>
   <Profile>
@@ -254,29 +255,29 @@ $MultilineComment = @"
   </Profile>
 </ArrayOfProfile>
 "@
-Set-Content -Path "$env:TEMP\Inspector.nip" -Value $MultilineComment -Force
-# import config
-Start-Process -wait "$env:TEMP\Inspector.exe" -ArgumentList "$env:TEMP\Inspector.nip"
-# enable nvidia legacy sharpen
-reg add "HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\FTS" /v "EnableGR535" /t REG_DWORD /d "0" /f | Out-Null
-reg add "HKLM\SYSTEM\ControlSet001\Services\nvlddmkm\Parameters\FTS" /v "EnableGR535" /t REG_DWORD /d "0" /f | Out-Null
-reg add "HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\Parameters\FTS" /v "EnableGR535" /t REG_DWORD /d "0" /f | Out-Null
-# open nvidiacontrolpanel
-Start-Process "shell:appsFolder\NVIDIACorp.NVIDIAControlPanel_56jybvy8sckqj!NVIDIACorp.NVIDIAControlPanel"
-exit
+        Set-Content -Path "$env:TEMP\Inspector.nip" -Value $MultilineComment -Force
+        # import config
+        Start-Process -wait "$env:TEMP\Inspector.exe" -ArgumentList "$env:TEMP\Inspector.nip"
+        # enable nvidia legacy sharpen
+        reg add "HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\FTS" /v "EnableGR535" /t REG_DWORD /d "0" /f | Out-Null
+        reg add "HKLM\SYSTEM\ControlSet001\Services\nvlddmkm\Parameters\FTS" /v "EnableGR535" /t REG_DWORD /d "0" /f | Out-Null
+        reg add "HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\Parameters\FTS" /v "EnableGR535" /t REG_DWORD /d "0" /f | Out-Null
+        # open nvidiacontrolpanel
+        Start-Process "shell:appsFolder\NVIDIACorp.NVIDIAControlPanel_56jybvy8sckqj!NVIDIACorp.NVIDIAControlPanel"
+        exit
 
       }
-    2 {
+      2 {
 
-Clear-Host
-Write-Host "Installing: NvidiaProfileInspector . . ."
-# unblock drs files
-$path = "C:\ProgramData\NVIDIA Corporation\Drs"
-Get-ChildItem -Path $path -Recurse | Unblock-File
-# download inspector
-Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/main/Inspector.exe" -File "$env:TEMP\Inspector.exe"
-# create config for inspector
-$MultilineComment = @"
+        Clear-Host
+        Write-Host "Installing: NvidiaProfileInspector . . ."
+        # unblock drs files
+        $path = "C:\ProgramData\NVIDIA Corporation\Drs"
+        Get-ChildItem -Path $path -Recurse | Unblock-File
+        # download inspector
+        Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/main/Inspector.exe" -File "$env:TEMP\Inspector.exe"
+        # create config for inspector
+        $MultilineComment = @"
 <?xml version="1.0" encoding="utf-16"?>
 <ArrayOfProfile>
   <Profile>
@@ -286,16 +287,19 @@ $MultilineComment = @"
   </Profile>
 </ArrayOfProfile>
 "@
-Set-Content -Path "$env:TEMP\Defaults.nip" -Value $MultilineComment -Force
-# import config
-Start-Process -wait "$env:TEMP\Inspector.exe" -ArgumentList "$env:TEMP\Defaults.nip"
-# disable nvidia legacy sharpen
-reg add "HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\FTS" /v "EnableGR535" /t REG_DWORD /d "1" /f | Out-Null
-reg add "HKLM\SYSTEM\ControlSet001\Services\nvlddmkm\Parameters\FTS" /v "EnableGR535" /t REG_DWORD /d "1" /f | Out-Null
-reg add "HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\Parameters\FTS" /v "EnableGR535" /t REG_DWORD /d "1" /f | Out-Null
-# open nvidiacontrolpanel
-Start-Process "shell:appsFolder\NVIDIACorp.NVIDIAControlPanel_56jybvy8sckqj!NVIDIACorp.NVIDIAControlPanel"
-exit
+        Set-Content -Path "$env:TEMP\Defaults.nip" -Value $MultilineComment -Force
+        # import config
+        Start-Process -wait "$env:TEMP\Inspector.exe" -ArgumentList "$env:TEMP\Defaults.nip"
+        # disable nvidia legacy sharpen
+        reg add "HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\FTS" /v "EnableGR535" /t REG_DWORD /d "1" /f | Out-Null
+        reg add "HKLM\SYSTEM\ControlSet001\Services\nvlddmkm\Parameters\FTS" /v "EnableGR535" /t REG_DWORD /d "1" /f | Out-Null
+        reg add "HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\Parameters\FTS" /v "EnableGR535" /t REG_DWORD /d "1" /f | Out-Null
+        # open nvidiacontrolpanel
+        Start-Process "shell:appsFolder\NVIDIACorp.NVIDIAControlPanel_56jybvy8sckqj!NVIDIACorp.NVIDIAControlPanel"
+        exit
 
       }
-    } } else { Write-Host "Invalid input. Please select a valid option (1-2)." } }
+    } 
+  }
+  else { Write-Host "Invalid input. Please select a valid option (1-2)." } 
+}

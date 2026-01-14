@@ -1,22 +1,23 @@
-    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator"))
-    {Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-    Exit}
-    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
-    $Host.UI.RawUI.BackgroundColor = "Black"
-	$Host.PrivateData.ProgressBackgroundColor = "Black"
-    $Host.PrivateData.ProgressForegroundColor = "White"
-    Clear-Host
+If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
+  Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
+  Exit
+}
+$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
+$Host.UI.RawUI.BackgroundColor = "Black"
+$Host.PrivateData.ProgressBackgroundColor = "Black"
+$Host.PrivateData.ProgressForegroundColor = "White"
+Clear-Host
 
-    function Get-FileFromWeb {
-    param ([Parameter(Mandatory)][string]$URL, [Parameter(Mandatory)][string]$File)
-    function Show-Progress {
+function Get-FileFromWeb {
+  param ([Parameter(Mandatory)][string]$URL, [Parameter(Mandatory)][string]$File)
+  function Show-Progress {
     param ([Parameter(Mandatory)][Single]$TotalValue, [Parameter(Mandatory)][Single]$CurrentValue, [Parameter(Mandatory)][string]$ProgressText, [Parameter()][int]$BarSize = 10, [Parameter()][switch]$Complete)
     $percent = $CurrentValue / $TotalValue
     $percentComplete = $percent * 100
     if ($psISE) { Write-Progress "$ProgressText" -id 0 -percentComplete $percentComplete }
     else { Write-Host -NoNewLine "`r$ProgressText $(''.PadRight($BarSize * $percent, [char]9608).PadRight($BarSize, [char]9617)) $($percentComplete.ToString('##0.00').PadLeft(6)) % " }
-    }
-    try {
+  }
+  try {
     $request = [System.Net.HttpWebRequest]::Create($URL)
     $response = $request.GetResponse()
     if ($response.StatusCode -eq 401 -or $response.StatusCode -eq 403 -or $response.StatusCode -eq 404) { throw "Remote file either doesn't exist, is unauthorized, or is forbidden for '$URL'." }
@@ -29,47 +30,48 @@
     $reader = $response.GetResponseStream()
     $writer = new-object System.IO.FileStream $File, 'Create'
     do {
-    $count = $reader.Read($buffer, 0, $buffer.Length)
-    $writer.Write($buffer, 0, $count)
-    $total += $count
-    if ($fullSize -gt 0) { Show-Progress -TotalValue $fullSize -CurrentValue $total -ProgressText " $($File.Name)" }
+      $count = $reader.Read($buffer, 0, $buffer.Length)
+      $writer.Write($buffer, 0, $count)
+      $total += $count
+      if ($fullSize -gt 0) { Show-Progress -TotalValue $fullSize -CurrentValue $total -ProgressText " $($File.Name)" }
     } while ($count -gt 0)
-    }
-    finally {
+  }
+  finally {
     $reader.Close()
     $writer.Close()
-    }
-    }
+  }
+}
 
 Write-Host "Installing: NvidiaProfileInspector . . ."
 # check for file
 if (-Not (Test-Path -Path "$env:TEMP\Inspector.exe")) {
-# unblock drs files
-$path = "C:\ProgramData\NVIDIA Corporation\Drs"
-Get-ChildItem -Path $path -Recurse | Unblock-File
-# download inspector
-Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/main/Inspector.exe" -File "$env:TEMP\Inspector.exe"
-# enable nvidia legacy sharpen
-reg add "HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\FTS" /v "EnableGR535" /t REG_DWORD /d "0" /f | Out-Null
-reg add "HKLM\SYSTEM\ControlSet001\Services\nvlddmkm\Parameters\FTS" /v "EnableGR535" /t REG_DWORD /d "0" /f | Out-Null
-reg add "HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\Parameters\FTS" /v "EnableGR535" /t REG_DWORD /d "0" /f | Out-Null
-} else {
-# skip
+  # unblock drs files
+  $path = "C:\ProgramData\NVIDIA Corporation\Drs"
+  Get-ChildItem -Path $path -Recurse | Unblock-File
+  # download inspector
+  Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/main/Inspector.exe" -File "$env:TEMP\Inspector.exe"
+  # enable nvidia legacy sharpen
+  reg add "HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\FTS" /v "EnableGR535" /t REG_DWORD /d "0" /f | Out-Null
+  reg add "HKLM\SYSTEM\ControlSet001\Services\nvlddmkm\Parameters\FTS" /v "EnableGR535" /t REG_DWORD /d "0" /f | Out-Null
+  reg add "HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\Parameters\FTS" /v "EnableGR535" /t REG_DWORD /d "0" /f | Out-Null
+}
+else {
+  # skip
 }
 Clear-Host
 
-    Write-Host "1. Resizable BAR Force: On"
-    Write-Host "2. Resizable BAR Force: Off"
-    while ($true) {
-    $choice = Read-Host " "
-    if ($choice -match '^[1-2]$') {
+Write-Host "1. Resizable BAR Force: On"
+Write-Host "2. Resizable BAR Force: Off"
+while ($true) {
+  $choice = Read-Host " "
+  if ($choice -match '^[1-2]$') {
     switch ($choice) {
-    1 {
+      1 {
 
-Clear-Host
-Write-Host "Resizable BAR: On . . ."
-# create config for inspector
-$MultilineComment = @"
+        Clear-Host
+        Write-Host "Resizable BAR: On . . ."
+        # create config for inspector
+        $MultilineComment = @"
 <?xml version="1.0" encoding="utf-16"?>
 <ArrayOfProfile>
   <Profile>
@@ -284,31 +286,31 @@ $MultilineComment = @"
   </Profile>
 </ArrayOfProfile>
 "@
-Set-Content -Path "$env:TEMP\ReBarOn.nip" -Value $MultilineComment -Force
-# import config
-Start-Process -wait "$env:TEMP\Inspector.exe" -ArgumentList "$env:TEMP\ReBarOn.nip"
-Clear-Host
-Write-Host "Check Resizable BAR Is On: In Inspector . . ." -ForegroundColor Red
-Write-Host ""
-Write-Host "Also Check Game Profile (Some Games Force On/Off In Individual Game Profile)" -ForegroundColor Red
-# open inspector
-Start-Process -wait "$env:TEMP\Inspector.exe"
-Clear-Host
-Write-Host "Enable: Resizable BAR & Above 4G Decoding in BIOS" -ForegroundColor Red
-Write-Host ""
-Write-Host "Restarting To BIOS: Press any key to restart . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-# restart to bios
-cmd /c C:\Windows\System32\shutdown.exe /r /fw
-exit
+        Set-Content -Path "$env:TEMP\ReBarOn.nip" -Value $MultilineComment -Force
+        # import config
+        Start-Process -wait "$env:TEMP\Inspector.exe" -ArgumentList "$env:TEMP\ReBarOn.nip"
+        Clear-Host
+        Write-Host "Check Resizable BAR Is On: In Inspector . . ." -ForegroundColor Red
+        Write-Host ""
+        Write-Host "Also Check Game Profile (Some Games Force On/Off In Individual Game Profile)" -ForegroundColor Red
+        # open inspector
+        Start-Process -wait "$env:TEMP\Inspector.exe"
+        Clear-Host
+        Write-Host "Enable: Resizable BAR & Above 4G Decoding in BIOS" -ForegroundColor Red
+        Write-Host ""
+        Write-Host "Restarting To BIOS: Press any key to restart . . ."
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        # restart to bios
+        cmd /c C:\Windows\System32\shutdown.exe /r /fw
+        exit
 
       }
-    2 {
+      2 {
 
-Clear-Host
-Write-Host "Resizable BAR: Off . . ."
-# create config for inspector
-$MultilineComment = @"
+        Clear-Host
+        Write-Host "Resizable BAR: Off . . ."
+        # create config for inspector
+        $MultilineComment = @"
 <?xml version="1.0" encoding="utf-16"?>
 <ArrayOfProfile>
   <Profile>
@@ -523,23 +525,26 @@ $MultilineComment = @"
   </Profile>
 </ArrayOfProfile>
 "@
-Set-Content -Path "$env:TEMP\ReBarOff.nip" -Value $MultilineComment -Force
-# import config
-Start-Process -wait "$env:TEMP\Inspector.exe" -ArgumentList "$env:TEMP\ReBarOff.nip"
-Clear-Host
-Write-Host "Check Resizable BAR Is Off: In Inspector . . ." -ForegroundColor Red
-Write-Host ""
-Write-Host "Also Check Game Profile (Some Games Force On/Off In Individual Game Profile)" -ForegroundColor Red
-# open inspector
-Start-Process -wait "$env:TEMP\Inspector.exe"
-Clear-Host
-Write-Host "Disable: Resizable BAR & Above 4G Decoding in BIOS" -ForegroundColor Red
-Write-Host ""
-Write-Host "Restarting To BIOS: Press any key to restart . . ."
-$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-# restart to bios
-cmd /c C:\Windows\System32\shutdown.exe /r /fw
-exit
+        Set-Content -Path "$env:TEMP\ReBarOff.nip" -Value $MultilineComment -Force
+        # import config
+        Start-Process -wait "$env:TEMP\Inspector.exe" -ArgumentList "$env:TEMP\ReBarOff.nip"
+        Clear-Host
+        Write-Host "Check Resizable BAR Is Off: In Inspector . . ." -ForegroundColor Red
+        Write-Host ""
+        Write-Host "Also Check Game Profile (Some Games Force On/Off In Individual Game Profile)" -ForegroundColor Red
+        # open inspector
+        Start-Process -wait "$env:TEMP\Inspector.exe"
+        Clear-Host
+        Write-Host "Disable: Resizable BAR & Above 4G Decoding in BIOS" -ForegroundColor Red
+        Write-Host ""
+        Write-Host "Restarting To BIOS: Press any key to restart . . ."
+        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+        # restart to bios
+        cmd /c C:\Windows\System32\shutdown.exe /r /fw
+        exit
 
       }
-    } } else { Write-Host "Invalid input. Please select a valid option (1-2)." } }
+    } 
+  }
+  else { Write-Host "Invalid input. Please select a valid option (1-2)." } 
+}

@@ -18,14 +18,16 @@ try {
     # Install PowerShell modules
     if (Get-Module -ListAvailable -Name Terminal-Icons) {
         Write-Host "Terminal-Icons already installed" -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "Installing Terminal-Icons..." -ForegroundColor Yellow
         Install-Module -Name Terminal-Icons -Force
     }
 
     if (Get-Module -ListAvailable -Name posh-git) {
         Write-Host "posh-git already installed" -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "Installing posh-git..." -ForegroundColor Yellow
         Install-Module -Name posh-git -Force
     }
@@ -44,7 +46,8 @@ try {
             Write-Host "Failed to install Oh-My-Posh via winget. You may need to install it manually." -ForegroundColor Red
             Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
         }
-    } else {
+    }
+    else {
         Write-Host "Oh-My-Posh already installed" -ForegroundColor Green
     }
 
@@ -595,7 +598,7 @@ catch {
 
     Write-Host "Profile installed successfully!" -ForegroundColor Green
     Write-Host "Profile location: $PROFILE" -ForegroundColor Cyan
- Write-Host "press any key to exit" -ForegroundColor Cyan
+    Write-Host "press any key to exit" -ForegroundColor Cyan
 
     # Pause until user interaction
     $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
