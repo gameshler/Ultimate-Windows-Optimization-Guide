@@ -541,6 +541,7 @@ function gd { git diff $args }
 function dev { Set-Location ~\Development }
 function proj { Set-Location ~\projects }
 function docs { Set-Location ~\Documents }
+function rmrf { Remove-Item $args -Recurse -Force}
 
 # Node.js/PNPM
 function pni { pnpm install $args }
