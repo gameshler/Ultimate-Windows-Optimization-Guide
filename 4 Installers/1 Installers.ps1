@@ -67,6 +67,7 @@ function show-menu {
     Write-Host "12. Microsoft Office 2024 LSTC Edition"  -ForegroundColor Cyan
     Write-Host "13. Web Browsers" -ForegroundColor Cyan
     Write-Host "14. Game Platforms" -ForegroundColor Cyan
+    Write-Host "15. Activation Windows / Office" -ForegroundColor Cyan
 }
 function show-browser-menu {
     Clear-Host
@@ -559,6 +560,10 @@ while ($true) {
             }
             14 {
                 show-game-platforms-menu
+                show-menu
+            }
+            15 {
+                Invoke-RestMethod https://get.activated.win | Invoke-Expression
                 show-menu
             }
         }
