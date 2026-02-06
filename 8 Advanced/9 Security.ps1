@@ -1,14 +1,13 @@
-If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-    Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-    Exit
-}
-$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
-$Host.UI.RawUI.BackgroundColor = "Black"
-$Host.PrivateData.ProgressBackgroundColor = "Black"
-$Host.PrivateData.ProgressForegroundColor = "White"
-Clear-Host
+    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator"))
+    {Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
+    Exit}
+    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
+    $Host.UI.RawUI.BackgroundColor = "Black"
+	$Host.PrivateData.ProgressBackgroundColor = "Black"
+    $Host.PrivateData.ProgressForegroundColor = "White"
+    Clear-Host
 
-function RunAsTI($cmd, $arg) {
+    function RunAsTI($cmd, $arg) {
     $id = 'RunAsTI'; $key = "Registry::HKU\$(((whoami /user)-split' ')[-1])\Volatile Environment"; $code = @'
     $I=[int32]; $M=$I.module.gettype("System.Runtime.Interop`Services.Mar`shal"); $P=$I.module.gettype("System.Int`Ptr"); $S=[string]
     $D=@(); $T=@(); $DM=[AppDomain]::CurrentDomain."DefineDynami`cAssembly"(1,1)."DefineDynami`cModule"(1); $Z=[uintptr]::size
@@ -38,50 +37,50 @@ function RunAsTI($cmd, $arg) {
     if ($11bug) {[Windows.Forms.SendKeys]::SendWait($path)}; do {sleep 7} while(Q); L '.Default' $LNK 'Interactive User'
 '@; $V = ''; 'cmd', 'arg', 'id', 'key' | ForEach-Object { $V += "`n`$$_='$($(Get-Variable $_ -val)-replace"'","''")';" }; Set-ItemProperty $key $id $($V, $code) -type 7 -force -ea 0
     Start-Process powershell -args "-win 1 -nop -c `n$V `$env:R=(gi `$key -ea 0).getvalue(`$id)-join''; iex `$env:R" -verb runas -Wait
-}
+    }
 
-Write-Host "1. Security: Off"
-Write-Host "2. Security: On"
-while ($true) {
+    Write-Host "1. Security: Off"
+    Write-Host "2. Security: On"
+    while ($true) {
     $choice = Read-Host " "
     if ($choice -match '^[1-2]$') {
-        switch ($choice) {
-            1 {
-                Clear-Host
-                Write-Host "1. Step: One"
-                Write-Host "2. Step: Two (Im In Safe Mode)"
-                while ($true) {
-                    $choice = Read-Host " "
-                    if ($choice -match '^[1-2]$') {
-                        switch ($choice) {
-                            1 {
+    switch ($choice) {
+    1 {
+    Clear-Host
+    Write-Host "1. Step: One"
+    Write-Host "2. Step: Two (Im In Safe Mode)"
+    while ($true) {
+    $choice = Read-Host " "
+    if ($choice -match '^[1-2]$') {
+    switch ($choice) {
+    1 {
 
-                                Clear-Host
-                                Write-Host "This script intentionally disables all Windows Security:" -ForegroundColor Red
-                                Write-Host "-Defender Windows Security Settings" -ForegroundColor Red
-                                Write-Host "-Smartscreen" -ForegroundColor Red
-                                Write-Host "-Defender Services" -ForegroundColor Red
-                                Write-Host "-Defender Drivers" -ForegroundColor Red
-                                Write-Host "-Windows Defender Firewall" -ForegroundColor Red
-                                Write-Host "-User Account Control" -ForegroundColor Red
-                                Write-Host "-Spectre Meltdown" -ForegroundColor Red
-                                Write-Host "-Data Execution Prevention" -ForegroundColor Red
-                                Write-Host "-Powershell Script Execution" -ForegroundColor Red
-                                Write-Host "-Open File Security Warning" -ForegroundColor Red
-                                Write-Host "-Windows Defender Default Definitions" -ForegroundColor Red
-                                Write-Host "-Windows Defender Applicationguard" -ForegroundColor Red
-                                Write-Host ""
-                                Write-Host "This will leave the PC completely vulnerable." -ForegroundColor Red
-                                Write-Host "If uncomfortable, please close this window!" -ForegroundColor Red
-                                Write-Host ""
-                                Pause
-                                Clear-Host
-                                Write-Host "Step: One. Please wait . . ."
-                                # disable exploit protection, leaving control flow guard cfg on for vanguard anticheat
-                                cmd /c "reg add `"HKLM\SYSTEM\ControlSet001\Control\Session Manager\kernel`" /v `"MitigationOptions`" /t REG_BINARY /d `"222222000001000000000000000000000000000000000000`" /f >nul 2>&1"
-                                Timeout /T 2 | Out-Null
-                                # create reg file
-                                $MultilineComment = @"
+Clear-Host
+Write-Host "This script intentionally disables all Windows Security:" -ForegroundColor Red
+Write-Host "-Defender Windows Security Settings" -ForegroundColor Red
+Write-Host "-Smartscreen" -ForegroundColor Red
+Write-Host "-Defender Services" -ForegroundColor Red
+Write-Host "-Defender Drivers" -ForegroundColor Red
+Write-Host "-Windows Defender Firewall" -ForegroundColor Red
+Write-Host "-User Account Control" -ForegroundColor Red
+Write-Host "-Spectre Meltdown" -ForegroundColor Red
+Write-Host "-Data Execution Prevention" -ForegroundColor Red
+Write-Host "-Powershell Script Execution" -ForegroundColor Red
+Write-Host "-Open File Security Warning" -ForegroundColor Red
+Write-Host "-Windows Defender Default Definitions" -ForegroundColor Red
+Write-Host "-Windows Defender Applicationguard" -ForegroundColor Red
+Write-Host ""
+Write-Host "This will leave the PC completely vulnerable." -ForegroundColor Red
+Write-Host "If uncomfortable, please close this window!" -ForegroundColor Red
+Write-Host ""
+Pause
+Clear-Host
+Write-Host "Step: One. Please wait . . ."
+# disable exploit protection, leaving control flow guard cfg on for vanguard anticheat
+cmd /c "reg add `"HKLM\SYSTEM\ControlSet001\Control\Session Manager\kernel`" /v `"MitigationOptions`" /t REG_BINARY /d `"222222000001000000000000000000000000000000000000`" /f >nul 2>&1"
+Timeout /T 2 | Out-Null
+# create reg file
+$MultilineComment = @"
 Windows Registry Editor Version 5.00
 
 ; DISABLE WINDOWS SECURITY SETTINGS
@@ -105,7 +104,7 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Features]
 "TamperProtection"=dword:00000004
 
-; controlled folder access
+; controlled folder access 
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\Controlled Folder Access]
 "EnableControlledFolderAccess"=dword:00000000
 
@@ -180,8 +179,8 @@ Windows Registry Editor Version 5.00
 "MitigationOptions"=hex:22,22,22,00,00,01,00,00,00,00,00,00,00,00,00,00,\
 00,00,00,00,00,00,00,00
 
-; core isolation
-; memory integrity
+; core isolation 
+; memory integrity 
 [HKEY_LOCAL_MACHINE\System\ControlSet001\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity]
 "ChangedInBootCycle"=-
 "Enabled"=dword:00000000
@@ -493,99 +492,96 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell]
 "ExecutionPolicy"="Unrestricted"
 "@
-                                Set-Content -Path "$env:TEMP\SecurityOff.reg" -Value $MultilineComment -Force
-                                # disable scheduled tasks
-                                schtasks /Change /TN "Microsoft\Windows\ExploitGuard\ExploitGuard MDM policy Refresh" /Disable | Out-Null
-                                schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance" /Disable | Out-Null
-                                schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cleanup" /Disable | Out-Null
-                                schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan" /Disable | Out-Null
-                                schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Verification" /Disable | Out-Null
-                                Clear-Host
-                                Write-Host "Restarting To Safe Mode: Press any key to restart . . ."
-                                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-                                # toggle safe boot
-                                cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"
-                                # restart
-                                shutdown -r -t 00
-                                exit
+Set-Content -Path "$env:TEMP\SecurityOff.reg" -Value $MultilineComment -Force
+# disable scheduled tasks
+schtasks /Change /TN "Microsoft\Windows\ExploitGuard\ExploitGuard MDM policy Refresh" /Disable | Out-Null
+schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance" /Disable | Out-Null
+schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cleanup" /Disable | Out-Null
+schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan" /Disable | Out-Null
+schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Verification" /Disable | Out-Null
+Clear-Host
+Write-Host "Restarting To Safe Mode: Press any key to restart . . ."
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+# toggle safe boot
+cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"
+# restart
+shutdown -r -t 00
+exit
 
-                            }
-                            2 {
+    }
+    2 {
 
-                                Clear-Host
-                                Write-Host "This script intentionally disables all Windows Security:" -ForegroundColor Red
-                                Write-Host "-Defender Windows Security Settings" -ForegroundColor Red
-                                Write-Host "-Smartscreen" -ForegroundColor Red
-                                Write-Host "-Defender Services" -ForegroundColor Red
-                                Write-Host "-Defender Drivers" -ForegroundColor Red
-                                Write-Host "-Windows Defender Firewall" -ForegroundColor Red
-                                Write-Host "-User Account Control" -ForegroundColor Red
-                                Write-Host "-Spectre Meltdown" -ForegroundColor Red
-                                Write-Host "-Data Execution Prevention" -ForegroundColor Red
-                                Write-Host "-Powershell Script Execution" -ForegroundColor Red
-                                Write-Host "-Open File Security Warning" -ForegroundColor Red
-                                Write-Host "-Windows Defender Default Definitions" -ForegroundColor Red
-                                Write-Host "-Windows Defender Applicationguard" -ForegroundColor Red
-                                Write-Host ""
-                                Write-Host "This will leave the PC completely vulnerable." -ForegroundColor Red
-                                Write-Host "If uncomfortable, please close this window!" -ForegroundColor Red
-                                Write-Host ""
-                                Pause
-                                Clear-Host
-                                Write-Host "Step: Two. Please wait . . ."
-                                # import reg file
-                                Regedit.exe /S "$env:TEMP\SecurityOff.reg"
-                                Timeout /T 5 | Out-Null
-                                # import reg file RunAsTI
-                                $SecurityOff = @'
+Clear-Host
+Write-Host "This script intentionally disables all Windows Security:" -ForegroundColor Red
+Write-Host "-Defender Windows Security Settings" -ForegroundColor Red
+Write-Host "-Smartscreen" -ForegroundColor Red
+Write-Host "-Defender Services" -ForegroundColor Red
+Write-Host "-Defender Drivers" -ForegroundColor Red
+Write-Host "-Windows Defender Firewall" -ForegroundColor Red
+Write-Host "-User Account Control" -ForegroundColor Red
+Write-Host "-Spectre Meltdown" -ForegroundColor Red
+Write-Host "-Data Execution Prevention" -ForegroundColor Red
+Write-Host "-Powershell Script Execution" -ForegroundColor Red
+Write-Host "-Open File Security Warning" -ForegroundColor Red
+Write-Host "-Windows Defender Default Definitions" -ForegroundColor Red
+Write-Host "-Windows Defender Applicationguard" -ForegroundColor Red
+Write-Host ""
+Write-Host "This will leave the PC completely vulnerable." -ForegroundColor Red
+Write-Host "If uncomfortable, please close this window!" -ForegroundColor Red
+Write-Host ""
+Pause
+Clear-Host
+Write-Host "Step: Two. Please wait . . ."
+# import reg file
+Regedit.exe /S "$env:TEMP\SecurityOff.reg"
+Timeout /T 5 | Out-Null
+# import reg file RunAsTI
+$SecurityOff = @'
 Regedit.exe /S "$env:TEMP\SecurityOff.reg"
 '@
-                                RunAsTI powershell "-nologo -windowstyle hidden -command $SecurityOff"
-                                Timeout /T 5 | Out-Null
-                                # stop smartscreen running
-                                Stop-Process -Force -Name smartscreen -ErrorAction SilentlyContinue | Out-Null
-                                # move smartscreen
-                                $SmartScreen = @'
+RunAsTI powershell "-nologo -windowstyle hidden -command $SecurityOff"
+Timeout /T 5 | Out-Null
+# stop smartscreen running
+Stop-Process -Force -Name smartscreen -ErrorAction SilentlyContinue | Out-Null
+# move smartscreen
+$SmartScreen = @'
 cmd.exe /c move /y "C:\Windows\System32\smartscreen.exe" "C:\Windows\smartscreen.exe"
 '@
-                                RunAsTI powershell "-nologo -windowstyle hidden -command $SmartScreen"
-                                Timeout /T 5 | Out-Null
-                                # disable windows-defender-default-definitions
-                                Dism /Online /NoRestart /Disable-Feature /FeatureName:Windows-Defender-Default-Definitions | Out-Null
-                                # disable windows-defender-applicationguard
-                                Dism /Online /NoRestart /Disable-Feature /FeatureName:Windows-Defender-ApplicationGuard | Out-Null
-                                # disable data execution prevention
-                                cmd /c "bcdedit /set nx AlwaysOff >nul 2>&1"
-                                Clear-Host
-                                Write-Host "Press any key to restart . . ."
-                                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-                                # toggle normal boot
-                                cmd /c "bcdedit /deletevalue safeboot >nul 2>&1"
-                                # restart
-                                shutdown -r -t 00
-                                exit
+RunAsTI powershell "-nologo -windowstyle hidden -command $SmartScreen"
+Timeout /T 5 | Out-Null
+# disable windows-defender-default-definitions
+Dism /Online /NoRestart /Disable-Feature /FeatureName:Windows-Defender-Default-Definitions | Out-Null
+# disable windows-defender-applicationguard
+Dism /Online /NoRestart /Disable-Feature /FeatureName:Windows-Defender-ApplicationGuard | Out-Null
+# disable data execution prevention
+cmd /c "bcdedit /set nx AlwaysOff >nul 2>&1"
+Clear-Host
+Write-Host "Press any key to restart . . ."
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+# toggle normal boot
+cmd /c "bcdedit /deletevalue safeboot >nul 2>&1"
+# restart
+shutdown -r -t 00
+exit
 
-                            }
-                        } 
-                    }
-                    else { Write-Host "Invalid input. Please select a valid option (1-2)." } 
-                }
-                exit
-            }
-            2 {
-                Clear-Host
-                Write-Host "1. Step: One"
-                Write-Host "2. Step: Two (Im In Safe Mode)"
-                while ($true) {
-                    $choice = Read-Host " "
-                    if ($choice -match '^[1-2]$') {
-                        switch ($choice) {
-                            1 {
+    }
+    } } else { Write-Host "Invalid input. Please select a valid option (1-2)." } }
+    exit
+    }
+    2 {
+    Clear-Host
+    Write-Host "1. Step: One"
+    Write-Host "2. Step: Two (Im In Safe Mode)"
+    while ($true) {
+    $choice = Read-Host " "
+    if ($choice -match '^[1-2]$') {
+    switch ($choice) {
+    1 {
 
-                                Clear-Host
-                                Write-Host "Step: One. Please wait . . ."
-                                # create reg file
-                                $MultilineComment = @"
+Clear-Host
+Write-Host "Step: One. Please wait . . ."
+# create reg file
+$MultilineComment = @"
 Windows Registry Editor Version 5.00
 
 ; ENABLE WINDOWS SECURITY SETTINGS
@@ -609,7 +605,7 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Features]
 "TamperProtection"=dword:00000005
 
-; controlled folder access
+; controlled folder access 
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender\Windows Defender Exploit Guard\Controlled Folder Access]
 "EnableControlledFolderAccess"=dword:00000001
 
@@ -684,8 +680,8 @@ Windows Registry Editor Version 5.00
 "MitigationOptions"=hex(3):11,11,11,00,00,01,00,00,00,00,00,00,00,00,00,00,\
 00,00,00,00,00,00,00,00
 
-; core isolation
-; memory integrity
+; core isolation 
+; memory integrity 
 [HKEY_LOCAL_MACHINE\System\ControlSet001\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity]
 "ChangedInBootCycle"=-
 "Enabled"=dword:00000001
@@ -998,65 +994,59 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell]
 "ExecutionPolicy"="Restricted"
 "@
-                                Set-Content -Path "$env:TEMP\SecurityOn.reg" -Value $MultilineComment -Force
-                                # enable scheduled tasks
-                                schtasks /Change /TN "Microsoft\Windows\ExploitGuard\ExploitGuard MDM policy Refresh" /Enable | Out-Null
-                                schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance" /Enable | Out-Null
-                                schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cleanup" /Enable | Out-Null
-                                schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan" /Enable | Out-Null
-                                schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Verification" /Enable | Out-Null
-                                Clear-Host
-                                Write-Host "Restarting To Safe Mode: Press any key to restart . . ."
-                                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-                                # toggle safe boot
-                                cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"
-                                # restart
-                                shutdown -r -t 00
-                                exit
+Set-Content -Path "$env:TEMP\SecurityOn.reg" -Value $MultilineComment -Force
+# enable scheduled tasks
+schtasks /Change /TN "Microsoft\Windows\ExploitGuard\ExploitGuard MDM policy Refresh" /Enable | Out-Null
+schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance" /Enable | Out-Null
+schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cleanup" /Enable | Out-Null
+schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan" /Enable | Out-Null
+schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Verification" /Enable | Out-Null
+Clear-Host
+Write-Host "Restarting To Safe Mode: Press any key to restart . . ."
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+# toggle safe boot
+cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"
+# restart
+shutdown -r -t 00
+exit
 
-                            }
-                            2 {
+    }
+    2 {
 
-                                Clear-Host
-                                Write-Host "Step: Two. Please wait . . ."
-                                # import reg file
-                                Regedit.exe /S "$env:TEMP\SecurityOn.reg"
-                                Timeout /T 5 | Out-Null
-                                # import reg file RunAsTI
-                                $SecurityOn = @'
+Clear-Host
+Write-Host "Step: Two. Please wait . . ."
+# import reg file
+Regedit.exe /S "$env:TEMP\SecurityOn.reg"
+Timeout /T 5 | Out-Null
+# import reg file RunAsTI
+$SecurityOn = @'
 Regedit.exe /S "$env:TEMP\SecurityOn.reg"
 '@
-                                RunAsTI powershell "-nologo -windowstyle hidden -command $SecurityOn"
-                                Timeout /T 5 | Out-Null
-                                # move smartscreen
-                                $SmartScreen = @'
+RunAsTI powershell "-nologo -windowstyle hidden -command $SecurityOn"
+Timeout /T 5 | Out-Null
+# move smartscreen
+$SmartScreen = @'
 cmd.exe /c move /y "C:\Windows\smartscreen.exe" "C:\Windows\System32\smartscreen.exe"
 '@
-                                RunAsTI powershell "-nologo -windowstyle hidden -command $SmartScreen"
-                                Timeout /T 5 | Out-Null
-                                # enable windows-defender-default-definitions (can't turn back on)
-                                # Dism /Online /NoRestart /Enable-Feature /FeatureName:Windows-Defender-Default-Definitions | Out-Null
-                                # enable windows-defender-applicationguard
-                                # Dism /Online /NoRestart /Enable-Feature /FeatureName:Windows-Defender-ApplicationGuard | Out-Null
-                                # enable data execution prevention
-                                cmd /c "bcdedit /deletevalue nx >nul 2>&1"
-                                Clear-Host
-                                Write-Host "Press any key to restart . . ."
-                                $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-                                # toggle normal boot
-                                cmd /c "bcdedit /deletevalue safeboot >nul 2>&1"
-                                # restart
-                                shutdown -r -t 00
-                                exit
+RunAsTI powershell "-nologo -windowstyle hidden -command $SmartScreen"
+Timeout /T 5 | Out-Null
+# enable windows-defender-default-definitions (can't turn back on)
+# Dism /Online /NoRestart /Enable-Feature /FeatureName:Windows-Defender-Default-Definitions | Out-Null
+# enable windows-defender-applicationguard
+# Dism /Online /NoRestart /Enable-Feature /FeatureName:Windows-Defender-ApplicationGuard | Out-Null
+# enable data execution prevention
+cmd /c "bcdedit /deletevalue nx >nul 2>&1"
+Clear-Host
+Write-Host "Press any key to restart . . ."
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+# toggle normal boot
+cmd /c "bcdedit /deletevalue safeboot >nul 2>&1"
+# restart
+shutdown -r -t 00
+exit
 
-                            }
-                        } 
-                    }
-                    else { Write-Host "Invalid input. Please select a valid option (1-2)." } 
-                }
-                exit
-            }
-        } 
     }
-    else { Write-Host "Invalid input. Please select a valid option (1-2)." } 
-}
+    } } else { Write-Host "Invalid input. Please select a valid option (1-2)." } }
+    exit
+    }
+    } } else { Write-Host "Invalid input. Please select a valid option (1-2)." } }
