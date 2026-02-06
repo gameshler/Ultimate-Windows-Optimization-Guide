@@ -127,7 +127,7 @@ function show-browser-menu {
                     # download firefox
                     Get-FileFromWeb -URL "https://download.mozilla.org/?product=firefox-latest-ssl&os=win&lang=en-US" -File "$env:TEMP\Firefox Installer.exe"
                     # install firefox
-                    Start-Process -wait "$env:TEMP\Firefox Installer.exe" -ArgumentList "/S"
+                    Start-Process -wait "$env:TEMP\Firefox Installer.exe" -ArgumentList "/S" -Wait -NoNewWindow
                     $firefoxPaths = @(
                         "C:\Program Files\Mozilla Firefox\firefox.exe",
                         "C:\Program Files (x86)\Mozilla Firefox\firefox.exe"
@@ -137,6 +137,8 @@ function show-browser-menu {
                     if ($firefoxPath) {
                         Start-Process -FilePath $firefoxPath -ArgumentList $firefoxExtensions
                     }
+                    Start-Process -FilePath "C:\Program Files (x86)\Mozilla Maintenance Service\uninstall.exe" -ArgumentList "/S" -WindowStyle Hidden -Wait
+                    
                     return
                 }
                 4 {
