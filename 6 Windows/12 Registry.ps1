@@ -1,25 +1,24 @@
-If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator")) {
-  Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-  Exit
-}
-$Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
-$Host.UI.RawUI.BackgroundColor = "Black"
-$Host.PrivateData.ProgressBackgroundColor = "Black"
-$Host.PrivateData.ProgressForegroundColor = "White"
-Clear-Host
+    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator"))
+    {Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
+    Exit}
+    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
+    $Host.UI.RawUI.BackgroundColor = "Black"
+	$Host.PrivateData.ProgressBackgroundColor = "Black"
+    $Host.PrivateData.ProgressForegroundColor = "White"
+    Clear-Host
 
-Write-Host "1. Registry: Optimize (Recommended)"
-Write-Host "2. Registry: Default"
-while ($true) {
-  $choice = Read-Host " "
-  if ($choice -match '^[1-2]$') {
+    Write-Host "1. Registry: Optimize (Recommended)"
+    Write-Host "2. Registry: Default"
+    while ($true) {
+    $choice = Read-Host " "
+    if ($choice -match '^[1-2]$') {
     switch ($choice) {
-      1 {
+    1 {
 
-        Clear-Host
-        Write-Host "Registry: Optimize . . ."
-        # create reg file
-        $MultilineComment = @"
+Clear-Host
+Write-Host "Registry: Optimize . . ."
+# create reg file
+$MultilineComment = @"
 Windows Registry Editor Version 5.00
 
 ; --LEGACY CONTROL PANEL--
@@ -588,6 +587,10 @@ Windows Registry Editor Version 5.00
 [HKEY_CURRENT_USER\Software\Microsoft\GameBar]
 "UseNexusForGameBarEnabled"=dword:00000000
 
+; disable use view + menu as guide button in apps
+[HKEY_CURRENT_USER\Software\Microsoft\GameBar]
+"GamepadNexusChordEnabled"=dword:00000000
+
 ; enable game mode
 [HKEY_CURRENT_USER\Software\Microsoft\GameBar]
 "AutoGameModeEnabled"=dword:00000001
@@ -650,6 +653,19 @@ Windows Registry Editor Version 5.00
 [HKEY_CURRENT_USER\Software\Microsoft\input\Settings]
 "InsightsEnabled"=dword:00000000
 
+; disable language bar
+[HKEY_CURRENT_USER\SOFTWARE\Microsoft\CTF\LangBar]
+"ExtraIconsOnMinimized"=dword:00000000
+"Label"=dword:00000000
+"ShowStatus"=dword:00000003
+"Transparency"=dword:000000ff
+
+; disable language hotkey
+[HKEY_CURRENT_USER\Keyboard Layout\Toggle]
+"Language Hotkey"="3"
+"Hotkey"="3"
+"Layout Hotkey"="3"
+
 
 
 
@@ -657,6 +673,10 @@ Windows Registry Editor Version 5.00
 ; disable use my sign in info after restart
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System]
 "DisableAutomaticRestartSignOn"=dword:00000001
+
+; disable dynamic lock
+[HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\Winlogon]
+"EnableGoodbye"=dword:00000000
 
 
 
@@ -666,7 +686,7 @@ Windows Registry Editor Version 5.00
 [HKEY_LOCAL_MACHINE\SYSTEM\Maps]
 "AutoUpdateEnabled"=dword:00000000
 
-; disable archive apps 
+; disable archive apps
 [HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Appx]
 "AllowAutomaticAppArchiving"=dword:00000000
 
@@ -984,25 +1004,6 @@ E0,F6,C5,D5,0E,CA,50,00,00
 
 
 
-; CHROME
-[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Google\Chrome]
-"StartupBoostEnabled"=dword:00000000
-"HardwareAccelerationModeEnabled"=dword:00000000
-"BackgroundModeEnabled"=dword:00000000
-"HighEfficiencyModeEnabled"=dword:00000001
-
-[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\GoogleChromeElevationService]
-"Start"=dword:00000004
-
-[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\gupdate]
-"Start"=dword:00000004
-
-[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\gupdatem]
-"Start"=dword:00000004
-
-
-
-
 ; NVIDIA
 ; disable nvidia tray icon
 [HKEY_CURRENT_USER\Software\NVIDIA Corporation\NvTray]
@@ -1063,9 +1064,9 @@ E0,F6,C5,D5,0E,CA,50,00,00
 
 
 ; POWER
-; unpark cpu cores 
+; unpark cpu cores
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Power\PowerSettings\54533251-82be-4824-96c1-47b60b740d00\0cc5b647-c1df-4637-891a-dec35c318583]
-"ValueMax"=dword:00000000
+"ValueMax"=dword:00000064
 
 ; disable power throttling
 [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling]
@@ -1166,27 +1167,100 @@ E0,F6,C5,D5,0E,CA,50,00,00
 ; enable endtask menu taskbar w11
 [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings]
 "TaskbarEndTask"=dword:00000001
+
+; disable phone companion in start menu
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Start]
+"RightCompanionToggledOpen"=dword:00000000
+
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Start\Companions\Microsoft.YourPhone_8wekyb3d8bbwe]
+"IsEnabled"=dword:00000000
+"IsAvailable"=dword:00000000
+
+; set start menu apps view to list
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Start]
+"AllAppsViewMode"=dword:00000002
+
+; more info on bsod
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\CrashControl]
+"DisplayParameters"=dword:00000001
+
+; enable long paths
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem]
+"LongPathsEnabled"=dword:00000001
+
+; disable windows platform binary table
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager]
+"DisableWpbtExecution"=dword:00000001
+
+; no web services in explorer
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer]
+"NoWebServices"=dword:00000001
+
+; disable windows ai
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
+"ShowCopilotButton"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsCopilot]
+"TurnOffWindowsCopilot"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsAI]
+"DisableAIDataAnalysis"=dword:00000001
+"AllowRecallEnablement"=dword:00000000
+"DisableClickToDo"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\Shell\Copilot\BingChat]
+"IsUserEligible"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Paint]
+"DisableGenerativeFill"=dword:00000001
+"DisableCocreator"=dword:00000001
+"DisableImageCreator"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\WindowsNotepad]
+"DisableAIFeatures"=dword:00000001
+
+; disable cross device resume
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\CrossDeviceResume\Configuration]
+"IsResumeAllowed"=dword:00000000
+"IsOneDriveResumeAllowed"=dword:00000000
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\default\Connectivity\DisableCrossDeviceResume]
+"value"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\FeatureManagement\Overrides\8\1387020943]
+"EnabledState"=dword:00000001
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\FeatureManagement\Overrides\8\1694661260]
+"EnabledState"=dword:00000001
+
+; hide home in settings
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer]
+"SettingsPageVisibility"="hide:home;"
+
+; disable desktop preview
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
+"TaskbarSd"=dword:00000000
 "@
-        Set-Content -Path "$env:TEMP\Registry Optimize.reg" -Value $MultilineComment -Force
-        # edit reg file
-        $path = "$env:TEMP\Registry Optimize.reg"
-        (Get-Content $path) -replace "\?", "$" | Out-File $path
-        # disable optimize drives
-        schtasks /Change /DISABLE /TN "\Microsoft\Windows\Defrag\ScheduledDefrag" | Out-Null
-        # import reg file
-        Regedit.exe /S "$env:TEMP\Registry Optimize.reg"
-        Clear-Host
-        Write-Host "Restart to apply . . ."
-        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-        exit
+Set-Content -Path "$env:TEMP\Registry Optimize.reg" -Value $MultilineComment -Force
+# edit reg file
+$path = "$env:TEMP\Registry Optimize.reg"
+(Get-Content $path) -replace "\?","$" | Out-File $path
+# disable optimize drives
+schtasks /Change /DISABLE /TN "\Microsoft\Windows\Defrag\ScheduledDefrag" | Out-Null
+# import reg file
+Regedit.exe /S "$env:TEMP\Registry Optimize.reg"
+Clear-Host
+Write-Host "Restart to apply . . ."
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+exit
 
       }
-      2 {
+    2 {
 
-        Clear-Host
-        Write-Host "Registry: Default . . ."
-        # create reg file
-        $MultilineComment = @"
+Clear-Host
+Write-Host "Registry: Default . . ."
+# create reg file
+$MultilineComment = @"
 Windows Registry Editor Version 5.00
 
 ; --LEGACY CONTROL PANEL--
@@ -1737,6 +1811,10 @@ Windows Registry Editor Version 5.00
 [HKEY_CURRENT_USER\Software\Microsoft\GameBar]
 "UseNexusForGameBarEnabled"=-
 
+; enable use view + menu as guide button in apps
+[HKEY_CURRENT_USER\Software\Microsoft\GameBar]
+"GamepadNexusChordEnabled"=-
+
 ; game mode
 [HKEY_CURRENT_USER\Software\Microsoft\GameBar]
 "AutoGameModeEnabled"=-
@@ -1799,6 +1877,19 @@ Windows Registry Editor Version 5.00
 [HKEY_CURRENT_USER\Software\Microsoft\input\Settings]
 "InsightsEnabled"=-
 
+; language bar
+[HKEY_CURRENT_USER\SOFTWARE\Microsoft\CTF\LangBar]
+"ExtraIconsOnMinimized"=-
+"Label"=-
+"ShowStatus"=-
+"Transparency"=-
+
+; language hotkey
+[HKEY_CURRENT_USER\Keyboard Layout\Toggle]
+"Language Hotkey"=-
+"Hotkey"=-
+"Layout Hotkey"=-
+
 
 
 
@@ -1806,6 +1897,10 @@ Windows Registry Editor Version 5.00
 ; use my sign in info after restart
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System]
 "DisableAutomaticRestartSignOn"=-
+
+; dynamic lock
+[HKEY_CURRENT_USER\Software\Microsoft\Windows NT\CurrentVersion\Winlogon]
+"EnableGoodbye"=-
 
 
 
@@ -2187,7 +2282,7 @@ Windows Registry Editor Version 5.00
 ; POWER
 ; park cpu cores 
 [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Power\PowerSettings\54533251-82be-4824-96c1-47b60b740d00\0cc5b647-c1df-4637-891a-dec35c318583]
-"ValueMax"=dword:00000064
+"ValueMax"=dword:00000000
 
 ; power throttling
 [-HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling]
@@ -2278,22 +2373,95 @@ Windows Registry Editor Version 5.00
 ; disable endtask menu taskbar w11
 [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings]
 "TaskbarEndTask"=dword:00000000
+
+; phone companion in start menu
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Start]
+"RightCompanionToggledOpen"=-
+
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Start\Companions\Microsoft.YourPhone_8wekyb3d8bbwe]
+"IsEnabled"=-
+"IsAvailable"=-
+
+; set start menu apps view to category
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Start]
+"AllAppsViewMode"=dword:00000000
+
+; remove more info on bsod
+[HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\CrashControl]
+"DisplayParameters"=dword:00000000
+
+; long paths
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem]
+"LongPathsEnabled"=-
+
+; windows platform binary table
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager]
+"DisableWpbtExecution"=-
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Session Manager]
+"DisableWpbtExecution"=-
+
+; web services in explorer
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer]
+"NoWebServices"=-
+
+; windows ai
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
+"ShowCopilotButton"=-
+
+[HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Windows\WindowsCopilot]
+"TurnOffWindowsCopilot"=-
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsAI]
+"DisableAIDataAnalysis"=-
+"AllowRecallEnablement"=-
+"DisableClickToDo"=-
+
+[HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\Shell\Copilot\BingChat]
+"IsUserEligible"=-
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Paint]
+"DisableGenerativeFill"=-
+"DisableCocreator"=-
+"DisableImageCreator"=-
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\WindowsNotepad]
+"DisableAIFeatures"=-
+
+; cross device resume
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\CrossDeviceResume\Configuration]
+"IsResumeAllowed"=-
+"IsOneDriveResumeAllowed"=-
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\PolicyManager\default\Connectivity\DisableCrossDeviceResume]
+"value"-
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\FeatureManagement\Overrides\8\1387020943]
+"EnabledState"-
+
+[HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\FeatureManagement\Overrides\8\1694661260]
+"EnabledState"-
+
+; home in settings
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer]
+"SettingsPageVisibility"=-
+
+; desktop preview
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
+"TaskbarSd"=-
 "@
-        Set-Content -Path "$env:TEMP\Registry Defaults.reg" -Value $MultilineComment -Force
-        # edit reg file
-        $path = "$env:TEMP\Registry Defaults.reg"
-        (Get-Content $path) -replace "\?", "$" | Out-File $path
-        # enable optimize drives
-        schtasks /Change /ENABLE /TN "\Microsoft\Windows\Defrag\ScheduledDefrag" | Out-Null
-        # import reg file
-        Regedit.exe /S "$env:TEMP\Registry Defaults.reg"
-        Clear-Host
-        Write-Host "Restart to apply . . ."
-        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-        exit
+Set-Content -Path "$env:TEMP\Registry Defaults.reg" -Value $MultilineComment -Force
+# edit reg file
+$path = "$env:TEMP\Registry Defaults.reg"
+(Get-Content $path) -replace "\?","$" | Out-File $path
+# enable optimize drives
+schtasks /Change /ENABLE /TN "\Microsoft\Windows\Defrag\ScheduledDefrag" | Out-Null
+# import reg file
+Regedit.exe /S "$env:TEMP\Registry Defaults.reg"
+Clear-Host
+Write-Host "Restart to apply . . ."
+$null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+exit
 
       }
-    } 
-  }
-  else { Write-Host "Invalid input. Please select a valid option (1-2)." } 
-}
+    } } else { Write-Host "Invalid input. Please select a valid option (1-2)." } }
