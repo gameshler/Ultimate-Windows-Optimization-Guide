@@ -7,8 +7,8 @@
     $Host.PrivateData.ProgressForegroundColor = "White"
     Clear-Host
 
-    Write-Host "1. New Start Menu"
-    Write-Host "2. Old Start Menu"
+    Write-Host "1. Start Menu: New (25H2)"
+    Write-Host "2. Start Menu: Default"
     while ($true) {
     $choice = Read-Host " "
     if ($choice -match '^[1-2]$') {

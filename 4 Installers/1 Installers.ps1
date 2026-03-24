@@ -125,7 +125,7 @@ function show-browser-menu {
                     Clear-Host
                     Write-Host "Installing: Firefox . . ."
                     # download firefox
-                    Get-FileFromWeb -URL "https://download.mozilla.org/?product=firefox-latest-ssl&os=win&lang=en-US" -File "$env:TEMP\Firefox Installer.exe"
+                    Get-FileFromWeb -URL "https://download.mozilla.org/?product=firefox-latest-ssl&os=win&lang=en-GB" -File "$env:TEMP\Firefox Installer.exe"
                     # install firefox
                     Start-Process -wait "$env:TEMP\Firefox Installer.exe" -ArgumentList "/S" -Wait -NoNewWindow
                     $firefoxPaths = @(
@@ -145,7 +145,7 @@ function show-browser-menu {
                     Clear-Host
                     Write-Host "Installing: Thorium Browser . . ."
                     # download thorium browser
-                    Get-FileFromWeb -URL "https://github.com/Alex313031/Thorium-Win/releases/download/M138.0.7204.300/thorium_AVX2_mini_installer.exe" -File "$env:TEMP\Thorium Browser.exe"
+                    Get-FileFromWeb -URL "https://github.com/Alex313031/Thorium-Win/releases/download/M138.0.7204.303/thorium_AVX2_mini_installer.exe" -File "$env:TEMP\Thorium Browser.exe"
                     # install thorium browser
                     Start-Process -wait "$env:TEMP\Thorium Browser.exe" -ArgumentList "/S"
                     $thoriumPaths = @(
@@ -178,7 +178,7 @@ function show-browser-menu {
                     Clear-Host
                     Write-Host "Installing: LibreWolf . . ."
                     #download librewolf browser 
-                    Get-FileFromWeb -URL "https://codeberg.org/api/packages/librewolf/generic/librewolf/147.0-1/librewolf-147.0-1-windows-x86_64-setup.exe" -File "$env:TEMP\LibreWolf.exe"
+                    Get-FileFromWeb -URL "https://dl.librewolf.net/librewolf/148.0.2-3/librewolf-148.0.2-3-windows-x86_64-setup.exe" -File "$env:TEMP\LibreWolf.exe"
                     Start-Process -wait "$env:TEMP\LibreWolf.exe" -ArgumentList "/S"
                     $librePath = "C:\Program Files\LibreWolf\librewolf.exe" | Where-Object { Test-Path $_ } | Select-Object -First 1
                     if ($librePath) {
@@ -321,7 +321,7 @@ while ($true) {
                 Clear-Host
                 Write-Host "Installing: Discord . . ."
                 # download discord
-                Get-FileFromWeb -URL "https://dl.discordapp.net/distro/app/stable/win/x86/1.0.9036/DiscordSetup.exe" -File "$env:TEMP\Discord.exe"
+                Get-FileFromWeb -URL "https://stable.dl2.discordapp.net/distro/app/stable/win/x64/1.0.9229/DiscordSetup.exe" -File "$env:TEMP\Discord.exe"
                 # install discord
                 Start-Process -wait "$env:TEMP\Discord.exe" -ArgumentList "/s"
                 show-menu
