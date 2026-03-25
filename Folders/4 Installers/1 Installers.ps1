@@ -39,7 +39,8 @@ function show-browser-menu {
     Write-Host "0. Back" -ForegroundColor Red
 
     while ($true) {
-        $choice = Read-Host " "
+        $choice = Read-Host ">"
+
         $chromiumExtensions = @(
             "https://chromewebstore.google.com/detail/context-menu-search/ocpcmghnefmdhljkoiapafejjohldoga",
             "https://chromewebstore.google.com/detail/dark-reader/eimadpbcbfnmbkopoojfekhnkhdbieeh",
@@ -60,8 +61,8 @@ function show-browser-menu {
             "https://addons.mozilla.org/en-GB/firefox/addon/search_by_image/",
             "https://addons.mozilla.org/en-GB/firefox/addon/darkreader/"
         )
-        if ($choice -match '^(1[0-9]|2[0-4]|[1-9])$') {
-            switch ($choice) {
+        if ($choice -match '^\d+$') {
+            switch ([int]$choice) {
                 1 {
                     
                     Clear-Host
@@ -146,8 +147,13 @@ function show-browser-menu {
                     Clear-Host
                     return 
                 }
-
+                default {
+                    Write-Host "Invalid choice." -ForegroundColor Red
+                }
+                
             }
+        } else {
+                Write-Host "Invalid input. Please select a valid option (1-5)." -ForegroundColor Red
         }
     }
 }
@@ -163,9 +169,9 @@ function show-game-platforms-menu {
     Write-Host "0. Back" -ForegroundColor Red
 
     while ($true) {
-        $choice = Read-Host " "
-        if ($choice -match '^(1[0-9]|2[0-4]|[1-9])$') {
-            switch ($choice) {
+        $choice = Read-Host ">"
+        if ($choice -match '^\d+$') {
+            switch ([int]$choice) {
                 1 {
                     Clear-Host
                     Write-Host "Installing: Battle.net . . ."
@@ -250,15 +256,20 @@ function show-game-platforms-menu {
                     Clear-Host
                     return 
                 }
+                default {
+                    Write-Host "Invalid choice." -ForegroundColor Red
+                }
             }
+        } else {
+            Write-Host "Invalid input. Please select a valid option (1-7)." -ForegroundColor Red
         }
     }
 }
 show-menu
 while ($true) {
-    $choice = Read-Host " "
-    if ($choice -match '^(1[0-9]|2[0-4]|[1-9])$') {
-        switch ($choice) {
+    $choice = Read-Host ">"
+    if ($choice -match '^\d+$') {
+        switch ([int]$choice) {
             1 {
 
                 Clear-Host
@@ -527,7 +538,10 @@ while ($true) {
                 Clear-Host
                 exit
             }
+            default {
+                Write-Host "Invalid choice." -ForegroundColor Red
+            }
         }
     }
-    else { Write-Host "Invalid input. Please select a valid option (0-14)." }
+    else { Write-Host "Invalid input. Please select a valid option (1-14)." }
 }
