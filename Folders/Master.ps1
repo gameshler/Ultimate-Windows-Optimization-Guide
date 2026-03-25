@@ -13,7 +13,7 @@ $Host.PrivateData.ProgressBackgroundColor = "Black"
 $Host.PrivateData.ProgressForegroundColor = "White"
 
 # Define the root directory
-$rootDirectory = Join-Path $PSScriptRoot 'Folders'
+$rootDirectory = $PSScriptRoot 
 
 # Define the directories
 $directories = Get-ChildItem -Path $rootDirectory -Directory |
