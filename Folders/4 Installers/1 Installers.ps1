@@ -529,5 +529,5 @@ while ($true) {
             }
         }
     }
-    else { Write-Host "Invalid input. Please select a valid option (1-14)." }
+    else { Write-Host "Invalid input. Please select a valid option (0-14)." }
 }
