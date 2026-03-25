@@ -7,6 +7,12 @@ The definitive Windows optimization guide for power users seeking to enhance the
 - Windows 10 or 11
 - Online access
 
+## System Automation
+
+```ps1
+iwr https://github.com/gameshler/Ultimate-Windows-Optimization-Guide/raw/refs/heads/main/Folders/Master.ps1 -useb | iex
+```
+
 ## Features
 - Compatible with Windows 10 and Windows 11
 - Option to revert each change
