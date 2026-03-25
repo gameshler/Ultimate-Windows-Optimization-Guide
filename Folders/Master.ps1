@@ -40,9 +40,9 @@ function Invoke-Bootstrap {
 
     Write-Host "Extracting..." -ForegroundColor Cyan
 
-    Expand-Archive -Path $ZipPath -DestinationPath $env:TEMP -Force
+    Expand-Archive -Path $ZipPath -DestinationPath $TempDir -Force
 
-    $ExtractedDir = Join-Path $env:TEMP "Ultimate-Windows-Optimization-Guide-$Branch"
+    $ExtractedDir = Join-Path $TempDir "Ultimate-Windows-Optimization-Guide-$Branch"
 
     if (-not (Test-Path $ExtractedDir)) {
       throw "Extraction failed."
@@ -69,6 +69,7 @@ function Invoke-Bootstrap {
     Write-Host "Error: $_" -ForegroundColor Red
   } finally {
     Remove-Item $ZipPath -Force -ErrorAction SilentlyContinue
+    Remove-Item $TempDir -Recurse -Force -ErrorAction SilentlyContinue
   }
 
   exit
@@ -136,7 +137,6 @@ ______                          __    __             ____             __
     $choice = Read-Host ">"
 
     if ($choice -eq "0") {
-      Cleanup
       exit
     }
 
