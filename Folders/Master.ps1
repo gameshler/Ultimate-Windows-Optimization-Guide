@@ -8,9 +8,11 @@ $Branch      = "main"
 $InstallDir  = Join-Path $env:USERPROFILE "Downloads\UWOG"
 $TempDir     = Join-Path $env:TEMP ("uwog-" + [guid]::NewGuid())
 $ZipPath     = "$TempDir.zip"
+$CommonScript = Join-Path $PSScriptRoot "CommonScript.ps1"
 
 # ---------- GLOBALS ----------
 $global:ScriptRoot = $null
+Set-Variable -Name CommonScript -Value $CommonScript -Scope Global
 
 # ---------- FUNCTIONS ----------
 

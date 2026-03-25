@@ -1,50 +1,12 @@
+. $CommonScript
+
+Ensure-Admin
+
 param(
     [switch]$SkipChocoInstall = $false,
     [switch]$SkipAppInstall = $false,
     [switch]$Force = $false
 )
-
-# Set up error handling
-$ErrorActionPreference = 'Stop'
-$ProgressPreference = 'SilentlyContinue'
-
-# Admin rights check
-$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
-    [Security.Principal.WindowsBuiltInRole]::Administrator
-)
-
-if (-not ($isAdmin)) {
-    Write-Host "This script requires administrator privileges. Restarting with elevated permissions..." -ForegroundColor Yellow
-
-    $arguments = @(
-        "-NoProfile"
-        "-ExecutionPolicy"
-        "Bypass"
-        "-File"
-        "`"$PSCommandPath`""
-    )
-    if ($Force) { $arguments += " -Force" }
-    if ($SkipChocoInstall) { $arguments += " -SkipChocoInstall" }
-    if ($SkipAppInstall) { $arguments += " -SkipAppInstall" }
-    $arguments += $args
-    try {
-        Start-Process PowerShell.exe -ArgumentList $arguments -Verb RunAs -Wait
-        Exit
-    }
-    catch {
-        Write-Host "Failed to elevate permissions: $($_.Exception.Message)" -ForegroundColor Red
-        Write-Host "Press any key to exit..." -ForegroundColor Gray
-        $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-        Exit 1
-    }
-}
-
-# Configure console
-$Host.UI.RawUI.WindowTitle = "$($myInvocation.MyCommand.Definition) (Administrator)"
-$Host.UI.RawUI.BackgroundColor = "Black"
-$Host.PrivateData.ProgressBackgroundColor = "Black"
-$Host.PrivateData.ProgressForegroundColor = "White"
-Clear-Host
 
 # Logging function
 function Write-Log {
@@ -77,7 +39,7 @@ function Install-Chocolatey {
         # Install Chocolatey
         Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
-        # Wait a moment for installation to complete
+        
         Start-Sleep -Seconds 5
 
         # Refresh environment variables

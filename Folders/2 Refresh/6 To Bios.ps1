@@ -1,17 +1,12 @@
-    If (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator"))
-    {Start-Process PowerShell.exe -ArgumentList ("-NoProfile -ExecutionPolicy Bypass -File `"{0}`"" -f $PSCommandPath) -Verb RunAs
-    Exit}
-    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + " (Administrator)"
-    $Host.UI.RawUI.BackgroundColor = "Black"
-	$Host.PrivateData.ProgressBackgroundColor = "Black"
-    $Host.PrivateData.ProgressForegroundColor = "White"
-    Clear-Host
+. $CommonScript
 
-    Write-Host "Press 'Y' To Restart To BIOS"
-    while ($true) {
-    $choice = Read-Host " "
-    if ($choice -match '^[yY]$') {
-    switch ($choice) {
+Ensure-Admin
+
+Write-Host "Press 'Y' To Restart To BIOS"
+while ($true) {
+$choice = Read-Host " "
+if ($choice -match '^[yY]$') {
+ switch ($choice) {
     y {
 
 Clear-Host
