@@ -53,30 +53,30 @@ function show-menu {
     Write-Host "Optimize your game settings to achieve this." -ForegroundColor Green
     Write-Host "Further tuning can be done via config files or launch options." -ForegroundColor Green
     Write-Host ""
-    Write-Host " 1. Exit" -ForegroundColor Red
-    Write-Host " 2. 7-Zip" -ForegroundColor Cyan
-    Write-Host " 3. Discord"  -ForegroundColor Cyan
-    Write-Host " 4. Escape From Tarkov"  -ForegroundColor Cyan
-    Write-Host " 5. League Of Legends"  -ForegroundColor Cyan
-    Write-Host " 6. Notepad ++"  -ForegroundColor Cyan
-    Write-Host " 7. OBS Studio"  -ForegroundColor Cyan
-    Write-Host " 8. Roblox"  -ForegroundColor Cyan
-    Write-Host " 9. Valorant"  -ForegroundColor Cyan
-    Write-Host "10. Plutonium"  -ForegroundColor Cyan
-    Write-Host "11. Faceit Launcher"  -ForegroundColor Cyan
-    Write-Host "12. Microsoft Office 2024 LSTC Edition"  -ForegroundColor Cyan
-    Write-Host "13. Web Browsers" -ForegroundColor Cyan
-    Write-Host "14. Game Platforms" -ForegroundColor Cyan
-    Write-Host "15. Activation Windows / Office" -ForegroundColor Cyan
+    Write-Host " 1. 7-Zip" -ForegroundColor Cyan
+    Write-Host " 2. Discord"  -ForegroundColor Cyan
+    Write-Host " 3. Escape From Tarkov"  -ForegroundColor Cyan
+    Write-Host " 4. League Of Legends"  -ForegroundColor Cyan
+    Write-Host " 5. Notepad ++"  -ForegroundColor Cyan
+    Write-Host " 6. OBS Studio"  -ForegroundColor Cyan
+    Write-Host " 7. Roblox"  -ForegroundColor Cyan
+    Write-Host " 8. Valorant"  -ForegroundColor Cyan
+    Write-Host " 9. Plutonium"  -ForegroundColor Cyan
+    Write-Host "10. Faceit Launcher"  -ForegroundColor Cyan
+    Write-Host "11. Microsoft Office 2024 LSTC Edition"  -ForegroundColor Cyan
+    Write-Host "12. Web Browsers" -ForegroundColor Cyan
+    Write-Host "13. Game Platforms" -ForegroundColor Cyan
+    Write-Host "14. Activation Windows / Office" -ForegroundColor Cyan
+    Write-Host " 0. Back" -ForegroundColor Red
 }
 function show-browser-menu {
     Clear-Host
-    Write-Host "1. Exit" -ForegroundColor Red
-    Write-Host "2. Google Chrome" -ForegroundColor Cyan
-    Write-Host "3. Firefox" -ForegroundColor Cyan
-    Write-Host "4. Thorium" -ForegroundColor Cyan
-    Write-Host "5. Brave" -ForegroundColor Cyan
-    Write-Host "6. LibreWolf" -ForegroundColor Cyan
+    Write-Host "1. Google Chrome" -ForegroundColor Cyan
+    Write-Host "2. Firefox" -ForegroundColor Cyan
+    Write-Host "3. Thorium" -ForegroundColor Cyan
+    Write-Host "4. Brave" -ForegroundColor Cyan
+    Write-Host "5. LibreWolf" -ForegroundColor Cyan
+    Write-Host "0. Back" -ForegroundColor Red
 
     while ($true) {
         $choice = Read-Host " "
@@ -103,10 +103,6 @@ function show-browser-menu {
         if ($choice -match '^(1[0-9]|2[0-4]|[1-9])$') {
             switch ($choice) {
                 1 {
-                    Clear-Host
-                    return 
-                }
-                2 {
                     
                     Clear-Host
                     Write-Host "Installing: Google Chrome . . ."
@@ -121,7 +117,7 @@ function show-browser-menu {
                     }
                     return
                 }
-                3 {
+                2 {
                     Clear-Host
                     Write-Host "Installing: Firefox . . ."
                     # download firefox
@@ -141,7 +137,7 @@ function show-browser-menu {
                     
                     return
                 }
-                4 {
+                3 {
                     Clear-Host
                     Write-Host "Installing: Thorium Browser . . ."
                     # download thorium browser
@@ -157,7 +153,7 @@ function show-browser-menu {
                     }
                     return
                 }
-                5 {
+                4 {
                     Clear-Host
                     Write-Host "Installing: Brave Browser . . ."
                     # download brave browser
@@ -174,7 +170,7 @@ function show-browser-menu {
                     }
                     return
                 }
-                6 {
+                5 {
                     Clear-Host
                     Write-Host "Installing: LibreWolf . . ."
                     #download librewolf browser 
@@ -186,6 +182,10 @@ function show-browser-menu {
                     }
                     return
                 }
+                0 {
+                    Clear-Host
+                    return 
+                }
 
             }
         }
@@ -193,23 +193,20 @@ function show-browser-menu {
 }
 function show-game-platforms-menu {
     Clear-Host
-    Write-Host "1. Exit" -ForegroundColor Red
-    Write-Host "2. Battle.net" -ForegroundColor Cyan
-    Write-Host "3. Electronic Arts" -ForegroundColor Cyan
-    Write-Host "4. Epic Games" -ForegroundColor Cyan
-    Write-Host "5. GOG launcher" -ForegroundColor Cyan
-    Write-Host "6. Rockstar Games" -ForegroundColor Cyan
-    Write-Host "7. Steam" -ForegroundColor Cyan
-    Write-Host "8. Ubisoft Connect" -ForegroundColor Cyan
+    Write-Host "1. Battle.net" -ForegroundColor Cyan
+    Write-Host "2. Electronic Arts" -ForegroundColor Cyan
+    Write-Host "3. Epic Games" -ForegroundColor Cyan
+    Write-Host "4. GOG launcher" -ForegroundColor Cyan
+    Write-Host "5. Rockstar Games" -ForegroundColor Cyan
+    Write-Host "6. Steam" -ForegroundColor Cyan
+    Write-Host "7. Ubisoft Connect" -ForegroundColor Cyan
+    Write-Host "0. Back" -ForegroundColor Red
+
     while ($true) {
         $choice = Read-Host " "
         if ($choice -match '^(1[0-9]|2[0-4]|[1-9])$') {
             switch ($choice) {
                 1 {
-                    Clear-Host
-                    return 
-                }
-                2 {
                     Clear-Host
                     Write-Host "Installing: Battle.net . . ."
                     # download battle.net
@@ -223,7 +220,7 @@ function show-game-platforms-menu {
                     $Shortcut.Save()
                     return 
                 }
-                3 {
+                2 {
                     Clear-Host
                     Write-Host "Installing: Electronic Arts . . ."
                     # download electronic arts
@@ -240,7 +237,7 @@ function show-game-platforms-menu {
                     Start-Process -wait "$env:TEMP\pbsetup\pbsetup.exe"
                     return 
                 }
-                4 {
+                3 {
                     Clear-Host
                     Write-Host "Installing: Epic Games . . ."
                     # download epic games
@@ -253,7 +250,7 @@ function show-game-platforms-menu {
                     cmd /c "msiexec.exe /x {57A956AB-4BCC-45C6-9B40-957E4E125568} /qn >nul 2>&1"
                     return 
                 }
-                5 {
+                4 {
                     Clear-Host
                     Write-Host "Installing: GOG launcher . . ."
                     # download gog launcher
@@ -262,7 +259,7 @@ function show-game-platforms-menu {
                     Start-Process "$env:TEMP\GOG launcher.exe"
                     return 
                 }
-                6 {
+                5 {
                     Clear-Host
                     Write-Host "Installing: Rockstar Games . . ."
                     # download rockstar games
@@ -271,7 +268,7 @@ function show-game-platforms-menu {
                     Start-Process "$env:TEMP\Rockstar Games.exe"
                     return 
                 }
-                7 {
+                6 {
                     Clear-Host
                     Write-Host "Installing: Steam . . ."
                     # download steam
@@ -280,13 +277,17 @@ function show-game-platforms-menu {
                     Start-Process -wait "$env:TEMP\Steam.exe" -ArgumentList "/S"
                     return 
                 }
-                8 {
+                7 {
                     Clear-Host
                     Write-Host "Installing: Ubisoft Connect . . ."
                     # download ubisoft connect
                     Get-FileFromWeb -URL "https://static3.cdn.ubi.com/orbit/launcher_installer/UbisoftConnectInstaller.exe" -File "$env:TEMP\Ubisoft Connect.exe"
                     # install ubisoft connect
                     Start-Process -wait "$env:TEMP\Ubisoft Connect.exe" -ArgumentList "/S"
+                    return 
+                }
+                0 {
+                    Clear-Host
                     return 
                 }
             }
@@ -301,12 +302,6 @@ while ($true) {
             1 {
 
                 Clear-Host
-                exit
-
-            }
-            2 {
-
-                Clear-Host
                 Write-Host "Installing: 7Zip . . ."
                 # download 7zip
                 Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/main/7 Zip.exe" -File "$env:TEMP\7 Zip.exe"
@@ -316,7 +311,7 @@ while ($true) {
 
             }
             
-            3 {
+            2 {
 
                 Clear-Host
                 Write-Host "Installing: Discord . . ."
@@ -328,7 +323,7 @@ while ($true) {
 
             }
             
-            4 {
+            3 {
 
                 Clear-Host
                 Write-Host "Installing: Escape From Tarkov . . ."
@@ -341,7 +336,7 @@ while ($true) {
             }
             
             
-            5 {
+            4 {
 
                 Clear-Host
                 Write-Host "Installing: League Of Legends . . ."
@@ -352,7 +347,7 @@ while ($true) {
                 show-menu
 
             }
-            6 {
+            5 {
 
                 Clear-Host
                 Write-Host "Installing: Notepad ++ . . ."
@@ -445,7 +440,7 @@ while ($true) {
                 show-menu
 
             }
-            7 {
+            6 {
 
                 Clear-Host
                 Write-Host "Installing: OBS Studio . . ."
@@ -456,7 +451,7 @@ while ($true) {
                 show-menu
 
             }
-            8 {
+            7 {
 
                 Clear-Host
                 Write-Host "Installing: Roblox . . ."
@@ -468,7 +463,7 @@ while ($true) {
 
             }
             
-            9 {
+            8 {
 
                 Clear-Host
                 Write-Host "Installing: Valorant . . ."
@@ -479,7 +474,7 @@ while ($true) {
                 show-menu
 
             }
-            10 {
+            9 {
                 Clear-Host
                 Write-Host "Installing: Plutonium . . ."
                 # download plutonium
@@ -499,7 +494,7 @@ while ($true) {
                 Start-Process "$plutoniumFolderPath\Plutonium.exe"
                 show-menu
             }
-            11 {
+            10 {
                 Clear-Host
                 Write-Host "Installing FaceIt Launcher . . ."
                 #download faceit launcher
@@ -516,7 +511,7 @@ while ($true) {
                 show-menu
             }
             
-            12 {
+            11 {
                 Clear-Host
                 Write-Host "Installing: Microsoft Office 2024 LSTC Edition . . ."
                 $toolPath = "$env:TEMP\officedeploymenttool_19029-20136.exe"
@@ -556,19 +551,23 @@ while ($true) {
                 Start-Process -FilePath "$env:TEMP\OfficeDeployment\setup.exe" -ArgumentList "/configure $configurationPath" -Wait
                 show-menu
             }
-            13 {
+            12 {
                 show-browser-menu
                 show-menu
             }
-            14 {
+            13 {
                 show-game-platforms-menu
                 show-menu
             }
-            15 {
+            14 {
                 Invoke-RestMethod https://get.activated.win | Invoke-Expression
                 show-menu
             }
+            0 {
+                Clear-Host
+                exit
+            }
         }
     }
-    else { Write-Host "Invalid input. Please select a valid option (1-24)." }
+    else { Write-Host "Invalid input. Please select a valid option (1-14)." }
 }

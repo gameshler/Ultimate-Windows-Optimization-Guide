@@ -95,11 +95,6 @@ function Cleanup {
   }
 }
 
-function Pause {
-  Write-Host ""
-  Read-Host "Press Enter to continue"
-}
-
 # ---------- MENU SYSTEM ----------
 
 function Get-Directories {
@@ -187,7 +182,6 @@ function Show-FilesInDirectory {
         Write-Host "Error: $_" -ForegroundColor Red
       }
 
-      Pause
     } else {
       Write-Host "Invalid choice." -ForegroundColor Red
       Start-Sleep 1
