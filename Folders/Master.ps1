@@ -3,7 +3,7 @@
 # ================================
 
 # ---------- CONFIG ----------
-$Repo        = "gameshler/Ultimate-Windows-Optimization-Guide"
+$Repo        = "gameshler/Ultimate"
 $Branch      = "main"
 $InstallDir  = Join-Path $env:USERPROFILE "Downloads\UWOG"
 $TempDir     = Join-Path $env:TEMP ("uwog-" + [guid]::NewGuid())
