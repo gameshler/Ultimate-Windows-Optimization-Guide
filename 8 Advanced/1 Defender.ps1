@@ -139,6 +139,13 @@ $windowssecuritysettings = @(
 'cmd /c "reg add `"HKEY_LOCAL_MACHINE\System\ControlSet001\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity`" /v `"Enabled`" /t REG_DWORD /d `"0`" /f >nul 2>&1"',
 'cmd /c "reg delete `"HKEY_LOCAL_MACHINE\System\ControlSet001\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity`" /v `"WasEnabledBy`" /f >nul 2>&1"',
 
+# turn off vbs virtualization based security
+# faceit anti cheat forces this on, even after uninstall
+'cmd /c "bcdedit /deletevalue allowedinmemorysettings >nul 2>&1"',
+'cmd /c "bcdedit /deletevalue isolatedcontext >nul 2>&1"',
+'cmd /c "bcdedit /deletevalue hypervisorlaunchtype >nul 2>&1"',
+'cmd /c "reg delete `"HKLM\SYSTEM\CurrentControlSet\Control\DeviceGuard`" /v `"EnableVirtualizationBasedSecurity`" /f >nul 2>&1"',
+
 # local security authority protection
 'cmd /c "reg add `"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa`" /v `"RunAsPPL`" /t REG_DWORD /d `"0`" /f >nul 2>&1"',
 
