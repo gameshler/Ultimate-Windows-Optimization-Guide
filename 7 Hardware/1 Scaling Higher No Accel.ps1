@@ -15,8 +15,7 @@
         exit
         }
 
-        Write-Host "Higher Scaling With No Acceleration"
-        Write-Host ""
+        Write-Host "Higher Scaling With No Acceleration`n"
         Write-Host "1. 100%"
         Write-Host "2. 125%"
         Write-Host "3. 150%"
