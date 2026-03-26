@@ -1,7 +1,7 @@
 # Ultimate
 - Windows guide for power users
 - Multiple scripts with revert options
-- Reboot needed for many scripts to apply
+- Reboot needed for scripts to apply
 
 # Requirements
 - Windows 10/11 Home/Pro/LTSC/IoT/Server
