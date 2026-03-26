@@ -3,7 +3,7 @@
 # ================================
 
 # ---------- CONFIG ----------
-$Repo        = "gameshler/Ultimate"
+$Repo        = "gameshler/Ultimate-Windows-Optimization-Guide"
 $Branch      = "main"
 $InstallDir  = Join-Path $env:USERPROFILE "Downloads\UWOG"
 $TempDir     = Join-Path $env:TEMP ("uwog-" + [guid]::NewGuid())
@@ -37,14 +37,14 @@ function Invoke-Bootstrap {
   Write-Host "`nDownloading repository..." -ForegroundColor Cyan
 
   try {
-    Invoke-WebRequest -Uri "https://github.com/$Repo/zip/refs/heads/$Branch.zip" `
+    Invoke-WebRequest -Uri "https://github.com/$Repo/archive/refs/heads/$Branch.zip" `
       -OutFile $ZipPath -UseBasicParsing
 
     Write-Host "Extracting..." -ForegroundColor Cyan
 
     Expand-Archive -Path $ZipPath -DestinationPath $TempDir -Force
 
-    $ExtractedDir = Join-Path $TempDir "Ultimate-$Branch"
+    $ExtractedDir = Join-Path $TempDir "Ultimate-Windows-Optimization-Guide-$Branch"
 
     if (-not (Test-Path $ExtractedDir)) {
       throw "Extraction failed."
