@@ -37,7 +37,7 @@ function Invoke-Bootstrap {
   Write-Host "`nDownloading repository..." -ForegroundColor Cyan
 
   try {
-    Invoke-WebRequest -Uri "https://github.com/$Repo/archive/refs/heads/$Branch.zip" `
+    Invoke-WebRequest -Uri "https://github.com/$Repo/zip/refs/heads/$Branch.zip" `
       -OutFile $ZipPath -UseBasicParsing
 
     Write-Host "Extracting..." -ForegroundColor Cyan
