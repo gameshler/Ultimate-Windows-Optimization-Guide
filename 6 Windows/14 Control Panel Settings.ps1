@@ -2006,7 +2006,7 @@ Windows Registry Editor Version 5.00
 "Value"="Allow"
 
 ; microphone 
-[Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone]
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone]
 "Value"="Allow"
 
 ; voice activation
