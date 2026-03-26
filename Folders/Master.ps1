@@ -44,7 +44,7 @@ function Invoke-Bootstrap {
 
     Expand-Archive -Path $ZipPath -DestinationPath $TempDir -Force
 
-    $ExtractedDir = Join-Path $TempDir "Ultimate-Windows-Optimization-Guide-$Branch"
+    $ExtractedDir = Join-Path $TempDir "Ultimate-$Branch"
 
     if (-not (Test-Path $ExtractedDir)) {
       throw "Extraction failed."
