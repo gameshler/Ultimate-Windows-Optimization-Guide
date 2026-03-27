@@ -65,7 +65,8 @@ Expand-Archive -Path "$env:SystemRoot\Temp\PBO2 Tuner.zip" -DestinationPath "$en
 
 # create desktop shortcut
 $WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("$Home\Desktop\PBO2 Tuner.lnk")
+$Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
+$Shortcut = $WshShell.CreateShortcut("$Desktop\PBO2 Tuner.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\PBO2 Tuner\PBO2 Tuner.exe"
 $Shortcut.Save()
 

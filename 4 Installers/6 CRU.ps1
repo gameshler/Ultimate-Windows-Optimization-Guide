@@ -64,7 +64,8 @@ Expand-Archive -Path "$env:SystemRoot\Temp\CRU.zip" -DestinationPath "$env:Syste
 
 # create desktop shortcut
 $WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Custom Resolution Utility.lnk")
+$Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
+$Shortcut = $WshShell.CreateShortcut("$Desktop\Custom Resolution Utility.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\CRU\CRU.exe"
 $Shortcut.Save()
 

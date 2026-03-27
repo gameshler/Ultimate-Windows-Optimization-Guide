@@ -63,7 +63,8 @@ Expand-Archive -Path "$env:SystemRoot\Temp\hidusbf.zip" -DestinationPath "$env:S
 
 # create desktop shortcut
 $WshShell = New-Object -comObject WScript.Shell
-$Shortcut = $WshShell.CreateShortcut("$Home\Desktop\Setup.lnk")
+$Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
+$Shortcut = $WshShell.CreateShortcut("$Desktop\Setup.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\hidusbf\Setup.exe"
 $Shortcut.Save()
 
