@@ -7,8 +7,11 @@
 - Windows 10/11 Home/Pro/LTSC/IoT/Server
 - Online access
 
-# Download
-- [Download](<https://github.com/FR33THYFR33THY/Ultimate/archive/refs/heads/main.zip>)
+# IWR
+- Paste this code into an elevated Administrator PowerShell/Terminal window
+```
+iwr https://github.com/FR33THYFR33THY/Ultimate/raw/refs/heads/main/IWR.ps1 -useb | iex
+```
 
 # Guide
 [Video](<https://youtu.be/PlACZ9Gp1xo>)
