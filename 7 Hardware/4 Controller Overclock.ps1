@@ -66,12 +66,14 @@ $WshShell = New-Object -comObject WScript.Shell
 $Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
 $Shortcut = $WshShell.CreateShortcut("$Desktop\Setup.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\hidusbf\Setup.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\hidusbf"
 $Shortcut.Save()
 
 # create start menu shortcut
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Setup.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\hidusbf\Setup.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\hidusbf"
 $Shortcut.Save()
 
 # start hidusbf

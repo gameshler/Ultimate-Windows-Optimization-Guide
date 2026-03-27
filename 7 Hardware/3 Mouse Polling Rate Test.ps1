@@ -60,6 +60,7 @@ $WshShell = New-Object -comObject WScript.Shell
 $Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
 $Shortcut = $WshShell.CreateShortcut("$Desktop\Mouse Movement Recorder.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Mouse Movement Recorder\Mouse Movement Recorder.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\Mouse Movement Recorder"
 $Shortcut.IconLocation = "%SystemRoot%\System32\shell32.dll,248"
 $Shortcut.Save()
 
@@ -67,6 +68,7 @@ $Shortcut.Save()
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Mouse Movement Recorder.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Mouse Movement Recorder\Mouse Movement Recorder.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\Mouse Movement Recorder"
 $Shortcut.IconLocation = "%SystemRoot%\System32\shell32.dll,248"
 $Shortcut.Save()
 

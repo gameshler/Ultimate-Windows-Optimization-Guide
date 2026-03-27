@@ -60,12 +60,14 @@ $WshShell = New-Object -comObject WScript.Shell
 $Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
 $Shortcut = $WshShell.CreateShortcut("$Desktop\Polling.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Polling\Polling.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\Polling"
 $Shortcut.Save()
 
 # create start menu shortcut
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Polling.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Polling\Polling.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\Polling"
 $Shortcut.Save()
 
 # open gamepadla

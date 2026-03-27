@@ -168,6 +168,7 @@ $WshShell = New-Object -comObject WScript.Shell
 $Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
 $Shortcut = $WshShell.CreateShortcut("$Desktop\7-Zip File Manager.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files\7-Zip\7zFM.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files\7-Zip"
 $Shortcut.Save()
 
 show-menu
@@ -298,6 +299,7 @@ $WshShell = New-Object -comObject WScript.Shell
 $Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
 $Shortcut = $WshShell.CreateShortcut("$Desktop\Battlestate Games Launcher.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Battlestate Games\BsgLauncher\BsgLauncher.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Battlestate Games\BsgLauncher"
 $Shortcut.Save()
 
 # cleaner start menu shortcut path
@@ -535,6 +537,7 @@ $WshShell = New-Object -comObject WScript.Shell
 $Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
 $Shortcut = $WshShell.CreateShortcut("$Desktop\Notepad++.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files\Notepad++\notepad++.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files\Notepad++"
 $Shortcut.Save()
 
 show-menu
@@ -588,12 +591,14 @@ $WshShell = New-Object -comObject WScript.Shell
 $Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
 $Shortcut = $WshShell.CreateShortcut("$Desktop\Onboard Memory Manager.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Onboard Memory Manager\Onboard Memory Manager.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\Onboard Memory Manager"
 $Shortcut.Save()
 
 # create start menu shortcut
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Onboard Memory Manager.lnk")
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Onboard Memory Manager\Onboard Memory Manager.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\Onboard Memory Manager"
 $Shortcut.Save()
 
 show-menu
