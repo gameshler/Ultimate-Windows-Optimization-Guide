@@ -6,31 +6,32 @@ Testing-Connection
 function show-menu {
 	Clear-Host
 	
-    Write-Host "Game launchers, programs and web browsers:"
-    Write-Host "- Disable hardware acceleration"
-    Write-Host "- Turn off running at startup"
-    Write-Host "- Deactivate overlays`n"
-    Write-Host "Lower GPU usage and higher framerates reduce latency"
-    Write-Host "Optimize your game settings to achieve this"
-    Write-Host "Further tuning can be done via config files or launch options`n"
-	Write-Host " 1. Discord"
-	Write-Host " 2. Roblox"
-    Write-Host " 3. 7-Zip"
-    Write-Host " 4. Escape From Tarkov"
-    Write-Host " 5. Frame View"		
-    Write-Host " 6. League Of Legends"
-    Write-Host " 7. Notepad ++"
-    Write-Host " 8. Nvidia App"
-    Write-Host " 9. OBS Studio"
-    Write-Host "10. Onboard Memory Manager"
-	Write-Host "11. Pot Player"		
-    Write-Host "12. Spotify"
-    Write-Host "13. Valorant"
-    Write-Host "14. Microsoft Office 2024 LSTC Edition"  -ForegroundColor Cyan
-    Write-Host "15. Activate Windows/Office"
-    Write-Host "16. Browsers"
-    Write-Host "17. Game Platforms"
-    Write-Host " 0. Back"
+    Write-Host "Game launchers, programs and web browsers:" -ForegroundColor Green
+    Write-Host "- Disable hardware acceleration" -ForegroundColor Green
+    Write-Host "- Turn off running at startup" -ForegroundColor Green
+    Write-Host "- Deactivate overlays`n" -ForegroundColor Green
+    Write-Host "Lower GPU usage and higher framerates reduce latency" -ForegroundColor Green
+    Write-Host "Optimize your game settings to achieve this" -ForegroundColor Green
+    Write-Host "Further tuning can be done via config files or launch options`n" -ForegroundColor Green
+	Write-Host ""
+	Write-Host " 1. Discord" -ForegroundColor Cyan
+	Write-Host " 2. Roblox" -ForegroundColor Cyan
+    Write-Host " 3. 7-Zip" -ForegroundColor Cyan
+    Write-Host " 4. Escape From Tarkov" -ForegroundColor Cyan
+    Write-Host " 5. Frame View"	-ForegroundColor Cyan
+    Write-Host " 6. League Of Legends" -ForegroundColor Cyan
+    Write-Host " 7. Notepad ++" -ForegroundColor Cyan
+    Write-Host " 8. Nvidia App" -ForegroundColor Cyan
+    Write-Host " 9. OBS Studio" -ForegroundColor Cyan
+    Write-Host "10. Onboard Memory Manager" -ForegroundColor Cyan
+	Write-Host "11. Pot Player"	-ForegroundColor Cyan
+    Write-Host "12. Spotify" -ForegroundColor Cyan
+    Write-Host "13. Valorant" -ForegroundColor Cyan
+    Write-Host "14. Microsoft Office 2024 LSTC Edition" -ForegroundColor Cyan
+    Write-Host "15. Activate Windows/Office" -ForegroundColor Cyan
+    Write-Host "16. Browsers" -ForegroundColor Cyan
+    Write-Host "17. Game Platforms" -ForegroundColor Cyan
+    Write-Host " 0. Back" -ForegroundColor Red
 }
 
 function show-browser-menu {
