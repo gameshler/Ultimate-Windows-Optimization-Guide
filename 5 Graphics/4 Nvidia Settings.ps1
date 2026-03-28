@@ -46,7 +46,7 @@
         }
 
 # download 7zip
-Get-FileFromWeb -URL "https://www.7-zip.org/a/7z2301-x64.exe" -File "$env:SystemRoot\Temp\7 Zip.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/7%20Zip.exe" -File "$env:SystemRoot\Temp\7 Zip.exe"
 
 # install 7zip
 Start-Process -Wait "$env:SystemRoot\Temp\7 Zip.exe" -ArgumentList "/S"
@@ -97,10 +97,7 @@ cmd /c "reg add `"HKLM\SYSTEM\ControlSet001\Services\nvlddmkm\Parameters\FTS`" /
 cmd /c "reg add `"HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\Parameters\FTS`" /v `"EnableGR535`" /t REG_DWORD /d `"0`" /f >nul 2>&1"
 
 # download inspector
-Get-FileFromWeb -URL "https://github.com/Orbmu2k/nvidiaProfileInspector/releases/download/2.4.0.31/nvidiaProfileInspector.zip" -File "$env:SystemRoot\Temp\Inspector.zip"
-
-# extract inspector with 7zip
-& "C:\Program Files\7-Zip\7z.exe" x "$env:SystemRoot\Temp\Inspector.zip" -o"$env:SystemRoot\Temp\Inspector" -y | Out-Null
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/Inspector.exe" -File "$env:SystemRoot\Temp\Inspector.exe"
 
 # set config for inspector
 $nipfile = @'
@@ -303,7 +300,7 @@ $nipfile = @'
 Set-Content -Path "$env:SystemRoot\Temp\Inspector.nip" -Value $nipfile -Force
 
 # import nip
-Start-Process -wait "$env:SystemRoot\Temp\Inspector\nvidiaProfileInspector.exe" -ArgumentList "-silentImport -silent $env:SystemRoot\Temp\Inspector.nip"
+Start-Process -wait "$env:SystemRoot\Temp\Inspector.exe" -ArgumentList "-silentImport -silent $env:SystemRoot\Temp\Inspector.nip"
 
 # open nvidiacontrolpanel
 Start-Process "shell:appsFolder\NVIDIACorp.NVIDIAControlPanel_56jybvy8sckqj!NVIDIACorp.NVIDIAControlPanel"
@@ -343,10 +340,7 @@ cmd /c "reg add `"HKLM\SYSTEM\ControlSet001\Services\nvlddmkm\Parameters\FTS`" /
 cmd /c "reg add `"HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\Parameters\FTS`" /v `"EnableGR535`" /t REG_DWORD /d `"1`" /f >nul 2>&1"
 
 # download inspector
-Get-FileFromWeb -URL "https://github.com/Orbmu2k/nvidiaProfileInspector/releases/download/2.4.0.31/nvidiaProfileInspector.zip" -File "$env:SystemRoot\Temp\Inspector.zip"
-
-# extract inspector with 7zip
-& "C:\Program Files\7-Zip\7z.exe" x "$env:SystemRoot\Temp\Inspector.zip" -o"$env:SystemRoot\Temp\Inspector" -y | Out-Null
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/Inspector.exe" -File "$env:SystemRoot\Temp\Inspector.exe"
 
 # set config for inspector
 $nipfile = @'
@@ -362,7 +356,7 @@ $nipfile = @'
 Set-Content -Path "$env:SystemRoot\Temp\Inspector.nip" -Value $nipfile -Force
 
 # import nip
-Start-Process -wait "$env:SystemRoot\Temp\Inspector\nvidiaProfileInspector.exe" -ArgumentList "-silentImport -silent $env:SystemRoot\Temp\Inspector.nip"
+Start-Process -wait "$env:SystemRoot\Temp\Inspector.exe" -ArgumentList "-silentImport -silent $env:SystemRoot\Temp\Inspector.nip"
 
 # open nvidiacontrolpanel
 Start-Process "shell:appsFolder\NVIDIACorp.NVIDIAControlPanel_56jybvy8sckqj!NVIDIACorp.NVIDIAControlPanel"

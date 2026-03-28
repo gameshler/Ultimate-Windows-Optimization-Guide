@@ -235,13 +235,13 @@ $_.Name -like '*Store*'
 } | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register -ErrorAction SilentlyContinue "$($_.InstallLocation)\AppXManifest.xml"}
 
 # download edge webview installer
-Get-FileFromWeb -URL "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/79f5276c-391e-481d-9e0f-50d730ae66a9/MicrosoftEdgeWebView2RuntimeInstallerX64.exe" -File "$env:SystemRoot\Temp\EdgeWebView.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/EdgeWebView.exe" -File "$env:SystemRoot\Temp\EdgeWebView.exe"
 
 # start edge webview installer
 Start-Process -Wait "$env:SystemRoot\Temp\EdgeWebView.exe"
 
 # download gamebar repair tool
-Get-FileFromWeb -URL "https://aka.ms/GamingRepairTool" -File "$env:SystemRoot\Temp\GamingRepairTool.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/GamingRepairTool.exe" -File "$env:SystemRoot\Temp\GamingRepairTool.exe"
 
 # start gamebar repair too
 Start-Process "$env:SystemRoot\Temp\GamingRepairTool.exe"

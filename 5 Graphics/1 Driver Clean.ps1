@@ -59,7 +59,7 @@
 Write-Host "Installing: 7-Zip File Manager`n"
 
 # download 7zip
-Get-FileFromWeb -URL "https://www.7-zip.org/a/7z2301-x64.exe" -File "$env:SystemRoot\Temp\7 Zip.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/7%20Zip.exe" -File "$env:SystemRoot\Temp\7 Zip.exe"
 
 # install 7zip
 Start-Process -Wait "$env:SystemRoot\Temp\7 Zip.exe" -ArgumentList "/S"
@@ -76,10 +76,10 @@ Remove-Item "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\7-Zip" -Recu
 Write-Host "Downloading: Display Driver Uninstaller`n"
         
 # download ddu
-Get-FileFromWeb -URL "https://www.wagnardsoft.com/DDU/download/DDU%20v18.1.4.2_setup.exe" -File "$env:SystemRoot\Temp\DDU.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/DDU.exe" -File "$env:SystemRoot\Temp\DDU.exe"
 
 # extract ddu with 7zip
-& "C:\Program Files\7-Zip\7z.exe" x "$env:SystemRoot\Temp\DDU.exe" -o"$env:SystemRoot\Temp\DDU" -y | Out-Null
+& "$env:SystemDrive\Program Files\7-Zip\7z.exe" x "$env:SystemRoot\Temp\DDU.exe" -o"$env:SystemRoot\Temp\DDU" -y | Out-Null
 
 # set config for ddu
 $DduConfig = @'
@@ -169,7 +169,7 @@ exit
 Write-Host "Installing: 7-Zip File Manager`n"
 
 # download 7zip
-Get-FileFromWeb -URL "https://www.7-zip.org/a/7z2301-x64.exe" -File "$env:SystemRoot\Temp\7 Zip.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/7%20Zip.exe" -File "$env:SystemRoot\Temp\7 Zip.exe"
 
 # install 7zip
 Start-Process -Wait "$env:SystemRoot\Temp\7 Zip.exe" -ArgumentList "/S"
@@ -186,10 +186,10 @@ Remove-Item "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\7-Zip" -Recu
 Write-Host "Downloading: Display Driver Uninstaller`n"
 
 # download ddu
-Get-FileFromWeb -URL "https://www.wagnardsoft.com/DDU/download/DDU%20v18.1.4.2_setup.exe" -File "$env:SystemRoot\Temp\DDU.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/DDU.exe" -File "$env:SystemRoot\Temp\DDU.exe"
 
 # extract ddu with 7zip
-& "C:\Program Files\7-Zip\7z.exe" x "$env:SystemRoot\Temp\DDU.exe" -o"$env:SystemRoot\Temp\DDU" -y | Out-Null
+& "$env:SystemDrive\Program Files\7-Zip\7z.exe" x "$env:SystemRoot\Temp\DDU.exe" -o"$env:SystemRoot\Temp\DDU" -y | Out-Null
 
 # set config for ddu
 $DduConfig = @'

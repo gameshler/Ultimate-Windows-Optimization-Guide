@@ -485,7 +485,7 @@ Clear-Host
 Write-Host "Installing: Remote Desktop Connection. Please wait..."
 
 # download remote desktop connection
-Get-FileFromWeb -URL "https://go.microsoft.com/fwlink/?linkid=2247659" -File "$env:SystemRoot\Temp\RemoteDesktopConnection.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/RemoteDesktopConnection.exe" -File "$env:SystemRoot\Temp\RemoteDesktopConnection.exe"
 
 # install remote desktop connection 
 cmd /c "%SystemRoot%\Temp\RemoteDesktopConnection.exe >nul 2>&1"
@@ -504,7 +504,7 @@ Write-Host "If installer fails on W10, restart PC and rerun script"
 Write-Host ""
 
 # download w10 snipping tool
-Get-FileFromWeb -URL "https://download.microsoft.com/download/f/4/e/f4e03465-34d1-49b6-af1a-2816ca4a2402/installers_signed/snippingtool_setup_x64.exe" -File "$env:SystemRoot\Temp\SnippingTool.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/SnippingTool.exe" -File "$env:SystemRoot\Temp\SnippingTool.exe"
 
 # install w10 snipping tool
 cmd /c "%SystemRoot%\Temp\SnippingTool.exe >nul 2>&1"

@@ -164,7 +164,7 @@ $stop | ForEach-Object { Stop-Process -Name $_ -Force -ErrorAction SilentlyConti
 Get-Process | Where-Object { $_.ProcessName -like "*edge*" } | Stop-Process -Force -ErrorAction SilentlyContinue
 
 # download edge installer
-Get-FileFromWeb -URL "https://go.microsoft.com/fwlink/?linkid=2109047&Channel=Stable&language=en&brand=M100" -File "$env:SystemRoot\Temp\Edge.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/Edge.exe" -File "$env:SystemRoot\Temp\Edge.exe"
 
 # start edge installer
 Start-Process -Wait "$env:SystemRoot\Temp\Edge.exe"
@@ -175,7 +175,7 @@ $stop | ForEach-Object { Stop-Process -Name $_ -Force -ErrorAction SilentlyConti
 Get-Process | Where-Object { $_.ProcessName -like "*edge*" } | Stop-Process -Force -ErrorAction SilentlyContinue
 
 # download edge webview installer
-Get-FileFromWeb -URL "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/304fddef-b073-4e0a-b1ff-c2ea02584017/MicrosoftEdgeWebview2Setup.exe" -File "$env:SystemRoot\Temp\EdgeWebView.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/EdgeWebView.exe" -File "$env:SystemRoot\Temp\EdgeWebView.exe"
 
 # start edge webview installer
 Start-Process -Wait "$env:SystemRoot\Temp\EdgeWebView.exe"

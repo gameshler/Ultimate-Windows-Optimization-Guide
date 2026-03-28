@@ -70,7 +70,6 @@
   		}
         }
 
-
 # create a restore point
 try {
 cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore`" /v `"SystemRestorePointCreationFrequency`" /t REG_DWORD /d `"0`" /f >nul 2>&1"
@@ -113,10 +112,7 @@ Remove-Item $_.FullName -Recurse -Force
 }
 
 # download autoruns
-Get-FileFromWeb -URL "https://download.sysinternals.com/files/Autoruns.zip" -File "$env:SystemRoot\Temp\Autoruns.zip"
-
-# extract files
-Expand-Archive "$env:SystemRoot\Temp\Autoruns.zip" -DestinationPath "$env:SystemRoot\Temp\Autoruns" -ErrorAction SilentlyContinue
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/Autoruns.exe" -File "$env:SystemRoot\Temp\Autoruns.exe"
 
 # start autoruns
-Start-Process "$env:SystemRoot\Temp\Autoruns\Autoruns64.exe"
+Start-Process "$env:SystemRoot\Temp\Autoruns.exe"

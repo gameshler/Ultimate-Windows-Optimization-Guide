@@ -67,7 +67,7 @@ Clear-Host
 Write-Host "Windows Updates: Default..."
 
 # download lgpo
-Get-FileFromWeb -URL "https://download.microsoft.com/download/8/5/C/85C25433-A1B0-4FFA-9429-7E023E7DA8D8/LGPO.zip" -File "$env:SystemRoot\Temp\LGPO.zip"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/LGPO.zip" -File "$env:SystemRoot\Temp\LGPO.zip"
 
 # extract file
 Expand-Archive "$env:SystemRoot\Temp\LGPO.zip" -DestinationPath "$env:SystemRoot\Temp\LGPO" -Force
@@ -197,7 +197,7 @@ Clear-Host
 Write-Host "Windows Updates: Off..."
 
 # download lgpo
-Get-FileFromWeb -URL "https://download.microsoft.com/download/8/5/C/85C25433-A1B0-4FFA-9429-7E023E7DA8D8/LGPO.zip" -File "$env:SystemRoot\Temp\LGPO.zip"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/LGPO.zip" -File "$env:SystemRoot\Temp\LGPO.zip"
 
 # extract file
 Expand-Archive "$env:SystemRoot\Temp\LGPO.zip" -DestinationPath "$env:SystemRoot\Temp\LGPO" -Force

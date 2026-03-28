@@ -42,7 +42,7 @@
         }
         }
 
-        # DOWNLOAD NVIDIA PROFILE INSPECTOR
+        # DOWNLOAD INSPECTOR
         Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/Inspector.exe" -File "$env:SystemRoot\Temp\Inspector.exe"
 
         Write-Host "SOME GAMES NEED TO BE SET IN THEIR INDIVIDUAL PROFILE`n" -ForegroundColor Red

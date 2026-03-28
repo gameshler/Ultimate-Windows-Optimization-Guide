@@ -45,6 +45,33 @@
         }
         }
 
+        # FUNCTION RUN AS TRUSTED INSTALLER
+        function Run-Trusted([String]$command) {
+        try {
+    	Stop-Service -Name TrustedInstaller -Force -ErrorAction Stop -WarningAction Stop
+  		}
+  		catch {
+    	taskkill /im trustedinstaller.exe /f >$null
+  		}
+        $service = Get-CimInstance -ClassName Win32_Service -Filter "Name='TrustedInstaller'"
+        $DefaultBinPath = $service.PathName
+  		$trustedInstallerPath = "$env:SystemRoot\servicing\TrustedInstaller.exe"
+  		if ($DefaultBinPath -ne $trustedInstallerPath) {
+    	$DefaultBinPath = $trustedInstallerPath
+  		}
+        $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
+        $base64Command = [Convert]::ToBase64String($bytes)
+        sc.exe config TrustedInstaller binPath= "cmd.exe /c powershell.exe -encodedcommand $base64Command" | Out-Null
+        sc.exe start TrustedInstaller | Out-Null
+        sc.exe config TrustedInstaller binpath= "`"$DefaultBinPath`"" | Out-Null
+        try {
+    	Stop-Service -Name TrustedInstaller -Force -ErrorAction Stop -WarningAction Stop
+  		}
+  		catch {
+    	taskkill /im trustedinstaller.exe /f >$null
+  		}
+        }
+
 		# FUNCTION MODERN FILE PICKER
     	function Show-ModernFilePicker {
     	param(
@@ -100,7 +127,7 @@
     	}
 
 # download 7zip
-Get-FileFromWeb -URL "https://www.7-zip.org/a/7z2301-x64.exe" -File "$env:SystemRoot\Temp\7 Zip.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/7%20Zip.exe" -File "$env:SystemRoot\Temp\7 Zip.exe"
 
 # install 7zip
 Start-Process -Wait "$env:SystemRoot\Temp\7 Zip.exe" -ArgumentList "/S"
@@ -149,7 +176,7 @@ $InstallFile = Show-ModernFilePicker -Mode File
         Write-Host "DEBLOATING DRIVER`n"
 
 # extract driver with 7zip
-& "C:\Program Files\7-Zip\7z.exe" x "$InstallFile" -o"$env:SystemRoot\Temp\NvidiaDriver" -y | Out-Null
+& "$env:SystemDrive\Program Files\7-Zip\7z.exe" x "$InstallFile" -o"$env:SystemRoot\Temp\NvidiaDriver" -y | Out-Null
 
 # debloat nvidia driver
 Remove-Item "$env:SystemRoot\Temp\NvidiaDriver\Display.Nview" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
@@ -186,13 +213,11 @@ Remove-Item "$env:SystemRoot\Temp\NvidiaDriver\NvApp\NvConfigGenerator.dll" -For
 # install nvidia driver
 Start-Process "$env:SystemRoot\Temp\NvidiaDriver\setup.exe" -ArgumentList "-s -noreboot -noeula -clean" -Wait -NoNewWindow
 
-# install nvidia control panel
-try {
-Start-Process "winget" -ArgumentList "install `"9NF8H0H7WMLT`" --silent --accept-package-agreements --accept-source-agreements --disable-interactivity --no-upgrade" -Wait -WindowStyle Hidden
-} catch { }
+# download nvidia control panel
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/NVIDIAControlPanel.Appx" -File "$env:SystemRoot\Temp\NVIDIAControlPanel.Appx"
 
-# uninstall winget
-Get-AppxPackage -allusers *Microsoft.Winget.Source* | Remove-AppxPackage
+# install nvidia control panel
+Add-AppxPackage -Path "$env:SystemRoot\Temp\NVIDIAControlPanel.Appx"
 
 # delete download
 Remove-Item "$InstallFile" -Force -ErrorAction SilentlyContinue | Out-Null
@@ -225,6 +250,27 @@ Get-ChildItem -Path $path -Recurse | Unblock-File
 # set physx to gpu
 cmd /c "reg add `"HKLM\System\ControlSet001\Services\nvlddmkm\Parameters\Global\NVTweak`" /v `"NvCplPhysxAuto`" /t REG_DWORD /d `"0`" /f >nul 2>&1"
 
+# turn on no scaling for all displays
+$configKeys = Get-ChildItem -Path "HKLM:\System\ControlSet001\Control\GraphicsDrivers\Configuration" -Recurse -ErrorAction SilentlyContinue
+foreach ($key in $configKeys) {
+$scalingValue = Get-ItemProperty -Path $key.PSPath -Name "Scaling" -ErrorAction SilentlyContinue
+if ($scalingValue) {
+$regPath = $key.PSPath.Replace('Microsoft.PowerShell.Core\Registry::', '').Replace('HKEY_LOCAL_MACHINE', 'HKLM')
+Run-Trusted -command "reg add `"$regPath`" /v `"Scaling`" /t REG_DWORD /d `"2`" /f"
+}
+}
+
+# turn on override the scaling mode set by games and programs for all displays
+# perform scaling on display
+$displayDbPath = "HKLM:\System\ControlSet001\Services\nvlddmkm\State\DisplayDatabase"
+if (Test-Path $displayDbPath) {
+$displays = Get-ChildItem -Path $displayDbPath -ErrorAction SilentlyContinue
+foreach ($display in $displays) {
+$regPath = $display.PSPath.Replace('Microsoft.PowerShell.Core\Registry::', '').Replace('HKEY_LOCAL_MACHINE', 'HKLM')
+Run-Trusted -command "reg add `"$regPath`" /v `"ScalingConfig`" /t REG_BINARY /d `"DB02000010000000200100000E010000`" /f"
+}
+}
+
 # enable developer settings
 cmd /c "reg add `"HKLM\System\ControlSet001\Services\nvlddmkm\Parameters\Global\NVTweak`" /v `"NvDevToolsVisible`" /t REG_DWORD /d `"1`" /f >nul 2>&1"
 
@@ -246,10 +292,7 @@ cmd /c "reg add `"HKLM\SYSTEM\ControlSet001\Services\nvlddmkm\Parameters\FTS`" /
 cmd /c "reg add `"HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\Parameters\FTS`" /v `"EnableGR535`" /t REG_DWORD /d `"0`" /f >nul 2>&1"
 
 # download inspector
-Get-FileFromWeb -URL "https://github.com/Orbmu2k/nvidiaProfileInspector/releases/download/2.4.0.31/nvidiaProfileInspector.zip" -File "$env:SystemRoot\Temp\Inspector.zip"
-
-# extract inspector with 7zip
-& "C:\Program Files\7-Zip\7z.exe" x "$env:SystemRoot\Temp\Inspector.zip" -o"$env:SystemRoot\Temp\Inspector" -y | Out-Null
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/Inspector.exe" -File "$env:SystemRoot\Temp\Inspector.exe"
 
 # set config for inspector
 $nipfile = @'
@@ -452,7 +495,7 @@ $nipfile = @'
 Set-Content -Path "$env:SystemRoot\Temp\Inspector.nip" -Value $nipfile -Force
 
 # import nip
-Start-Process -wait "$env:SystemRoot\Temp\Inspector\nvidiaProfileInspector.exe" -ArgumentList "-silentImport -silent $env:SystemRoot\Temp\Inspector.nip"
+Start-Process -wait "$env:SystemRoot\Temp\Inspector.exe" -ArgumentList "-silentImport -silent $env:SystemRoot\Temp\Inspector.nip"
 
         break MainLoop
 
@@ -480,7 +523,7 @@ $InstallFile = Show-ModernFilePicker -Mode File
         Write-Host "DEBLOATING DRIVER`n"
 
 # extract driver with 7zip
-& "C:\Program Files\7-Zip\7z.exe" x "$InstallFile" -o"$env:SystemRoot\Temp\AmdDriver" -y | Out-Null
+& "$env:SystemDrive\Program Files\7-Zip\7z.exe" x "$InstallFile" -o"$env:SystemRoot\Temp\AmdDriver" -y | Out-Null
 
 # debloat amd driver
 $path = "$env:SystemRoot\Temp\AmdDriver\Packages\Drivers\Display\WT6A_INF"
@@ -631,6 +674,29 @@ cmd /c "reg add `"HKCU\Software\AMD\CN\CustomResolutions`" /v `"EulaAccepted`" /
 # accept overrides eula
 cmd /c "reg add `"HKCU\Software\AMD\CN\DisplayOverride`" /v `"EulaAccepted`" /t REG_SZ /d `"true`" /f >nul 2>&1"
 
+# disable hdcp support
+$basePath = "HKLM:\System\ControlSet001\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}"
+$allKeys = Get-ChildItem -Path $basePath -Recurse -ErrorAction SilentlyContinue
+$edidKeysWithSuffix = $allKeys | Where-Object { $_.PSChildName -match '^EDID_[A-F0-9]+_[A-F0-9]+_[A-F0-9]+$' }
+foreach ($edidKey in $edidKeysWithSuffix) {
+if ($edidKey.PSChildName -match '^(EDID_[A-F0-9]+_[A-F0-9]+)_[A-F0-9]+$') {
+$baseEdidName = $matches[1]
+$parentPath = Split-Path $edidKey.PSPath
+$baseEdidPath = Join-Path $parentPath $baseEdidName
+if (!(Test-Path $baseEdidPath)) {
+New-Item -Path $baseEdidPath -Force -ErrorAction SilentlyContinue | Out-Null
+}   
+$optionPathNew = Join-Path $baseEdidPath "Option"
+if (!(Test-Path $optionPathNew)) {
+New-Item -Path $optionPathNew -Force -ErrorAction SilentlyContinue | Out-Null
+}
+$regPath = $optionPathNew.Replace('Microsoft.PowerShell.Core\Registry::', '').Replace('HKEY_LOCAL_MACHINE', 'HKLM')
+cmd /c "reg add `"$regPath`" /v `"All_nodes`" /t REG_BINARY /d `"50726F74656374696F6E436F6E74726F6C00`" /f >nul 2>&1"
+cmd /c "reg add `"$regPath`" /v `"default`" /t REG_BINARY /d `"64`" /f >nul 2>&1"
+cmd /c "reg add `"$regPath`" /v `"ProtectionControl`" /t REG_BINARY /d `"0100000001000000`" /f >nul 2>&1"
+}
+}
+
 # vari-bright - maximize brightness
 $basePath = "HKLM:\System\ControlSet001\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}"
 $allKeys = Get-ChildItem -Path $basePath -Recurse -ErrorAction SilentlyContinue
@@ -684,7 +750,7 @@ $InstallFile = Show-ModernFilePicker -Mode File
         Write-Host "DEBLOATING DRIVER`n"
 
 # extract driver with 7zip
-& "C:\Program Files\7-Zip\7z.exe" x "$InstallFile" -o"$env:SystemDrive\IntelDriver" -y | Out-Null
+& "$env:SystemDrive\Program Files\7-Zip\7z.exe" x "$InstallFile" -o"$env:SystemDrive\IntelDriver" -y | Out-Null
 
         Write-Host "INSTALLING DRIVER`n"
 
@@ -824,6 +890,17 @@ Start-Process mmsys.cpl
 Pause
 
         Clear-Host
+
+# reapply for nvidia cards after changing resolution
+# turn on no scaling for all displays
+$configKeys = Get-ChildItem -Path "HKLM:\System\ControlSet001\Control\GraphicsDrivers\Configuration" -Recurse -ErrorAction SilentlyContinue
+foreach ($key in $configKeys) {
+$scalingValue = Get-ItemProperty -Path $key.PSPath -Name "Scaling" -ErrorAction SilentlyContinue
+if ($scalingValue) {
+$regPath = $key.PSPath.Replace('Microsoft.PowerShell.Core\Registry::', '').Replace('HKEY_LOCAL_MACHINE', 'HKLM')
+Run-Trusted -command "reg add `"$regPath`" /v `"Scaling`" /t REG_DWORD /d `"2`" /f"
+}
+}
 
 # disable automatically manage color for apps
 $basePath = "HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers\MonitorDataStore"

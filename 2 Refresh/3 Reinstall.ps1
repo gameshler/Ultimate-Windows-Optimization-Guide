@@ -63,7 +63,7 @@ Clear-Host
 Write-Host "Downloading: Media Creation Tool Win 10..."
 
 # download media creation tool win 10
-Get-FileFromWeb -URL "https://go.microsoft.com/fwlink/?LinkId=2265055" -File "$env:SystemRoot\Temp\Media Creation Tool Win 10.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/MediaCreationToolW10.exe" -File "$env:SystemRoot\Temp\Media Creation Tool Win 10.exe"
 
 # start media creation tool win 10
 Start-Process "$env:SystemRoot\Temp\Media Creation Tool Win 10.exe"
@@ -78,7 +78,7 @@ Clear-Host
 Write-Host "Downloading: Media Creation Tool Win 11..."
 
 # download media creation tool win 11
-Get-FileFromWeb -URL "https://go.microsoft.com/fwlink/?linkid=2156295" -File "$env:SystemRoot\Temp\Media Creation Tool Win 11.exe"
+Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/MediaCreationToolW11.exe" -File "$env:SystemRoot\Temp\Media Creation Tool Win 11.exe"
 
 # start media creation tool win 11
 Start-Process "$env:SystemRoot\Temp\Media Creation Tool Win 11.exe"
