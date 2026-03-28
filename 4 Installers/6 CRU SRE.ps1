@@ -54,25 +54,43 @@
         }
 
 ## explorer "https://www.monitortests.com/forum/Thread-Custom-Resolution-Utility-CRU"
-Write-Host "Installing: Custom Resolution Utility..."
+## explorer "https://www.monitortests.com/forum/Thread-Scaled-Resolution-Editor-SRE"
+Write-Host "Installing:"
+Write-Host "- Custom Resolution Utility..."
+Write-Host "- Scaled Resolution Editor..."
 
-# download custom resolution utility
+# download custom resolution utility & scaled resolution editor
 Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/CRU.zip" -File "$env:SystemRoot\Temp\CRU.zip"
 
 # extract file
-Expand-Archive -Path "$env:SystemRoot\Temp\CRU.zip" -DestinationPath "$env:SystemDrive\Program Files (x86)\CRU" -Force
+Expand-Archive -Path "$env:SystemRoot\Temp\CRU.zip" -DestinationPath "$env:SystemDrive\Program Files (x86)\CRUSRE" -Force
 
 # create desktop shortcut
 $WshShell = New-Object -comObject WScript.Shell
 $Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
 $Shortcut = $WshShell.CreateShortcut("$Desktop\Custom Resolution Utility.lnk")
-$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\CRU\CRU.exe"
-$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\CRU"
+$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\CRUSRE\CRU.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\CRUSRE"
 $Shortcut.Save()
 
 # create start menu shortcut
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Custom Resolution Utility.lnk")
-$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\CRU\CRU.exe"
-$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\CRU"
+$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\CRUSRE\CRU.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\CRUSRE"
+$Shortcut.Save()
+
+# create desktop shortcut
+$WshShell = New-Object -comObject WScript.Shell
+$Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
+$Shortcut = $WshShell.CreateShortcut("$Desktop\Scaled Resolution Editor.lnk")
+$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\CRUSRE\SRE.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\CRUSRE"
+$Shortcut.Save()
+
+# create start menu shortcut
+$WshShell = New-Object -comObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut("$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Scaled Resolution Editor.lnk")
+$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\CRUSRE\SRE.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\CRUSRE"
 $Shortcut.Save()
