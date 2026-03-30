@@ -19,7 +19,7 @@
 Clear-Host
 
 # open & close amd software adrenalin edition settings page so settings stick
-Start-Process "C:\Program Files\AMD\CNext\CNext\RadeonSoftware.exe"
+Start-Process "$env:SystemDrive\Program Files\AMD\CNext\CNext\RadeonSoftware.exe"
 Start-Sleep -Seconds 30
 Stop-Process -Name "RadeonSoftware" -Force -ErrorAction SilentlyContinue
 Start-Sleep -Seconds 2
