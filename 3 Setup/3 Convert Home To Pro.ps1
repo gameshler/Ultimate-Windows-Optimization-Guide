@@ -8,7 +8,7 @@
         $Host.PrivateData.ProgressForegroundColor = "White"
         Clear-Host
 
-Write-Host "Disable: Internet First...`n" -ForegroundColor Red
+Write-Host "Disable Internet First`n"
 
 # copy key to clipboard
 Set-Clipboard -Value "VK7JG-NPHTM-C97JM-9MPGT-3V66T"

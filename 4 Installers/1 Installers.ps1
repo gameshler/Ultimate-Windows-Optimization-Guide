@@ -259,7 +259,7 @@ Get-FileFromWeb -URL "https://launcher-public-service-prod06.ol.epicgames.com/la
 Start-Process -Wait "$env:SystemRoot\Temp\Epic Games.msi" -ArgumentList "/quiet"
 
 Clear-Host
-Write-Host "Close: Epic Games After Update" -ForegroundColor Red
+Write-Host "Close: Epic Games After Update..."
 
 # open epic games to update and install epic online services
 Start-Process -Wait "$env:SystemDrive\Program Files\Epic Games\Launcher\Portal\Binaries\Win64\EpicGamesLauncher.exe"

@@ -144,7 +144,7 @@ Remove-Item "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\7-Zip" -Recu
         function show-menu {
         Clear-Host
         Write-Host "INSTALL GRAPHICS DRIVERS" -ForegroundColor Yellow
-        Write-Host "SELECT YOUR SYSTEM'S GPU`n" -ForegroundColor Yellow
+        Write-Host "SELECT YOUR SYSTEM'S GPU" -ForegroundColor Yellow
         Write-Host " 1.  NVIDIA" -ForegroundColor Green
         Write-Host " 2.  AMD" -ForegroundColor Red
         Write-Host " 3.  INTEL`n" -ForegroundColor Blue
@@ -166,6 +166,7 @@ Remove-Item "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\7-Zip" -Recu
 Start-Sleep -Seconds 5
 Start-Process "https://www.nvidia.com/en-us/drivers"
 Pause
+
         Write-Host ""
         Write-Host "SELECT DOWNLOADED DRIVER`n" -ForegroundColor Yellow
 

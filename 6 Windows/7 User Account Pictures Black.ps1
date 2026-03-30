@@ -8,7 +8,7 @@
         $Host.PrivateData.ProgressForegroundColor = "White"
         Clear-Host
 
-        Write-Host "User Account Pictures:`n"
+        Write-Host "User Account Pictures:"
         Write-Host "1. Black"
         Write-Host "2. Default`n"
         while ($true) {

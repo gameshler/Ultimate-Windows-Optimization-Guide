@@ -62,7 +62,7 @@
     	return $OpenFileDialog.FileName
     	}
 
-		Write-Host "TEMPORARILY CHANGE PRIORITY FOR TESTING PER APP/GAME:"
+		Write-Host "TEMPORARILY CHANGE PRIORITY FOR TESTING PER APP/GAME:`n"
         Write-Host "1. Priority: Already Running"
         Write-Host "2. Priority: Startup`n"
         while ($true) {

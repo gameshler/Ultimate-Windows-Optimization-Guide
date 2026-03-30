@@ -45,7 +45,7 @@
         # DOWNLOAD INSPECTOR
         Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/Inspector.exe" -File "$env:SystemRoot\Temp\Inspector.exe"
 
-        Write-Host "SOME GAMES NEED TO BE SET IN THEIR INDIVIDUAL PROFILE`n" -ForegroundColor Red
+        Write-Host "SOME GAMES NEED TO BE SET IN THEIR INDIVIDUAL PROFILE`n"
         Write-Host "NVIDIA RESIZABLE BAR FORCE:`n"
         Write-Host "1. DEFAULT DRIVER WHITELIST PER GAME (DEFAULT)"
 		Write-Host "2. FORCE ON"
@@ -723,7 +723,7 @@ exit
 Clear-Host
 
 # restart to bios
-cmd /c C:\Windows\System32\shutdown.exe /r /fw
+cmd /c C:\Windows\System32\shutdown.exe /r /fw /t 0
 
 exit
 

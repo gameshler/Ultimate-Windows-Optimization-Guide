@@ -53,7 +53,7 @@
         }
         }
 
-        Write-Host "SELECT YOUR SYSTEM'S GPU`n" -ForegroundColor Yellow
+        Write-Host "SELECT YOUR SYSTEM'S GPU" -ForegroundColor Yellow
         Write-Host " 1.  NVIDIA" -ForegroundColor Green
         Write-Host " 2.  AMD" -ForegroundColor Red
         Write-Host " 3.  INTEL`n" -ForegroundColor Blue
@@ -65,12 +65,12 @@
 
 Clear-Host
 
-Write-Host "Unless recording or using replay buffer," -ForegroundColor Red 
-Write-Host "avoid installing the NVIDIA App.`n" -ForegroundColor Red
-Write-Host "Game Filter (ALT+F3) and Statistics (ALT+R)," -ForegroundColor Red 
-Write-Host "will significantly reduce FPS when enabled.`n" -ForegroundColor Red
-Write-Host "In the NVIDIA App turn off," -ForegroundColor Red
-Write-Host "'Automatically optimize newly added games and apps'.`n" -ForegroundColor Red
+Write-Host "Unless recording or using replay buffer,"
+Write-Host "avoid installing the NVIDIA App.`n"
+Write-Host "Game Filter (ALT+F3) and Statistics (ALT+R),"
+Write-Host "will significantly reduce FPS when enabled.`n"
+Write-Host "In the NVIDIA App turn off,"
+Write-Host "'Automatically optimize newly added games and apps'.`n"
 
 # find latest nvidia driver
 $uri = 'https://gfwsl.geforce.com/services_toolkit/services/com/nvidia/services/AjaxDriverService.php?func=DriverManualLookup&psid=120&pfid=929&osID=57&languageCode=1033&isWHQL=1&dch=1&sort1=0&numberOfResults=1'

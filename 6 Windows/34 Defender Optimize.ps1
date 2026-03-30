@@ -8,7 +8,7 @@
         $Host.PrivateData.ProgressForegroundColor = "White"
         Clear-Host
 
-        Write-Host "1. Defender Optimize: On (Recommended)"
+        Write-Host "1. Defender: Optimize (Recommended)"
         Write-Host "2. Defender: Default`n"
         while ($true) {
         $choice = Read-Host " "

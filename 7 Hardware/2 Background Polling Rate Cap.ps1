@@ -8,7 +8,7 @@
         $Host.PrivateData.ProgressForegroundColor = "White"
         Clear-Host
 
-        Write-Host "Background Polling Rate Cap"
+        Write-Host "Background Polling Rate Cap:`n"
         Write-Host "1. Off (Recommended)"
         Write-Host "2. Default (125hz)`n"
         while ($true) {

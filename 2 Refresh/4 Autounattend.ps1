@@ -8,8 +8,6 @@
         $Host.PrivateData.ProgressForegroundColor = "White"
         Clear-Host
 
-Write-Host "Remove Ethernet Cable During The Windows Installation..." -ForegroundColor Red
-
 # save autounattendtemplate
 $AutoUnattend = @'
 <?xml version="1.0" encoding="utf-8"?>

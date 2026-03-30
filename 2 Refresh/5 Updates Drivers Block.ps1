@@ -8,7 +8,7 @@
         $Host.PrivateData.ProgressForegroundColor = "White"
         Clear-Host
 
-	    Write-Host "WINDOWS PRO/LTSC/IOT/SERVER ONLY`n" -ForegroundColor Red
+	    Write-Host "WINDOWS PRO/LTSC/IOT/SERVER ONLY`n"
         Write-Host "DRIVER UPDATES:"
         Write-Host " 1. Block"
 	    Write-Host " 2. Block (Bootable USB)"
@@ -25,7 +25,7 @@
 
 Clear-Host
 
-Write-Host "Block: Driver Updates"
+Write-Host "Blocked: Driver Updates"
 
 # block all windows driver updates
 reg add "HKLM\Software\Policies\Microsoft\Windows\Device Metadata" /v "PreventDeviceMetadataFromNetwork" /t REG_DWORD /d 1 /f | Out-Null
@@ -47,7 +47,7 @@ exit
 
 Clear-Host
 
-Write-Host "Block: Driver Updates (Bootable USB)"
+Write-Host "Blocked: Driver Updates (Bootable USB)"
 
 # create setupcomplete.cmd
 $SetupCompleteCmd = @'
@@ -85,7 +85,7 @@ exit
 
 Clear-Host
 
-Write-Host "Unblock: Driver Updates"
+Write-Host "Unblocked: Driver Updates"
 
 # revert block all windows driver updates
 reg delete "HKLM\Software\Policies\Microsoft\Windows\Device Metadata" /v "PreventDeviceMetadataFromNetwork" /f | Out-Null
@@ -107,7 +107,7 @@ exit
 
 Clear-Host
 
-Write-Host "Block: Updates"
+Write-Host "Blocked: Updates"
 
 # block all windows updates
 reg add "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate" /v "DoNotConnectToWindowsUpdateInternetLocations" /t REG_DWORD /d 1 /f | Out-Null
@@ -128,7 +128,7 @@ exit
 
 Clear-Host
 
-Write-Host "Block: Updates (Bootable USB)"
+Write-Host "Blocked: Updates (Bootable USB)"
 
 # create setupcomplete.cmd
 $SetupCompleteCmd = @'
@@ -165,7 +165,7 @@ exit
 
 Clear-Host
 
-Write-Host "Unblock: Updates"
+Write-Host "Unblocked: Updates"
 
 # revert block all windows updates
 reg delete "HKLM\Software\Policies\Microsoft\Windows\WindowsUpdate" /v "DoNotConnectToWindowsUpdateInternetLocations" /f | Out-Null

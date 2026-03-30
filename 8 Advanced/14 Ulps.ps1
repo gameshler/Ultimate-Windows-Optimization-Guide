@@ -8,7 +8,7 @@
         $Host.PrivateData.ProgressForegroundColor = "White"
         Clear-Host
 
-        Write-Host "OFF NOT RECOMMENDED WITH HAGS:`n" -ForegroundColor Red
+        Write-Host "OFF NOT RECOMMENDED WITH HAGS:`n"
         Write-Host "AMD Ultra Low Power Saving:"
         Write-Host "1. On (Default)"
         Write-Host "2. Off`n"

@@ -18,7 +18,7 @@
 
 Clear-Host
 
-Write-Host "Memory Compression: Off...`n"
+Write-Host "Memory Compression: Off..."
 
 # disable memory compression
 Disable-MMAgent -MemoryCompression -ErrorAction SilentlyContinue | Out-Null
@@ -35,13 +35,10 @@ exit
 
 Clear-Host
 
-Write-Host "Memory Compression: Enable...`n"
+Write-Host "Memory Compression: Enable..."
 
 # enable memory compression
 Enable-MMAgent -MemoryCompression -ErrorAction SilentlyContinue | Out-Null
-
-# show mmagent
-get-mmagent
 
 Pause
 

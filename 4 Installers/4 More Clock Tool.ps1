@@ -53,7 +53,7 @@
 ## explorer "https://www.igorslab.de/en/download-area-new-version-of-morepowertool-mpt-and-final-release-of-redbioseditor-rbe"
 ## explorer "https://www.igorslab.de/installer/MoreClockTool_v1111_2.zip"
 Write-Host "Installing: More Clock Tool..."
-Write-Host "Navi GPUS only, 5000 series and above`n" -ForegroundColor Red
+Write-Host "Navi GPUS only, 5000 series and above`n"
 
 Pause
 

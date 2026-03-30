@@ -20,7 +20,7 @@
 
 ## explorer "https://www.overclock.net/threads/corecycler-tool-for-testing-single-core-stability-e-g-curve-optimizer-settings.1777398/page-45#post-28999750"
 Write-Host "Installing: PBO2 Tuner..."
-Write-Host "AM4 CPUS only, 5000 series and below`n" -ForegroundColor Red
+Write-Host "AM4 CPUS only, 5000 series and below`n"
 
 Pause
 

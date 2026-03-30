@@ -8,8 +8,8 @@
         $Host.PrivateData.ProgressForegroundColor = "White"
         Clear-Host
 
-        Write-Host "If using 'NVME Faster Driver.ps1' apply that" -ForegroundColor Red
-        Write-Host "and restart first before proceeding with this`n" -ForegroundColor Red
+        Write-Host "If using 'NVME Faster Driver.ps1' apply that"
+        Write-Host "and restart first before proceeding with this`n"
         Write-Host "1. Write Cache Buffer Flushing: Off (Recommended)"
         Write-Host "2. Write Cache Buffer Flushing: Default`n"
         while ($true) {

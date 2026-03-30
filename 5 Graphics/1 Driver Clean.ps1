@@ -152,7 +152,7 @@ cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /
 # turn on safe boot
 cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"
 
-Write-Host "RESTARTING`n" -ForegroundColor Red
+Write-Host "Restarting`n" -ForegroundColor Red
 
 # restart
 Start-Sleep -Seconds 5
@@ -249,7 +249,7 @@ start-process explorer
 # remove safe mode boot
 cmd /c "bcdedit /deletevalue {current} safeboot >nul 2>&1"
 
-Write-Host "DDU & MANUAL`n"
+Write-Host "DDU MANUAL`n"
 
 # open ddu
 Start-Process "$env:SystemRoot\Temp\DDU\Display Driver Uninstaller.exe"
@@ -262,7 +262,7 @@ cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /
 # turn on safe boot
 cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"
 
-Write-Host "RESTARTING`n" -ForegroundColor Red
+Write-Host "Restarting`n" -ForegroundColor Red
 
 # restart
 Start-Sleep -Seconds 5
