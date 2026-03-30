@@ -10,7 +10,7 @@
 		
 Start-Process "ms-settings:optionalfeatures"
 
-dism /online /get-capabilities /format:table
+Get-WindowsCapability -Online | Select-Object Name, State | Format-Table -AutoSize
 
 Write-Host ""
 
