@@ -348,8 +348,8 @@ $nipfile = @'
 <ArrayOfProfile>
   <Profile>
     <ProfileName>Base Profile</ProfileName>
-    <Executeables />
-    <Settings />
+    <Executeables/>
+    <Settings/>
   </Profile>
 </ArrayOfProfile>
 '@
