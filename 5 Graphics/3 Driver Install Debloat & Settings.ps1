@@ -18,33 +18,6 @@
         # SCRIPT SILENT
         $progresspreference = 'silentlycontinue'
 
-        # FUNCTION RUN AS TRUSTED INSTALLER
-        function Run-Trusted([String]$command) {
-        try {
-    	Stop-Service -Name TrustedInstaller -Force -ErrorAction Stop -WarningAction Stop
-  		}
-  		catch {
-    	taskkill /im trustedinstaller.exe /f >$null
-  		}
-        $service = Get-CimInstance -ClassName Win32_Service -Filter "Name='TrustedInstaller'"
-        $DefaultBinPath = $service.PathName
-  		$trustedInstallerPath = "$env:SystemRoot\servicing\TrustedInstaller.exe"
-  		if ($DefaultBinPath -ne $trustedInstallerPath) {
-    	$DefaultBinPath = $trustedInstallerPath
-  		}
-        $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
-        $base64Command = [Convert]::ToBase64String($bytes)
-        sc.exe config TrustedInstaller binPath= "cmd.exe /c powershell.exe -encodedcommand $base64Command" | Out-Null
-        sc.exe start TrustedInstaller | Out-Null
-        sc.exe config TrustedInstaller binpath= "`"$DefaultBinPath`"" | Out-Null
-        try {
-    	Stop-Service -Name TrustedInstaller -Force -ErrorAction Stop -WarningAction Stop
-  		}
-  		catch {
-    	taskkill /im trustedinstaller.exe /f >$null
-  		}
-        }
-
 		# FUNCTION MODERN FILE PICKER
     	function Show-ModernFilePicker {
     	param(
@@ -224,27 +197,6 @@ Get-ChildItem -Path $path -Recurse | Unblock-File
 
 # set physx to gpu
 cmd /c "reg add `"HKLM\System\ControlSet001\Services\nvlddmkm\Parameters\Global\NVTweak`" /v `"NvCplPhysxAuto`" /t REG_DWORD /d `"0`" /f >nul 2>&1"
-
-# turn on no scaling for all displays
-$configKeys = Get-ChildItem -Path "HKLM:\System\ControlSet001\Control\GraphicsDrivers\Configuration" -Recurse -ErrorAction SilentlyContinue
-foreach ($key in $configKeys) {
-$scalingValue = Get-ItemProperty -Path $key.PSPath -Name "Scaling" -ErrorAction SilentlyContinue
-if ($scalingValue) {
-$regPath = $key.PSPath.Replace('Microsoft.PowerShell.Core\Registry::', '').Replace('HKEY_LOCAL_MACHINE', 'HKLM')
-Run-Trusted -command "reg add `"$regPath`" /v `"Scaling`" /t REG_DWORD /d `"2`" /f"
-}
-}
-
-# turn on override the scaling mode set by games and programs for all displays
-# perform scaling on display
-$displayDbPath = "HKLM:\System\ControlSet001\Services\nvlddmkm\State\DisplayDatabase"
-if (Test-Path $displayDbPath) {
-$displays = Get-ChildItem -Path $displayDbPath -ErrorAction SilentlyContinue
-foreach ($display in $displays) {
-$regPath = $display.PSPath.Replace('Microsoft.PowerShell.Core\Registry::', '').Replace('HKEY_LOCAL_MACHINE', 'HKLM')
-Run-Trusted -command "reg add `"$regPath`" /v `"ScalingConfig`" /t REG_BINARY /d `"DB02000010000000200100000E010000`" /f"
-}
-}
 
 # enable developer settings
 cmd /c "reg add `"HKLM\System\ControlSet001\Services\nvlddmkm\Parameters\Global\NVTweak`" /v `"NvDevToolsVisible`" /t REG_DWORD /d `"1`" /f >nul 2>&1"
@@ -826,17 +778,6 @@ Start-Process mmsys.cpl
 Pause
 
         Clear-Host
-
-# reapply for nvidia cards after changing resolution
-# turn on no scaling for all displays
-$configKeys = Get-ChildItem -Path "HKLM:\System\ControlSet001\Control\GraphicsDrivers\Configuration" -Recurse -ErrorAction SilentlyContinue
-foreach ($key in $configKeys) {
-$scalingValue = Get-ItemProperty -Path $key.PSPath -Name "Scaling" -ErrorAction SilentlyContinue
-if ($scalingValue) {
-$regPath = $key.PSPath.Replace('Microsoft.PowerShell.Core\Registry::', '').Replace('HKEY_LOCAL_MACHINE', 'HKLM')
-Run-Trusted -command "reg add `"$regPath`" /v `"Scaling`" /t REG_DWORD /d `"2`" /f"
-}
-}
 
 # disable automatically manage color for apps
 $basePath = "HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers\MonitorDataStore"
