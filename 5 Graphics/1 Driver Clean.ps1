@@ -18,33 +18,6 @@
         # SCRIPT SILENT
         $progresspreference = 'silentlycontinue'
 
-        # FUNCTION FASTER DOWNLOADS
-        function Get-FileFromWeb {
-        param ([Parameter(Mandatory)][string]$URL, [Parameter(Mandatory)][string]$File)
-        try {
-        $Request = [System.Net.HttpWebRequest]::Create($URL)
-        $Response = $Request.GetResponse()
-        if ($Response.StatusCode -eq 401 -or $Response.StatusCode -eq 403 -or $Response.StatusCode -eq 404) { throw "401, 403 or 404 '$URL'." }
-        if ($File -match '^\.\\') { $File = Join-Path (Get-Location -PSProvider 'FileSystem') ($File -Split '^\.')[1] }
-        if ($File -and !(Split-Path $File)) { $File = Join-Path (Get-Location -PSProvider 'FileSystem') $File }
-        if ($File) { $FileDirectory = $([System.IO.Path]::GetDirectoryName($File)); if (!(Test-Path($FileDirectory))) { [System.IO.Directory]::CreateDirectory($FileDirectory) | Out-Null } }
-        [long]$FullSize = $Response.ContentLength
-        [byte[]]$Buffer = new-object byte[] 1048576
-        [long]$Total = [long]$Count = 0
-        $Reader = $Response.GetResponseStream()
-        $Writer = new-object System.IO.FileStream $File, 'Create'
-        do {
-        $Count = $Reader.Read($Buffer, 0, $Buffer.Length)
-        $Writer.Write($Buffer, 0, $Count)
-        $Total += $Count
-        } while ($Count -gt 0)
-        }
-        finally {
-        $Reader.Close()
-        $Writer.Close()
-        }
-        }
-
         Write-Host "1. DDU: Auto"
         Write-Host "2. DDU: Manual`n"
         while ($true) {
@@ -59,7 +32,7 @@
 Write-Host "Installing: 7-Zip File Manager`n"
 
 # download 7zip
-Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/7%20Zip.exe" -File "$env:SystemRoot\Temp\7 Zip.exe"
+IWR "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/7%20Zip.exe" -OutFile "$env:SystemRoot\Temp\7 Zip.exe"
 
 # install 7zip
 Start-Process -Wait "$env:SystemRoot\Temp\7 Zip.exe" -ArgumentList "/S"
@@ -76,7 +49,7 @@ Remove-Item "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\7-Zip" -Recu
 Write-Host "Downloading: Display Driver Uninstaller`n"
         
 # download ddu
-Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/DDU.exe" -File "$env:SystemRoot\Temp\DDU.exe"
+IWR "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/DDU.exe" -OutFile "$env:SystemRoot\Temp\DDU.exe"
 
 # extract ddu with 7zip
 & "$env:SystemDrive\Program Files\7-Zip\7z.exe" x "$env:SystemRoot\Temp\DDU.exe" -o"$env:SystemRoot\Temp\DDU" -y | Out-Null
@@ -169,7 +142,7 @@ exit
 Write-Host "Installing: 7-Zip File Manager`n"
 
 # download 7zip
-Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/7%20Zip.exe" -File "$env:SystemRoot\Temp\7 Zip.exe"
+IWR "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/7%20Zip.exe" -OutFile "$env:SystemRoot\Temp\7 Zip.exe"
 
 # install 7zip
 Start-Process -Wait "$env:SystemRoot\Temp\7 Zip.exe" -ArgumentList "/S"
@@ -186,7 +159,7 @@ Remove-Item "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\7-Zip" -Recu
 Write-Host "Downloading: Display Driver Uninstaller`n"
 
 # download ddu
-Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/DDU.exe" -File "$env:SystemRoot\Temp\DDU.exe"
+IWR "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/DDU.exe" -OutFile "$env:SystemRoot\Temp\DDU.exe"
 
 # extract ddu with 7zip
 & "$env:SystemDrive\Program Files\7-Zip\7z.exe" x "$env:SystemRoot\Temp\DDU.exe" -o"$env:SystemRoot\Temp\DDU" -y | Out-Null
@@ -252,7 +225,7 @@ cmd /c "bcdedit /deletevalue {current} safeboot >nul 2>&1"
 Write-Host "DDU MANUAL`n"
 
 # open ddu
-Start-Process "$env:SystemRoot\Temp\DDU\Display Driver Uninstaller.exe"
+Start-Process -Wait "$env:SystemRoot\Temp\DDU\Display Driver Uninstaller.exe"
 '@
 Set-Content -Path "$env:SystemRoot\Temp\DDU.ps1" -Value $DDU -Force
 

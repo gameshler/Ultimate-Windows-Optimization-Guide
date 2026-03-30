@@ -25,7 +25,7 @@ Write-Host "AM4 CPUS only, 5000 series and below`n"
 Pause
 
 # download pbo2 tuner
-iwr "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/PBO2%20Tuner.zip" -OutFile "$env:SystemRoot\Temp\PBO2 Tuner.zip"
+IWR "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/PBO2%20Tuner.zip" -OutFile "$env:SystemRoot\Temp\PBO2 Tuner.zip"
 
 # extract file
 Expand-Archive -Path "$env:SystemRoot\Temp\PBO2 Tuner.zip" -DestinationPath "$env:SystemDrive\Program Files (x86)\PBO2 Tuner" -Force

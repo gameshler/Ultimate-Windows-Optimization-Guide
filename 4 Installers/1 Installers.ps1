@@ -15,40 +15,8 @@
         exit
         }
 
-        # FUNCTION FASTER DOWNLOADS % BAR
-        function Get-FileFromWeb {
-        param ([Parameter(Mandatory)][string]$URL, [Parameter(Mandatory)][string]$File)
-        function Show-Progress {
-        param ([Parameter(Mandatory)][Single]$TotalValue, [Parameter(Mandatory)][Single]$CurrentValue, [Parameter(Mandatory)][string]$ProgressText, [Parameter()][int]$BarSize = 10, [Parameter()][switch]$Complete)
-        $percent = $CurrentValue / $TotalValue
-        $percentComplete = $percent * 100
-        if ($psISE) { Write-Progress "$ProgressText" -id 0 -percentComplete $percentComplete }
-        else { Write-Host -NoNewLine "`r$ProgressText $(''.PadRight($BarSize * $percent, [char]9608).PadRight($BarSize, [char]9617)) $($percentComplete.ToString('##0.00').PadLeft(6)) % " }
-        }
-        try {
-        $request = [System.Net.HttpWebRequest]::Create($URL)
-        $response = $request.GetResponse()
-        if ($response.StatusCode -eq 401 -or $response.StatusCode -eq 403 -or $response.StatusCode -eq 404) { throw "401, 403 or 404 '$URL'." }
-        if ($File -match '^\.\\') { $File = Join-Path (Get-Location -PSProvider 'FileSystem') ($File -Split '^\.')[1] }
-        if ($File -and !(Split-Path $File)) { $File = Join-Path (Get-Location -PSProvider 'FileSystem') $File }
-        if ($File) { $fileDirectory = $([System.IO.Path]::GetDirectoryName($File)); if (!(Test-Path($fileDirectory))) { [System.IO.Directory]::CreateDirectory($fileDirectory) | Out-Null } }
-        [long]$fullSize = $response.ContentLength
-        [byte[]]$buffer = new-object byte[] 1048576
-        [long]$total = [long]$count = 0
-        $reader = $response.GetResponseStream()
-        $writer = new-object System.IO.FileStream $File, 'Create'
-        do {
-        $count = $reader.Read($buffer, 0, $buffer.Length)
-        $writer.Write($buffer, 0, $count)
-        $total += $count
-        if ($fullSize -gt 0) { Show-Progress -TotalValue $fullSize -CurrentValue $total -ProgressText " $($File.Name)" }
-        } while ($count -gt 0)
-        }
-        finally {
-        $reader.Close()
-        $writer.Close()
-        }
-        }
+        # SCRIPT SILENT
+        $progresspreference = 'silentlycontinue'
 
         function show-menu {
 	    Clear-Host
@@ -120,7 +88,7 @@ $DiscordSettings = @'
 Set-Content -Path "$env:APPDATA\discord\settings.json" -Value $DiscordSettings -Force | Out-Null
 
 # download discord				  
-Get-FileFromWeb -URL "https://discord.com/api/downloads/distributions/app/installers/latest?channel=stable&platform=win&arch=x64" -File "$env:SystemRoot\Temp\Discord.exe"
+IWR "https://discord.com/api/downloads/distributions/app/installers/latest?channel=stable&platform=win&arch=x64" -OutFile "$env:SystemRoot\Temp\Discord.exe"
 
 # install discord	
 Start-Process "$env:SystemRoot\Temp\Discord.exe"
@@ -135,7 +103,7 @@ Clear-Host
 Write-Host "Installing: Roblox..."
 
 # download roblox
-Get-FileFromWeb -URL "https://www.roblox.com/download/client?os=win" -File "$env:SystemRoot\Temp\Roblox.exe"
+IWR "https://www.roblox.com/download/client?os=win" -OutFile "$env:SystemRoot\Temp\Roblox.exe"
 
 # install roblox
 Start-Process "$env:SystemRoot\Temp\Roblox.exe" -ArgumentList "/S"
@@ -150,7 +118,7 @@ Clear-Host
 Write-Host "Installing: 7Zip..."
 
 # download 7zip
-Get-FileFromWeb -URL "https://www.7-zip.org/a/7z2301-x64.exe" -File "$env:SystemRoot\Temp\7 Zip.exe"
+IWR "https://www.7-zip.org/a/7z2301-x64.exe" -OutFile "$env:SystemRoot\Temp\7 Zip.exe"
 
 # install 7zip
 Start-Process -Wait "$env:SystemRoot\Temp\7 Zip.exe" -ArgumentList "/S"
@@ -181,7 +149,7 @@ Clear-Host
 Write-Host "Installing: Battle.net..."
 
 # download battle.net
-Get-FileFromWeb -URL "https://downloader.battle.net/download/getInstaller?os=win&installer=Battle.net-Setup.exe" -File "$env:SystemRoot\Temp\Battle.net.exe"
+IWR "https://downloader.battle.net/download/getInstaller?os=win&installer=Battle.net-Setup.exe" -OutFile "$env:SystemRoot\Temp\Battle.net.exe"
 
 # install battle.net 
 Start-Process "$env:SystemRoot\Temp\Battle.net.exe" -ArgumentList '--lang=enUS --installpath="C:\Program Files (x86)\Battle.net"'
@@ -196,7 +164,7 @@ Clear-Host
 Write-Host "Installing: Brave..."
 
 # download brave
-Get-FileFromWeb -URL "https://brave-browser-downloads.s3.brave.com/latest/brave_installer-x64.exe" -File "$env:SystemRoot\Temp\BraveInstaller.exe"
+IWR "https://brave-browser-downloads.s3.brave.com/latest/brave_installer-x64.exe" -OutFile "$env:SystemRoot\Temp\BraveInstaller.exe"
 
 # install brave
 Start-Process "$env:SystemRoot\Temp\BraveInstaller.exe" -ArgumentList "--system-level" -Wait
@@ -238,7 +206,7 @@ Clear-Host
 Write-Host "Installing: Electronic Arts..."
 
 # download electronic arts
-Get-FileFromWeb -URL "https://origin-a.akamaihd.net/EA-Desktop-Client-Download/installer-releases/EAappInstaller.exe" -File "$env:SystemRoot\Temp\Electronic Arts.exe"
+IWR "https://origin-a.akamaihd.net/EA-Desktop-Client-Download/installer-releases/EAappInstaller.exe" -OutFile "$env:SystemRoot\Temp\Electronic Arts.exe"
 
 # install electronic arts
 Start-Process "$env:SystemRoot\Temp\Electronic Arts.exe"
@@ -253,7 +221,7 @@ Clear-Host
 Write-Host "Installing: Epic Games..."
 
 # download epic games
-Get-FileFromWeb -URL "https://launcher-public-service-prod06.ol.epicgames.com/launcher/api/installer/download/EpicGamesLauncherInstaller.msi" -File "$env:SystemRoot\Temp\Epic Games.msi"
+IWR "https://launcher-public-service-prod06.ol.epicgames.com/launcher/api/installer/download/EpicGamesLauncherInstaller.msi" -OutFile "$env:SystemRoot\Temp\Epic Games.msi"
 
 # install epic games
 Start-Process -Wait "$env:SystemRoot\Temp\Epic Games.msi" -ArgumentList "/quiet"
@@ -289,7 +257,7 @@ Clear-Host
 Write-Host "Installing: Escape From Tarkov..."
 
 # download escape from tarkov
-Get-FileFromWeb -URL "https://prod.escapefromtarkov.com/launcher/download" -File "$env:SystemRoot\Temp\Escape From Tarkov.exe"
+IWR "https://prod.escapefromtarkov.com/launcher/download" -OutFile "$env:SystemRoot\Temp\Escape From Tarkov.exe"
 
 # install escape from tarkov
 Start-Process -Wait "$env:SystemRoot\Temp\Escape From Tarkov.exe" -ArgumentList "/VERYSILENT /NORESTART"
@@ -316,7 +284,7 @@ Clear-Host
 Write-Host "Installing: Firefox..."
 
 # download firefox
-Get-FileFromWeb -URL "https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=en-US" -File "$env:SystemRoot\Temp\Firefox.exe"
+IWR "https://download.mozilla.org/?product=firefox-latest-ssl&os=win64&lang=en-US" -OutFile "$env:SystemRoot\Temp\Firefox.exe"
 
 # install firefox
 Start-Process -Wait "$env:SystemRoot\Temp\Firefox.exe" -ArgumentList "/S"
@@ -330,7 +298,7 @@ Get-ScheduledTask | Where-Object {$_.Taskname -match 'Firefox'} | Unregister-Sch
 # install ublock origin
 $uBlockDir = "C:\Program Files\Mozilla Firefox\distribution\extensions"
 If (!(Test-Path $ublockDir)) { New-Item -ItemType Directory -Path $ublockDir -Force | Out-Null }
-Get-FileFromWeb -URL "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi" -File "$uBlockDir\uBlock0@raymondhill.net.xpi"
+IWR "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi" -OutFile "$uBlockDir\uBlock0@raymondhill.net.xpi"
 
 # disable firefox updates
 cmd /c "reg add `"HKLM\SOFTWARE\Policies\Mozilla\Firefox`" /v `"AppAutoUpdate`" /t REG_DWORD /d `"0`" /f >nul 2>&1"
@@ -360,7 +328,7 @@ Clear-Host
 Write-Host "Installing: Frame View..."
 
 # download frame view
-Get-FileFromWeb -URL "https://images.nvidia.com/content/geforce/technologies/frameview/FrameView_1.7/FrameViewSetup.exe" -File "$env:SystemRoot\Temp\FrameView.exe"
+IWR "https://images.nvidia.com/content/geforce/technologies/frameview/FrameView_1.7/FrameViewSetup.exe" -OutFile "$env:SystemRoot\Temp\FrameView.exe"
 
 # install frame view 
 Start-Process -Wait "$env:SystemRoot\Temp\FrameView.exe" -ArgumentList "/s"
@@ -379,7 +347,7 @@ Clear-Host
 Write-Host "Installing: GOG launcher..."
 
 # download gog launcher
-Get-FileFromWeb -URL "https://webinstallers.gog-statics.com/download/GOG_Galaxy_2.0.exe" -File "$env:SystemRoot\Temp\GOG launcher.exe"
+IWR "https://webinstallers.gog-statics.com/download/GOG_Galaxy_2.0.exe" -OutFile "$env:SystemRoot\Temp\GOG launcher.exe"
 
 # install gog launcher
 Start-Process "$env:SystemRoot\Temp\GOG launcher.exe"
@@ -394,7 +362,7 @@ Clear-Host
 Write-Host "Installing: Google Chrome..."
 
 # download google chrome
-Get-FileFromWeb -URL "https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi" -File "$env:SystemRoot\Temp\Chrome.msi"
+IWR "https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi" -OutFile "$env:SystemRoot\Temp\Chrome.msi"
 
 # install google chrome
 Start-Process -Wait "$env:SystemRoot\Temp\Chrome.msi" -ArgumentList "/quiet"
@@ -436,7 +404,7 @@ Clear-Host
 Write-Host "Installing: League Of Legends..."
 
 # download league of legends
-Get-FileFromWeb -URL "https://lol.secure.dyn.riotcdn.net/channels/public/x/installer/current/live.na.exe" -File "$env:SystemRoot\Temp\League Of Legends.exe"
+IWR "https://lol.secure.dyn.riotcdn.net/channels/public/x/installer/current/live.na.exe" -OutFile "$env:SystemRoot\Temp\League Of Legends.exe"
 
 # install league of legends
 Start-Process "$env:SystemRoot\Temp\League Of Legends.exe" -ArgumentList "--skip-to-install"
@@ -451,7 +419,7 @@ Clear-Host
 Write-Host "Installing: Notepad ++..."
 
 # download notepad ++
-Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/main/Notepad%20++.exe" -File "$env:SystemRoot\Temp\Notepad ++.exe"
+IWR "https://github.com/FR33THYFR33THY/files/raw/main/Notepad%20++.exe" -OutFile "$env:SystemRoot\Temp\Notepad ++.exe"
 
 # install notepad ++
 Start-Process -Wait "$env:SystemRoot\Temp\Notepad ++.exe" -ArgumentList "/S"
@@ -550,7 +518,7 @@ Clear-Host
 Write-Host "Installing: Nvidia App..."
 
 # download nvidia app
-Get-FileFromWeb -URL "https://us.download.nvidia.com/nvapp/client/11.0.6.383/NVIDIA_app_v11.0.6.383.exe" -File "$env:SystemRoot\Temp\NvidiaApp.exe"
+IWR "https://us.download.nvidia.com/nvapp/client/11.0.6.383/NVIDIA_app_v11.0.6.383.exe" -OutFile "$env:SystemRoot\Temp\NvidiaApp.exe"
 
 # install nvidia app
 Start-Process -Wait "$env:SystemRoot\Temp\NvidiaApp.exe" -ArgumentList "/s"
@@ -569,7 +537,7 @@ Clear-Host
 Write-Host "Installing: OBS Studio..."
 
 # download obs studio                      
-Get-FileFromWeb -URL "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-32.1.0-Windows-x64-Installer.exe" -File "$env:SystemRoot\Temp\OBS Studio.exe"
+IWR "https://cdn-fastly.obsproject.com/downloads/OBS-Studio-32.1.0-Windows-x64-Installer.exe" -OutFile "$env:SystemRoot\Temp\OBS Studio.exe"
 
 # install obs studio
 Start-Process -Wait "$env:SystemRoot\Temp\OBS Studio.exe" -ArgumentList "/S"
@@ -583,8 +551,11 @@ Clear-Host
 
 Write-Host "Installing: Onboard Memory Manager..."
 
+# new folder
+New-Item -Path "$env:SystemDrive\Program Files (x86)\Onboard Memory Manager" -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
+
 # download onboard memory manager
-Get-FileFromWeb -URL "https://download01.logi.com/web/ftp/pub/techsupport/gaming/OnboardMemoryManager_2.6.1749.exe" -File "$env:SystemDrive\Program Files (x86)\Onboard Memory Manager\Onboard Memory Manager.exe"
+IWR "https://download01.logi.com/web/ftp/pub/techsupport/gaming/OnboardMemoryManager_2.6.1749.exe" -OutFile "$env:SystemDrive\Program Files (x86)\Onboard Memory Manager\Onboard Memory Manager.exe"
 
 # create desktop shortcut
 $WshShell = New-Object -comObject WScript.Shell
@@ -611,7 +582,7 @@ Clear-Host
 Write-Host "Installing: Pot Player..."
 
 # download pot player         
-Get-FileFromWeb -URL "https://t1.daumcdn.net/potplayer/PotPlayer/Version/Latest/PotPlayerSetup64.exe" -File "$env:SystemRoot\Temp\Pot Player.exe"
+IWR "https://t1.daumcdn.net/potplayer/PotPlayer/Version/Latest/PotPlayerSetup64.exe" -OutFile "$env:SystemRoot\Temp\Pot Player.exe"
 
 # install pot player 
 Start-Process -Wait "$env:SystemRoot\Temp\Pot Player.exe" -ArgumentList "/S /allusers"
@@ -630,7 +601,7 @@ Clear-Host
 Write-Host "Installing: Rockstar Games..."
 
 # download rockstar games
-Get-FileFromWeb -URL "https://gamedownloads.rockstargames.com/public/installer/Rockstar-Games-Launcher.exe" -File "$env:SystemRoot\Temp\Rockstar Games.exe"
+IWR "https://gamedownloads.rockstargames.com/public/installer/Rockstar-Games-Launcher.exe" -OutFile "$env:SystemRoot\Temp\Rockstar Games.exe"
 
 # install rockstar games
 Start-Process -Wait "$env:SystemRoot\Temp\Rockstar Games.exe" -ArgumentList "/s /f"
@@ -658,10 +629,10 @@ ui.hardware_acceleration=false
 Set-Content -Path "$env:APPDATA\Spotify\prefs" -Value $SpotifySettingsPrefs -Force | Out-Null
 
 # download spotify
-Get-FileFromWeb -URL "https://download.scdn.co/SpotifySetup.exe" -File "$env:TEMP\Spotify.exe"
+IWR "https://download.scdn.co/SpotifySetup.exe" -OutFile "$env:SystemRoot\Temp\Spotify.exe"
 
 # install spotify
-Start-Process "explorer.exe" -ArgumentList "$env:TEMP\Spotify.exe"
+Start-Process "explorer.exe" -ArgumentList "$env:SystemRoot\Temp\Spotify.exe"
 
 show-menu
 
@@ -673,7 +644,7 @@ Clear-Host
 Write-Host "Installing: Steam..."
 
 # download steam
-Get-FileFromWeb -URL "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe" -File "$env:SystemRoot\Temp\Steam.exe"
+IWR "https://cdn.cloudflare.steamstatic.com/client/installer/SteamSetup.exe" -OutFile "$env:SystemRoot\Temp\Steam.exe"
 
 # install steam
 Start-Process -Wait "$env:SystemRoot\Temp\Steam.exe" -ArgumentList "/S"
@@ -695,7 +666,7 @@ Clear-Host
 Write-Host "Installing: Ubisoft Connect..."
 
 # download ubisoft connect
-Get-FileFromWeb -URL "https://static3.cdn.ubi.com/orbit/launcher_installer/UbisoftConnectInstaller.exe" -File "$env:SystemRoot\Temp\Ubisoft Connect.exe"
+IWR "https://static3.cdn.ubi.com/orbit/launcher_installer/UbisoftConnectInstaller.exe" -OutFile "$env:SystemRoot\Temp\Ubisoft Connect.exe"
 
 # install ubisoft connect
 Start-Process -Wait "$env:SystemRoot\Temp\Ubisoft Connect.exe" -ArgumentList "/S"
@@ -714,7 +685,7 @@ Clear-Host
 Write-Host "Installing: Valorant..."
 
 # download valorant
-Get-FileFromWeb -URL "https://valorant.secure.dyn.riotcdn.net/channels/public/x/installer/current/live.live.ap.exe" -File "$env:SystemRoot\Temp\Valorant.exe"
+IWR "https://valorant.secure.dyn.riotcdn.net/channels/public/x/installer/current/live.live.ap.exe" -OutFile "$env:SystemRoot\Temp\Valorant.exe"
 
 # install valorant 
 Start-Process "$env:SystemRoot\Temp\Valorant.exe" -ArgumentList "--skip-to-install"

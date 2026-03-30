@@ -18,41 +18,6 @@
         # SCRIPT SILENT
         $progresspreference = 'silentlycontinue'
 
-        # FUNCTION FASTER DOWNLOADS % BAR
-        function Get-FileFromWeb {
-        param ([Parameter(Mandatory)][string]$URL, [Parameter(Mandatory)][string]$File)
-        function Show-Progress {
-        param ([Parameter(Mandatory)][Single]$TotalValue, [Parameter(Mandatory)][Single]$CurrentValue, [Parameter(Mandatory)][string]$ProgressText, [Parameter()][int]$BarSize = 10, [Parameter()][switch]$Complete)
-        $percent = $CurrentValue / $TotalValue
-        $percentComplete = $percent * 100
-        if ($psISE) { Write-Progress "$ProgressText" -id 0 -percentComplete $percentComplete }
-        else { Write-Host -NoNewLine "`r$ProgressText $(''.PadRight($BarSize * $percent, [char]9608).PadRight($BarSize, [char]9617)) $($percentComplete.ToString('##0.00').PadLeft(6)) % " }
-        }
-        try {
-        $request = [System.Net.HttpWebRequest]::Create($URL)
-        $response = $request.GetResponse()
-        if ($response.StatusCode -eq 401 -or $response.StatusCode -eq 403 -or $response.StatusCode -eq 404) { throw "401, 403 or 404 '$URL'." }
-        if ($File -match '^\.\\') { $File = Join-Path (Get-Location -PSProvider 'FileSystem') ($File -Split '^\.')[1] }
-        if ($File -and !(Split-Path $File)) { $File = Join-Path (Get-Location -PSProvider 'FileSystem') $File }
-        if ($File) { $fileDirectory = $([System.IO.Path]::GetDirectoryName($File)); if (!(Test-Path($fileDirectory))) { [System.IO.Directory]::CreateDirectory($fileDirectory) | Out-Null } }
-        [long]$fullSize = $response.ContentLength
-        [byte[]]$buffer = new-object byte[] 1048576
-        [long]$total = [long]$count = 0
-        $reader = $response.GetResponseStream()
-        $writer = new-object System.IO.FileStream $File, 'Create'
-        do {
-        $count = $reader.Read($buffer, 0, $buffer.Length)
-        $writer.Write($buffer, 0, $count)
-        $total += $count
-        if ($fullSize -gt 0) { Show-Progress -TotalValue $fullSize -CurrentValue $total -ProgressText " $($File.Name)" }
-        } while ($count -gt 0)
-        }
-        finally {
-        $reader.Close()
-        $writer.Close()
-        }
-        }
-
         # ALLOW PASSWORD SIGN IN
         cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device`" /v `"DevicePasswordLessBuildVersion`" /t REG_DWORD /d `"0`" /f >nul 2>&1"
 
@@ -485,7 +450,7 @@ Clear-Host
 Write-Host "Installing: Remote Desktop Connection. Please wait..."
 
 # download remote desktop connection
-Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/RemoteDesktopConnection.exe" -File "$env:SystemRoot\Temp\RemoteDesktopConnection.exe"
+IWR "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/RemoteDesktopConnection.exe" -OutFile "$env:SystemRoot\Temp\RemoteDesktopConnection.exe"
 
 # install remote desktop connection 
 cmd /c "%SystemRoot%\Temp\RemoteDesktopConnection.exe >nul 2>&1"
@@ -504,7 +469,7 @@ Write-Host "If installer fails on W10, restart PC and rerun script"
 Write-Host ""
 
 # download w10 snipping tool
-Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/SnippingTool.exe" -File "$env:SystemRoot\Temp\SnippingTool.exe"
+IWR "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/SnippingTool.exe" -OutFile "$env:SystemRoot\Temp\SnippingTool.exe"
 
 # install w10 snipping tool
 cmd /c "%SystemRoot%\Temp\SnippingTool.exe >nul 2>&1"

@@ -15,35 +15,11 @@
         exit
         }
 
-        # FUNCTION FASTER DOWNLOADS
-        function Get-FileFromWeb {
-        param ([Parameter(Mandatory)][string]$URL, [Parameter(Mandatory)][string]$File)
-        try {
-        $Request = [System.Net.HttpWebRequest]::Create($URL)
-        $Response = $Request.GetResponse()
-        if ($Response.StatusCode -eq 401 -or $Response.StatusCode -eq 403 -or $Response.StatusCode -eq 404) { throw "401, 403 or 404 '$URL'." }
-        if ($File -match '^\.\\') { $File = Join-Path (Get-Location -PSProvider 'FileSystem') ($File -Split '^\.')[1] }
-        if ($File -and !(Split-Path $File)) { $File = Join-Path (Get-Location -PSProvider 'FileSystem') $File }
-        if ($File) { $FileDirectory = $([System.IO.Path]::GetDirectoryName($File)); if (!(Test-Path($FileDirectory))) { [System.IO.Directory]::CreateDirectory($FileDirectory) | Out-Null } }
-        [long]$FullSize = $Response.ContentLength
-        [byte[]]$Buffer = new-object byte[] 1048576
-        [long]$Total = [long]$Count = 0
-        $Reader = $Response.GetResponseStream()
-        $Writer = new-object System.IO.FileStream $File, 'Create'
-        do {
-        $Count = $Reader.Read($Buffer, 0, $Buffer.Length)
-        $Writer.Write($Buffer, 0, $Count)
-        $Total += $Count
-        } while ($Count -gt 0)
-        }
-        finally {
-        $Reader.Close()
-        $Writer.Close()
-        }
-        }
+        # SCRIPT SILENT
+        $progresspreference = 'silentlycontinue'
 
         # DOWNLOAD INSPECTOR
-        Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/Inspector.exe" -File "$env:SystemRoot\Temp\Inspector.exe"
+        IWR "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/Inspector.exe" -OutFile "$env:SystemRoot\Temp\Inspector.exe"
 
         Write-Host "SOME GAMES NEED TO BE SET IN THEIR INDIVIDUAL PROFILE`n"
         Write-Host "NVIDIA RESIZABLE BAR FORCE:`n"

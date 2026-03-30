@@ -18,33 +18,6 @@
         # SCRIPT SILENT
         $progresspreference = 'silentlycontinue'
 
-        # FUNCTION FASTER DOWNLOADS
-        function Get-FileFromWeb {
-        param ([Parameter(Mandatory)][string]$URL, [Parameter(Mandatory)][string]$File)
-        try {
-        $Request = [System.Net.HttpWebRequest]::Create($URL)
-        $Response = $Request.GetResponse()
-        if ($Response.StatusCode -eq 401 -or $Response.StatusCode -eq 403 -or $Response.StatusCode -eq 404) { throw "401, 403 or 404 '$URL'." }
-        if ($File -match '^\.\\') { $File = Join-Path (Get-Location -PSProvider 'FileSystem') ($File -Split '^\.')[1] }
-        if ($File -and !(Split-Path $File)) { $File = Join-Path (Get-Location -PSProvider 'FileSystem') $File }
-        if ($File) { $FileDirectory = $([System.IO.Path]::GetDirectoryName($File)); if (!(Test-Path($FileDirectory))) { [System.IO.Directory]::CreateDirectory($FileDirectory) | Out-Null } }
-        [long]$FullSize = $Response.ContentLength
-        [byte[]]$Buffer = new-object byte[] 1048576
-        [long]$Total = [long]$Count = 0
-        $Reader = $Response.GetResponseStream()
-        $Writer = new-object System.IO.FileStream $File, 'Create'
-        do {
-        $Count = $Reader.Read($Buffer, 0, $Buffer.Length)
-        $Writer.Write($Buffer, 0, $Count)
-        $Total += $Count
-        } while ($Count -gt 0)
-        }
-        finally {
-        $Reader.Close()
-        $Writer.Close()
-        }
-        }
-
         # FUNCTION RUN AS TRUSTED INSTALLER
         function Run-Trusted([String]$command) {
         try {
@@ -127,7 +100,7 @@
     	}
 
 # download 7zip
-Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/7%20Zip.exe" -File "$env:SystemRoot\Temp\7 Zip.exe"
+IWR "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/7%20Zip.exe" -OutFile "$env:SystemRoot\Temp\7 Zip.exe"
 
 # install 7zip
 Start-Process -Wait "$env:SystemRoot\Temp\7 Zip.exe" -ArgumentList "/S"
@@ -216,7 +189,7 @@ Remove-Item "$env:SystemRoot\Temp\NvidiaDriver\NvApp\NvConfigGenerator.dll" -For
 Start-Process "$env:SystemRoot\Temp\NvidiaDriver\setup.exe" -ArgumentList "-s -noreboot -noeula -clean" -Wait -NoNewWindow
 
 # download nvidia control panel
-Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/NVIDIAControlPanel.Appx" -File "$env:SystemRoot\Temp\NVIDIAControlPanel.Appx"
+IWR "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/NVIDIAControlPanel.Appx" -OutFile "$env:SystemRoot\Temp\NVIDIAControlPanel.Appx"
 
 # install nvidia control panel
 Add-AppxPackage -Path "$env:SystemRoot\Temp\NVIDIAControlPanel.Appx"
@@ -294,7 +267,7 @@ cmd /c "reg add `"HKLM\SYSTEM\ControlSet001\Services\nvlddmkm\Parameters\FTS`" /
 cmd /c "reg add `"HKLM\SYSTEM\CurrentControlSet\Services\nvlddmkm\Parameters\FTS`" /v `"EnableGR535`" /t REG_DWORD /d `"0`" /f >nul 2>&1"
 
 # download inspector
-Get-FileFromWeb -URL "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/Inspector.exe" -File "$env:SystemRoot\Temp\Inspector.exe"
+IWR "https://github.com/FR33THYFR33THY/files/raw/refs/heads/main/Inspector.exe" -OutFile "$env:SystemRoot\Temp\Inspector.exe"
 
 # set config for inspector
 $nipfile = @'
