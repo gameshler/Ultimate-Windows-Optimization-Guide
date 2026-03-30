@@ -166,6 +166,7 @@ Remove-Item "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\7-Zip" -Recu
 Start-Sleep -Seconds 5
 Start-Process "https://www.nvidia.com/en-us/drivers"
 Pause
+Clear-Host
 
         Write-Host ""
         Write-Host "SELECT DOWNLOADED DRIVER`n" -ForegroundColor Yellow
@@ -513,6 +514,7 @@ Start-Process -wait "$env:SystemRoot\Temp\Inspector.exe" -ArgumentList "-silentI
 Start-Sleep -Seconds 5
 Start-Process "https://www.amd.com/en/support/download/drivers.html"
 Pause
+Clear-Host
 
         Write-Host ""
         Write-Host "SELECT DOWNLOADED DRIVER`n" -ForegroundColor Yellow
@@ -525,15 +527,6 @@ $InstallFile = Show-ModernFilePicker -Mode File
 
 # extract driver with 7zip
 & "$env:SystemDrive\Program Files\7-Zip\7z.exe" x "$InstallFile" -o"$env:SystemRoot\Temp\AmdDriver" -y | Out-Null
-
-# debloat amd driver
-$path = "$env:SystemRoot\Temp\AmdDriver\Packages\Drivers\Display\WT6A_INF"
-Get-ChildItem $path -Directory | Where-Object {
-    $_.Name -notlike "B*" -and
-    $_.Name -ne "amdvlk" -and
-    $_.Name -ne "amdogl" -and
-	$_.Name -ne "amdocl"
-} | Remove-Item -Recurse -Force
 
 # edit xml files, set enabled & hidden to false
 $xmlFiles = @(
@@ -584,6 +577,18 @@ cmd /c "reg delete `"HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce`" /v
 # delete startcn task
 Unregister-ScheduledTask -TaskName "StartCN" -Confirm:$false -ErrorAction SilentlyContinue
 
+# delete amd crash defender service
+cmd /c "sc stop `"AMD Crash Defender Service`" >nul 2>&1"
+cmd /c "sc delete `"AMD Crash Defender Service`" >nul 2>&1"
+
+# delete amd crash defender driver
+cmd /c "sc stop `"amdfendr`" >nul 2>&1"
+cmd /c "sc delete `"amdfendr`" >nul 2>&1"
+
+# delete amd crash defender manager driver
+cmd /c "sc stop `"amdfendrmgr`" >nul 2>&1"
+cmd /c "sc delete `"amdfendrmgr`" >nul 2>&1"
+
 # delete amd audio coprocessr dsp driver
 cmd /c "sc stop `"amdacpbus`" >nul 2>&1"
 cmd /c "sc delete `"amdacpbus`" >nul 2>&1"
@@ -620,13 +625,12 @@ Remove-Item "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\$folderName"
 # delete old driver files
 Remove-Item "$env:SystemDrive\AMD" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
 
-# wait incase driver timeout or installer bugs
-
-        80..0 | % { Write-Host "`rIMPORTING SETTINGS $_   " -NoNewline; Start-Sleep 1 }; Write-Host "`n"
+        Write-Host "IMPORTING SETTINGS"
+        Write-Host "IGNORE RSSERVCMD.EXE ERROR`n" -ForegroundColor Red
 
 # open & close amd software adrenalin edition settings page so settings stick
 Start-Process "$env:SystemDrive\Program Files\AMD\CNext\CNext\RadeonSoftware.exe"
-Start-Sleep -Seconds 30
+Start-Sleep -Seconds 15
 Stop-Process -Name "RadeonSoftware" -Force -ErrorAction SilentlyContinue
 Start-Sleep -Seconds 2
 
@@ -717,6 +721,7 @@ cmd /c "reg add `"HKCU\Software\AMD\CN\VirtualSuperResolution`" /v `"AlreadyNoti
 Start-Sleep -Seconds 5
 Start-Process "https://www.intel.com/content/www/us/en/search.html#sortCriteria=%40lastmodifieddt%20descending&f-operatingsystem_en=Windows%2011%20Family*&f-downloadtype=Drivers&cf-tabfilter=Downloads&cf-downloadsppth=Graphics"
 Pause
+Clear-Host
 
         Write-Host ""
         Write-Host "SELECT DOWNLOADED DRIVER`n" -ForegroundColor Yellow
@@ -797,26 +802,6 @@ cmd /c "reg add `"$regPath\3DKeys`" /f >nul 2>&1"
 }
 }
 
-# display
-# variable refresh rate mode - disabled
-$basePath = "HKLM:\System\ControlSet001\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}"
-$allKeys = Get-ChildItem -Path $basePath -Recurse -ErrorAction SilentlyContinue
-$optionKeys = $allKeys | Where-Object { $_.PSChildName -eq "3DKeys" }
-foreach ($key in $optionKeys) {
-$regPath = $key.Name
-cmd /c "reg add `"$regPath`" /v `"Global_VRRWindowedBLT`" /t REG_DWORD /d `"2`" /f >nul 2>&1"
-}
-
-# variable refresh rate - disabled
-$basePath = "HKLM:\System\ControlSet001\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}"
-$adapterKeys = Get-ChildItem -Path $basePath -ErrorAction SilentlyContinue
-foreach ($key in $adapterKeys) {
-if ($key.PSChildName -match '^\d{4}$') {
-$regPath = $key.Name
-cmd /c "reg add `"$regPath`" /v `"AdaptiveVsyncEnableUserSetting`" /t REG_BINARY /d `"00000000`" /f >nul 2>&1"
-}
-}
-
 # graphics
 # frame synchronization - vsync off
 $basePath = "HKLM:\System\ControlSet001\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}"
@@ -886,7 +871,6 @@ $monitorKeys = Get-ChildItem -Path $basePath -Recurse -ErrorAction SilentlyConti
 foreach ($key in $monitorKeys) {
 $regPath = $key.Name
 cmd /c "reg add `"$regPath`" /v `"AutoColorManagementEnabled`" /t REG_DWORD /d `"0`" /f >nul 2>&1"
-cmd /c "reg add `"$regPath`" /v `"AutoColorManagementSupported`" /t REG_DWORD /d `"0`" /f >nul 2>&1"
 }
 
 # enable msi mode for all gpus
