@@ -81,13 +81,7 @@ $ServicesOff = @'
   		}
         }
 
-	    # REMOVE WINLOGON PS1 FILE
-        cmd /c "reg add `"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v `"Userinit`" /t REG_SZ /d `"C:\WINDOWS\system32\userinit.exe,`" /f >nul 2>&1"
-
 Write-Host "Services: Off...`n"
-
-# start explorer
-Start-Process explorer
 
 # create reg file
 $ServicesOff = @'
@@ -959,8 +953,8 @@ Set-Content -Path "$env:SystemRoot\Temp\servicesoff.ps1" -Value $ServicesOff -Fo
 $ServicesOffPs1 = "$env:SystemRoot\Temp\servicesoff.ps1"
 (Get-Content $ServicesOffPs1 -Raw) -replace "``'@","'@" | Set-Content $ServicesOffPs1 -NoNewline
 
-# install winlogon servicesoff ps1 file to run in safe boot
-cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v `"Userinit`" /t REG_SZ /d `"powershell.exe -nop -ep bypass -WindowStyle Maximized -f $env:SystemRoot\Temp\servicesoff.ps1`" /f >nul 2>&1"
+# install runonce servicesoff ps1 file to run in safe boot
+cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce`" /v `"*servicesoff`" /t REG_SZ /d `"powershell.exe -nop -ep bypass -WindowStyle Maximized -f $env:SystemRoot\Temp\servicesoff.ps1`" /f >nul 2>&1"
 
 # turn on safe boot
 cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"
@@ -1019,13 +1013,7 @@ $ServicesOn = @'
   		}
         }
 
-	    # REMOVE WINLOGON PS1 FILE
-        cmd /c "reg add `"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v `"Userinit`" /t REG_SZ /d `"C:\WINDOWS\system32\userinit.exe,`" /f >nul 2>&1"
-
 Write-Host "Services: Default...`n"
-
-# start explorer
-Start-Process explorer
 
 # create reg file
 $ServicesOn = @'
@@ -1897,8 +1885,8 @@ Set-Content -Path "$env:SystemRoot\Temp\serviceson.ps1" -Value $ServicesOn -Forc
 $ServicesOnPs1 = "$env:SystemRoot\Temp\serviceson.ps1"
 (Get-Content $ServicesOnPs1 -Raw) -replace "``'@","'@" | Set-Content $ServicesOnPs1 -NoNewline
 
-# install winlogon serviceson ps1 file to run in safe boot
-cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v `"Userinit`" /t REG_SZ /d `"powershell.exe -nop -ep bypass -WindowStyle Maximized -f $env:SystemRoot\Temp\serviceson.ps1`" /f >nul 2>&1"
+# install runonce serviceson ps1 file to run in safe boot
+cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce`" /v `"*serviceson`" /t REG_SZ /d `"powershell.exe -nop -ep bypass -WindowStyle Maximized -f $env:SystemRoot\Temp\serviceson.ps1`" /f >nul 2>&1"
 
 # turn on safe boot
 cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"

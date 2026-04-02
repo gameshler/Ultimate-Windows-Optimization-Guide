@@ -59,12 +59,6 @@ $DefenderOptimize = @'
   		}
         }
 
-	    # REMOVE WINLOGON PS1 FILE
-        cmd /c "reg add `"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v `"Userinit`" /t REG_SZ /d `"C:\WINDOWS\system32\userinit.exe,`" /f >nul 2>&1"
-
-# start explorer
-Start-Process explorer
-
 Write-Host "Defender Optimize: On...`n"
 
 $windowssecuritysettings = @(
@@ -174,8 +168,8 @@ shutdown -r -t 00
 '@
 Set-Content -Path "$env:SystemRoot\Temp\defenderoptimize.ps1" -Value $DefenderOptimize -Force
 
-# install winlogon defenderoptimize ps1 file to run in safe boot
-cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v `"Userinit`" /t REG_SZ /d `"powershell.exe -nop -ep bypass -WindowStyle Maximized -f $env:SystemRoot\Temp\defenderoptimize.ps1`" /f >nul 2>&1"
+# install runonce defenderoptimize ps1 file to run in safe boot
+cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce`" /v `"*defenderoptimize`" /t REG_SZ /d `"powershell.exe -nop -ep bypass -WindowStyle Maximized -f $env:SystemRoot\Temp\defenderoptimize.ps1`" /f >nul 2>&1"
 
 # smartscreen for microsoft edge - needs normal boot as admin
 cmd /c "reg add `"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Edge\SmartScreenEnabled`" /ve /t REG_DWORD /d `"0`" /f >nul 2>&1"
@@ -246,12 +240,6 @@ $DefenderDefault = @'
     	taskkill /im trustedinstaller.exe /f >$null
   		}
         }
-
-	    # REMOVE WINLOGON PS1 FILE
-        cmd /c "reg add `"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v `"Userinit`" /t REG_SZ /d `"C:\WINDOWS\system32\userinit.exe,`" /f >nul 2>&1"
-
-# start explorer
-Start-Process explorer
 
 Write-Host "Defender: Default...`n"
 
@@ -355,8 +343,8 @@ shutdown -r -t 00
 '@
 Set-Content -Path "$env:SystemRoot\Temp\defenderdefault.ps1" -Value $DefenderDefault -Force
 
-# install winlogon defenderdefault ps1 file to run in safe boot
-cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v `"Userinit`" /t REG_SZ /d `"powershell.exe -nop -ep bypass -WindowStyle Maximized -f $env:SystemRoot\Temp\defenderdefault.ps1`" /f >nul 2>&1"
+# install runonce defenderdefault ps1 file to run in safe boot
+cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce`" /v `"*defenderdefault`" /t REG_SZ /d `"powershell.exe -nop -ep bypass -WindowStyle Maximized -f $env:SystemRoot\Temp\defenderdefault.ps1`" /f >nul 2>&1"
 
 # smartscreen for microsoft edge - needs normal boot as admin
 cmd /c "reg add `"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Edge\SmartScreenEnabled`" /ve /t REG_DWORD /d `"1`" /f >nul 2>&1"

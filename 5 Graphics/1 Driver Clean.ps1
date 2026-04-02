@@ -103,12 +103,6 @@ cmd /c "reg add `"HKLM\Software\Microsoft\Windows\CurrentVersion\DriverSearching
 
 # create ddu ps1 file
 $DDU = @'
-	    # REMOVE WINLOGON STEPONE PS1 FILE
-        cmd /c "reg add `"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v `"Userinit`" /t REG_SZ /d `"C:\WINDOWS\system32\userinit.exe,`" /f >nul 2>&1"
-
-# start explorer
-Start-Process explorer
-
 # remove safe mode boot
 cmd /c "bcdedit /deletevalue {current} safeboot >nul 2>&1"
 
@@ -119,8 +113,8 @@ Start-Process "$env:SystemRoot\Temp\ddu\Display Driver Uninstaller.exe" -Argumen
 '@
 Set-Content -Path "$env:SystemRoot\Temp\ddu.ps1" -Value $DDU -Force
 
-# install winlogon ddu ps1 file to run in safe boot
-cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v `"Userinit`" /t REG_SZ /d `"powershell.exe -nop -ep bypass -WindowStyle Maximized -f $env:SystemRoot\Temp\ddu.ps1`" /f >nul 2>&1"
+# install runonce ddu ps1 file to run in safe boot
+cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce`" /v `"*ddu`" /t REG_SZ /d `"powershell.exe -nop -ep bypass -WindowStyle Maximized -f $env:SystemRoot\Temp\ddu.ps1`" /f >nul 2>&1"
 
 # turn on safe boot
 cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"
@@ -211,14 +205,8 @@ Set-ItemProperty -Path "$env:SystemRoot\Temp\ddu\Settings\Settings.xml" -Name Is
 # prevent downloads of drivers from windows update
 cmd /c "reg add `"HKLM\Software\Microsoft\Windows\CurrentVersion\DriverSearching`" /v `"SearchOrderConfig`" /t REG_DWORD /d `"0`" /f >nul 2>&1"
 
-# create ddu ps1 file
+# create ddumanual ps1 file
 $DDU = @'
-	    # REMOVE WINLOGON STEPONE PS1 FILE
-        cmd /c "reg add `"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v `"Userinit`" /t REG_SZ /d `"C:\WINDOWS\system32\userinit.exe,`" /f >nul 2>&1"
-
-# start explorer
-start-process explorer
-
 # remove safe mode boot
 cmd /c "bcdedit /deletevalue {current} safeboot >nul 2>&1"
 
@@ -227,10 +215,10 @@ Write-Host "DDU MANUAL`n"
 # open ddu
 Start-Process -Wait "$env:SystemRoot\Temp\ddu\Display Driver Uninstaller.exe"
 '@
-Set-Content -Path "$env:SystemRoot\Temp\ddu.ps1" -Value $DDU -Force
+Set-Content -Path "$env:SystemRoot\Temp\ddumanual.ps1" -Value $DDU -Force
 
-# install winlogon ddu ps1 file to run in safe boot
-cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon`" /v `"Userinit`" /t REG_SZ /d `"powershell.exe -nop -ep bypass -WindowStyle Maximized -f $env:SystemRoot\Temp\ddu.ps1`" /f >nul 2>&1"
+# install runonce ddumanual ps1 file to run in safe boot
+cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce`" /v `"*ddumanual`" /t REG_SZ /d `"powershell.exe -nop -ep bypass -WindowStyle Maximized -f $env:SystemRoot\Temp\ddumanual.ps1`" /f >nul 2>&1"
 
 # turn on safe boot
 cmd /c "bcdedit /set {current} safeboot minimal >nul 2>&1"
