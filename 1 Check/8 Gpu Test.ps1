@@ -27,7 +27,7 @@ IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/furmar
 Expand-Archive "$env:SystemRoot\Temp\furmark.zip" -DestinationPath "$env:SystemRoot\Temp\furmark" -ErrorAction SilentlyContinue
 
 # start furmark
-Start-Process "$env:SystemRoot\Temp\furmark\FurMark.exe"
+Start-Process "$env:SystemRoot\Temp\furmark\FurMark_win64\furmark.exe"
 
 Clear-Host
 Write-Host "Run a basic GPU stress test`n"
