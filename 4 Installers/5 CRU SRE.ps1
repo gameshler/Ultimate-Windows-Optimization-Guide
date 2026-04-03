@@ -24,11 +24,17 @@ Write-Host "Installing:"
 Write-Host "- Custom Resolution Utility..."
 Write-Host "- Scaled Resolution Editor..."
 
-# download custom resolution utility & scaled resolution editor
+# download custom resolution utility
 IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/cru.zip" -OutFile "$env:SystemRoot\Temp\cru.zip"
 
 # extract file
 Expand-Archive -Path "$env:SystemRoot\Temp\cru.zip" -DestinationPath "$env:SystemDrive\Program Files (x86)\CRUSRE" -Force
+
+# download scaled resolution editor
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/sre.zip" -OutFile "$env:SystemRoot\Temp\sre.zip"
+
+# extract file
+Expand-Archive -Path "$env:SystemRoot\Temp\sre.zip" -DestinationPath "$env:SystemDrive\Program Files (x86)\CRUSRE" -Force
 
 # create desktop shortcut
 $WshShell = New-Object -comObject WScript.Shell
