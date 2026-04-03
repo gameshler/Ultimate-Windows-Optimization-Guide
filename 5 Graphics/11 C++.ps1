@@ -21,10 +21,18 @@
 Write-Host "Downloading: C++..."
 
 # download c++ installers
-IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/c++.zip" -OutFile "$env:SystemRoot\Temp\c++.zip"
-
-# extract files
-Expand-Archive "$env:SystemRoot\Temp\c++.zip" -DestinationPath "$env:SystemRoot\Temp\c++" -ErrorAction SilentlyContinue
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/vcredist2005_x64.exe" -OutFile "$env:SystemRoot\Temp\vcredist2005_x64.exe"
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/vcredist2005_x86.exe" -OutFile "$env:SystemRoot\Temp\vcredist2005_x86.exe"
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/vcredist2008_x64.exe" -OutFile "$env:SystemRoot\Temp\vcredist2008_x64.exe"
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/vcredist2008_x86.exe" -OutFile "$env:SystemRoot\Temp\vcredist2008_x86.exe"
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/vcredist2010_x64.exe" -OutFile "$env:SystemRoot\Temp\vcredist2010_x64.exe"
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/vcredist2010_x86.exe" -OutFile "$env:SystemRoot\Temp\vcredist2010_x86.exe"
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/vcredist2012_x64.exe" -OutFile "$env:SystemRoot\Temp\vcredist2012_x64.exe"
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/vcredist2012_x86.exe" -OutFile "$env:SystemRoot\Temp\vcredist2012_x86.exe"
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/vcredist2013_x64.exe" -OutFile "$env:SystemRoot\Temp\vcredist2013_x64.exe"
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/vcredist2013_x86.exe" -OutFile "$env:SystemRoot\Temp\vcredist2013_x86.exe"
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/vcredist2015_2017_2019_2022_x64.exe" -OutFile "$env:SystemRoot\Temp\vcredist2015_2017_2019_2022_x64.exe"
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/vcredist2015_2017_2019_2022_x86.exe" -OutFile "$env:SystemRoot\Temp\vcredist2015_2017_2019_2022_x86.exe"
 
 Clear-Host
 
