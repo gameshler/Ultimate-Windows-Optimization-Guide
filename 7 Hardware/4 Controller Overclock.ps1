@@ -26,20 +26,26 @@ IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/hidusb
 # extract file
 Expand-Archive -Path "$env:SystemRoot\Temp\hidusbf.zip" -DestinationPath "$env:SystemDrive\Program Files (x86)\hidusbf" -Force
 
+# move files
+Move-Item -Path "$env:SystemDrive\Program Files (x86)\hidusbf\hidusbf (BB11.5.25)\*" -Destination "$env:SystemDrive\Program Files (x86)\hidusbf" -Force
+
+# delete folder
+Remove-Item "$env:SystemDrive\Program Files (x86)\hidusbf\hidusbf (BB11.5.25)" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
+
 # create desktop shortcut
 $WshShell = New-Object -comObject WScript.Shell
 $Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
 $Shortcut = $WshShell.CreateShortcut("$Desktop\Setup.lnk")
-$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\hidusbf\Setup.exe"
-$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\hidusbf"
+$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\hidusbf\DRIVER\Setup.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\hidusbf\DRIVER"
 $Shortcut.Save()
 
 # create start menu shortcut
 $WshShell = New-Object -comObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Setup.lnk")
-$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\hidusbf\Setup.exe"
-$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\hidusbf"
+$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\hidusbf\DRIVER\Setup.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\hidusbf\DRIVER"
 $Shortcut.Save()
 
 # start hidusbf
-Start-Process "$env:SystemDrive\Program Files (x86)\hidusbf\Setup.exe"
+Start-Process "$env:SystemDrive\Program Files (x86)\hidusbf\DRIVER\Setup.exe"
