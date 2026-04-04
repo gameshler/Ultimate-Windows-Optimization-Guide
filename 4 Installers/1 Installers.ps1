@@ -88,11 +88,14 @@ $DiscordSettings = @'
 '@
 Set-Content -Path "$env:APPDATA\discord\settings.json" -Value $DiscordSettings -Force | Out-Null
 
+# fix path for space in username
+$Global:tempDir = (([System.IO.Path]::GetTempPath())).trimend('\')
+
 # download discord				  
-IWR "https://discord.com/api/downloads/distributions/app/installers/latest?channel=stable&platform=win&arch=x64" -OutFile "$env:SystemRoot\Temp\Discord.exe"
+IWR "https://discord.com/api/downloads/distributions/app/installers/latest?channel=stable&platform=win&arch=x64" -OutFile "$tempDir\Discord.exe"
 
 # install discord	
-Start-Process "$env:SystemRoot\Temp\Discord.exe"
+Start-Process "$tempDir\Discord.exe"
 
 show-menu
 
@@ -420,7 +423,7 @@ Clear-Host
 Write-Host "Installing: Notepad ++..."
 
 # download notepad ++
-IWR "https://github.com/FR33THYFR33THY/files/raw/main/Notepad%20++.exe" -OutFile "$env:SystemRoot\Temp\Notepad ++.exe"
+IWR "https://github.com/notepad-plus-plus/notepad-plus-plus/releases/download/v8.9.3/npp.8.9.3.Installer.x64.exe" -OutFile "$env:SystemRoot\Temp\Notepad ++.exe"
 
 # install notepad ++
 Start-Process -Wait "$env:SystemRoot\Temp\Notepad ++.exe" -ArgumentList "/S"
@@ -629,11 +632,14 @@ ui.hardware_acceleration=false
 '@
 Set-Content -Path "$env:APPDATA\Spotify\prefs" -Value $SpotifySettingsPrefs -Force | Out-Null
 
+# fix path for space in username
+$Global:tempDir = (([System.IO.Path]::GetTempPath())).trimend('\')
+
 # download spotify
-IWR "https://download.scdn.co/SpotifySetup.exe" -OutFile "$env:SystemRoot\Temp\Spotify.exe"
+IWR "https://download.scdn.co/SpotifySetup.exe" -OutFile "$tempDir\Spotify.exe"
 
 # install spotify
-Start-Process "explorer.exe" -ArgumentList "$env:SystemRoot\Temp\Spotify.exe"
+Start-Process "explorer.exe" -ArgumentList "$tempDir\Spotify.exe"
 
 show-menu
 
