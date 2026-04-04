@@ -49,7 +49,7 @@ exit
 
 Clear-Host
 
-Write-Host "Uninstalling: UWP Apps. Please wait..`n"
+Write-Host "Uninstalling: UWP Apps. Please wait...`n"
 
 Get-AppXPackage -AllUsers | Where-Object {
 # breaks file explorer
@@ -79,7 +79,7 @@ $_.Name -notlike '*windows.immersivecontrolpanel*'
 
 Clear-Host
 
-Write-Host "Uninstalling: UWP Features. Please wait..`n"
+Write-Host "Uninstalling: UWP Features. Please wait...`n"
 
 Get-WindowsCapability -Online | Where-Object {
 $_.Name -notlike '*Microsoft.Windows.Ethernet*' -and
@@ -104,7 +104,7 @@ Remove-WindowsCapability -Online -Name $_.Name | Out-Null
 
 Clear-Host
 
-Write-Host "Uninstalling: Legacy Features. Please wait..`n"
+Write-Host "Uninstalling: Legacy Features. Please wait...`n"
 
 Get-WindowsOptionalFeature -Online | Where-Object {
 $_.FeatureName -notlike '*DirectPlay*' -and
@@ -139,7 +139,7 @@ Disable-WindowsOptionalFeature -Online -FeatureName $_.FeatureName -NoRestart -W
 
 Clear-Host
 
-Write-Host "Uninstalling: Legacy Apps. Please wait..`n"
+Write-Host "Uninstalling: Legacy Apps. Please wait...`n"
 
 # uninstall microsoft gameinput
 $findmicrosoftgameinput = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
