@@ -74,8 +74,8 @@ Disable-MMAgent -MemoryCompression -ErrorAction SilentlyContinue | Out-Null
 # enable operationapi
 Enable-MMAgent -OperationAPI -ErrorAction SilentlyContinue | Out-Null
 
-# enable pagecombining
-Enable-MMAgent -PageCombining -ErrorAction SilentlyContinue | Out-Null
+# disable pagecombining
+Disable-MMAgent -PageCombining -ErrorAction SilentlyContinue | Out-Null
 
 exit
 
