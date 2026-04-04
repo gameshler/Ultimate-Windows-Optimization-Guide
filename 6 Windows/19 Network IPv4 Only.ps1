@@ -29,6 +29,12 @@ foreach ($adapterbinding in $adapterstodisable) {
 Disable-NetAdapterBinding -Name "*" -ComponentID $adapterbinding -ErrorAction SilentlyContinue
 }
 
+# again
+$adapterstodisable = @('ms_lldp', 'ms_lltdio', 'ms_implat', 'ms_rspndr', 'ms_tcpip6', 'ms_server', 'ms_msclient', 'ms_pacer')
+foreach ($adapterbinding in $adapterstodisable) {
+Disable-NetAdapterBinding -Name "*" -ComponentID $adapterbinding -ErrorAction SilentlyContinue
+}
+
 # open settings
 get-netadapterbinding | select-object name, displayname, componentid, enabled | format-table -autosize
 
@@ -44,6 +50,12 @@ Clear-Host
 Write-Host "Network: Default..`n"
 
 # enable all network adapters
+$adapterstoenable = @('ms_lldp', 'ms_lltdio', 'ms_implat', 'ms_tcpip', 'ms_rspndr', 'ms_tcpip6', 'ms_server', 'ms_msclient', 'ms_pacer')
+foreach ($adapterbinding in $adapterstoenable) {
+Enable-NetAdapterBinding -Name "*" -ComponentID $adapterbinding -ErrorAction SilentlyContinue
+}
+
+# again
 $adapterstoenable = @('ms_lldp', 'ms_lltdio', 'ms_implat', 'ms_tcpip', 'ms_rspndr', 'ms_tcpip6', 'ms_server', 'ms_msclient', 'ms_pacer')
 foreach ($adapterbinding in $adapterstoenable) {
 Enable-NetAdapterBinding -Name "*" -ComponentID $adapterbinding -ErrorAction SilentlyContinue

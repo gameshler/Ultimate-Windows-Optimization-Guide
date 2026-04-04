@@ -46,6 +46,3 @@ $Shortcut = $WshShell.CreateShortcut("$env:ProgramData\Microsoft\Windows\Start M
 $Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\hidusbf\DRIVER\Setup.exe"
 $Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\hidusbf\DRIVER"
 $Shortcut.Save()
-
-# start hidusbf
-Start-Process "$env:SystemDrive\Program Files (x86)\hidusbf\DRIVER\Setup.exe"
