@@ -14,5 +14,5 @@ iwr https://github.com/FR33THYFR33THY/Ultimate/raw/refs/heads/main/IWR.ps1 -useb
 ```
 
 # Guide
-[Video](<https://youtu.be/PlACZ9Gp1xo>)
-[![Video](https://img.youtube.com/vi/PlACZ9Gp1xo/maxresdefault.jpg)](https://youtu.be/PlACZ9Gp1xo)
+[Video](<https://youtu.be/zwPEDXteJYQ>)
+[![Video](https://img.youtube.com/vi/zwPEDXteJYQ/maxresdefault.jpg)](https://youtu.be/zwPEDXteJYQ)
