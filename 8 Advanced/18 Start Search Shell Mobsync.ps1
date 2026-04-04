@@ -22,14 +22,14 @@ Clear-Host
 Write-Host "Start Search Shell Mobsync: Off...`n"
 
 # takeownership of folders
-cmd /c "takeown.exe /f C:\Windows\SystemApps\Microsoft.Windows.Search_cw5n1h2txyewy >nul 2>&1"
-cmd /c "icacls.exe C:\Windows\SystemApps\Microsoft.Windows.Search_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
-cmd /c "takeown.exe /f C:\Windows\SystemApps\ShellExperienceHost_cw5n1h2txyewy >nul 2>&1"
-cmd /c "icacls.exe C:\Windows\SystemApps\ShellExperienceHost_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
-cmd /c "takeown.exe /f C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy >nul 2>&1"
-cmd /c "icacls.exe C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
-cmd /c "takeown.exe /f C:\Windows\System32\mobsync.exe >nul 2>&1"
-cmd /c "icacls.exe C:\Windows\System32\mobsync.exe /grant *S-1-3-4:F /t /q >nul 2>&1"
+cmd /c "takeown.exe /f $env:SystemRoot\SystemApps\Microsoft.Windows.Search_cw5n1h2txyewy >nul 2>&1"
+cmd /c "icacls.exe $env:SystemRoot\SystemApps\Microsoft.Windows.Search_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
+cmd /c "takeown.exe /f $env:SystemRoot\SystemApps\ShellExperienceHost_cw5n1h2txyewy >nul 2>&1"
+cmd /c "icacls.exe $env:SystemRoot\SystemApps\ShellExperienceHost_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
+cmd /c "takeown.exe /f $env:SystemRoot\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy >nul 2>&1"
+cmd /c "icacls.exe $env:SystemRoot\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
+cmd /c "takeown.exe /f $env:SystemRoot\System32\mobsync.exe >nul 2>&1"
+cmd /c "icacls.exe $env:SystemRoot\System32\mobsync.exe /grant *S-1-3-4:F /t /q >nul 2>&1"
 
 # stop tasks
 $stop = "AccountsServiceProduct",
@@ -76,10 +76,10 @@ $stop = "AccountsServiceProduct",
 $stop | ForEach-Object { Stop-Process -Name $_ -Force -ErrorAction SilentlyContinue }
 
 # move folders
-cmd /c "move /y C:\Windows\SystemApps\Microsoft.Windows.Search_cw5n1h2txyewy C:\Windows >nul 2>&1"
-cmd /c "move /y C:\Windows\SystemApps\ShellExperienceHost_cw5n1h2txyewy C:\Windows >nul 2>&1"
-cmd /c "move /y C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy C:\Windows >nul 2>&1"
-cmd /c "move /y C:\Windows\System32\mobsync.exe C:\Windows >nul 2>&1"
+cmd /c "move /y $env:SystemRoot\SystemApps\Microsoft.Windows.Search_cw5n1h2txyewy $env:SystemRoot >nul 2>&1"
+cmd /c "move /y $env:SystemRoot\SystemApps\ShellExperienceHost_cw5n1h2txyewy $env:SystemRoot >nul 2>&1"
+cmd /c "move /y $env:SystemRoot\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy $env:SystemRoot >nul 2>&1"
+cmd /c "move /y $env:SystemRoot\System32\mobsync.exe $env:SystemRoot >nul 2>&1"
 
 # disable uwp search
 cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\PolicyManager\default\Search\DisableSearch`" /v `"value`" /t REG_DWORD /d `"1`" /f >nul 2>&1"
@@ -104,11 +104,11 @@ Start-Sleep 15
 cmd /c "sc stop WSearch >nul 2>&1"
 
 # reapply for w10 search
-cmd /c "takeown.exe /f C:\Windows\SystemApps\Microsoft.Windows.Search_cw5n1h2txyewy >nul 2>&1"
-cmd /c "icacls.exe C:\Windows\SystemApps\Microsoft.Windows.Search_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
+cmd /c "takeown.exe /f $env:SystemRoot\SystemApps\Microsoft.Windows.Search_cw5n1h2txyewy >nul 2>&1"
+cmd /c "icacls.exe $env:SystemRoot\SystemApps\Microsoft.Windows.Search_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
 cmd /c "taskkill /F /IM SearchApp.exe >nul 2>&1"
 cmd /c "taskkill /F /IM SearchHost.exe >nul 2>&1"
-cmd /c "move /y C:\Windows\SystemApps\Microsoft.Windows.Search_cw5n1h2txyewy C:\Windows >nul 2>&1"
+cmd /c "move /y $env:SystemRoot\SystemApps\Microsoft.Windows.Search_cw5n1h2txyewy $env:SystemRoot >nul 2>&1"
 
 exit
 
@@ -120,20 +120,20 @@ Clear-Host
 Write-Host "Start Search Shell Mobsync: Default...`n"
 
 # takeownership of folders
-cmd /c "takeown.exe /f C:\Windows\Microsoft.Windows.Search_cw5n1h2txyewy >nul 2>&1"
-cmd /c "icacls.exe C:\Windows\Microsoft.Windows.Search_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
-cmd /c "takeown.exe /f C:\Windows\ShellExperienceHost_cw5n1h2txyewy >nul 2>&1"
-cmd /c "icacls.exe C:\Windows\ShellExperienceHost_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
-cmd /c "takeown.exe /f C:\Windows\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy >nul 2>&1"
-cmd /c "icacls.exe C:\Windows\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
-cmd /c "takeown.exe /f C:\Windows\mobsync.exe >nul 2>&1"
-cmd /c "icacls.exe C:\Windows\mobsync.exe /grant *S-1-3-4:F /t /q >nul 2>&1"
+cmd /c "takeown.exe /f $env:SystemRoot\Microsoft.Windows.Search_cw5n1h2txyewy >nul 2>&1"
+cmd /c "icacls.exe $env:SystemRoot\Microsoft.Windows.Search_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
+cmd /c "takeown.exe /f $env:SystemRoot\ShellExperienceHost_cw5n1h2txyewy >nul 2>&1"
+cmd /c "icacls.exe $env:SystemRoot\ShellExperienceHost_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
+cmd /c "takeown.exe /f $env:SystemRoot\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy >nul 2>&1"
+cmd /c "icacls.exe $env:SystemRoot\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy /grant *S-1-3-4:F /t /q >nul 2>&1"
+cmd /c "takeown.exe /f $env:SystemRoot\mobsync.exe >nul 2>&1"
+cmd /c "icacls.exe $env:SystemRoot\mobsync.exe /grant *S-1-3-4:F /t /q >nul 2>&1"
 
 # move folders
-cmd /c "move /y C:\Windows\Microsoft.Windows.Search_cw5n1h2txyewy C:\Windows\SystemApps >nul 2>&1"
-cmd /c "move /y C:\Windows\ShellExperienceHost_cw5n1h2txyewy C:\Windows\SystemApps >nul 2>&1"
-cmd /c "move /y C:\Windows\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy C:\Windows\SystemApps >nul 2>&1"
-cmd /c "move /y C:\Windows\mobsync.exe C:\Windows\System32 >nul 2>&1"
+cmd /c "move /y $env:SystemRoot\Microsoft.Windows.Search_cw5n1h2txyewy $env:SystemRoot\SystemApps >nul 2>&1"
+cmd /c "move /y $env:SystemRoot\ShellExperienceHost_cw5n1h2txyewy $env:SystemRoot\SystemApps >nul 2>&1"
+cmd /c "move /y $env:SystemRoot\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy $env:SystemRoot\SystemApps >nul 2>&1"
+cmd /c "move /y $env:SystemRoot\mobsync.exe $env:SystemRoot\System32 >nul 2>&1"
 
 # enable uwp search completely
 cmd /c "reg add `"HKLM\SOFTWARE\Microsoft\PolicyManager\default\Search\DisableSearch`" /v `"value`" /t REG_DWORD /d `"0`" /f >nul 2>&1"
