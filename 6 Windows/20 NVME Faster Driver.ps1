@@ -8,6 +8,7 @@
         $Host.PrivateData.ProgressForegroundColor = "White"
         Clear-Host
 
+        Write-Host "NO LONGER WORKING SINCE KB5086672 UPDATE" -ForegroundColor Red
         Write-Host "1. NVME: Faster Driver (Recommended)"
         Write-Host "2. NVME: Default`n"
         while ($true) {
