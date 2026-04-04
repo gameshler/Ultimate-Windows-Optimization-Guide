@@ -21,6 +21,7 @@
         function show-menu {
 	    Clear-Host
 	    Write-Host "Game launchers, programs and web browsers:"
+		Write-Host "- Turn off cloud config/cloud sync"
         Write-Host "- Disable hardware acceleration"
         Write-Host "- Turn off running at startup"
         Write-Host "- Deactivate overlays`n"
