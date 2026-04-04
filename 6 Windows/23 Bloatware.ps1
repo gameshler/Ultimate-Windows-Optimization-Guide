@@ -141,6 +141,13 @@ Clear-Host
 
 Write-Host "Uninstalling: Legacy Apps. Please wait...`n"
 
+# uninstall brlapi
+cmd /c "sc stop `"brlapi`" >nul 2>&1"
+cmd /c "sc delete `"brlapi`" >nul 2>&1"
+cmd /c "takeown /f `"$env:SystemRoot\brltty`" /r /d y >nul 2>&1"
+cmd /c "icacls `"$env:SystemRoot\brltty`" /grant administrators:F /t >nul 2>&1"
+Remove-Item "$env:SystemRoot\brltty" -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
+
 # uninstall microsoft gameinput
 $findmicrosoftgameinput = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
 $microsoftgameinput = Get-ItemProperty $findmicrosoftgameinput -ErrorAction SilentlyContinue |
