@@ -7,7 +7,7 @@
         $Host.PrivateData.ProgressBackgroundColor = "Black"
         $Host.PrivateData.ProgressForegroundColor = "White"
         Clear-Host
-
+        Write-Host "SECURE BOOT MUST BE OFF FOR 'Disable' TO WORK`n"
         Write-Host "Data Execution Prevention:"
         Write-Host "1. Disable"
         Write-Host "2. Enable (Default)`n"
