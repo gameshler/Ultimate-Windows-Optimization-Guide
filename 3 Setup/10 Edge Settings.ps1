@@ -46,9 +46,3 @@ Get-ScheduledTask | Where-Object { $_.TaskName -like '*Edge*' } | Unregister-Sch
 # remove ietoedge bho
 cmd /c "reg delete `"HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{1FD49718-1D00-4B19-AF5F-070AF6D5D54C}`" /f >nul 2>&1"
 cmd /c "reg delete `"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{1FD49718-1D00-4B19-AF5F-070AF6D5D54C}`" /f >nul 2>&1"
-
-# wait
-Start-Sleep -Seconds 2
-
-# open edge
-Start-Process "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
