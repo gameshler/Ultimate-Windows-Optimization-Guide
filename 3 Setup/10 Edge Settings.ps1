@@ -8,7 +8,27 @@
         $Host.PrivateData.ProgressForegroundColor = "White"
         Clear-Host
 
-Write-Host "Edge Settings: Importing..."
+        # SCRIPT CHECK INTERNET
+        if (!(Test-Connection -ComputerName "8.8.8.8" -Count 1 -Quiet -ErrorAction SilentlyContinue)) {
+        Write-Host "Internet Connection Required`n" -ForegroundColor Red
+        Pause
+        exit
+        }
+
+        # SCRIPT SILENT
+        $progresspreference = 'silentlycontinue'
+
+        Write-Host "1. Edge Settings: Optimize (Recommended)"
+        Write-Host "2. Edge Settings: Default`n"
+        while ($true) {
+        $choice = Read-Host " "
+        if ($choice -match '^[1-2]$') {
+        switch ($choice) {
+        1 {
+
+Clear-Host
+
+Write-Host "Edge Settings: Optimize..."
 
 # install ublock origin
 cmd /c "reg add `"HKLM\SOFTWARE\Policies\Microsoft\Edge\ExtensionInstallForcelist`" /v `"1`" /t REG_SZ /d `"odfafepnkmbhccpbejgmiehpchacaeak;https://edge.microsoft.com/extensionwebstorebase/v1/crx`" /f >nul 2>&1"
@@ -46,3 +66,38 @@ Get-ScheduledTask | Where-Object { $_.TaskName -like '*Edge*' } | Unregister-Sch
 # remove ietoedge bho
 cmd /c "reg delete `"HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{1FD49718-1D00-4B19-AF5F-070AF6D5D54C}`" /f >nul 2>&1"
 cmd /c "reg delete `"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{1FD49718-1D00-4B19-AF5F-070AF6D5D54C}`" /f >nul 2>&1"
+
+exit
+
+          }
+        2 {
+
+Clear-Host
+
+Write-Host "Edge Settings: Default..."
+
+# remove ublock origin
+# remove edge policies
+cmd /c "reg delete `"HKLM\SOFTWARE\Policies\Microsoft\Edge`" /f >nul 2>&1"
+
+# stop edge running
+Stop-Process -Name "msedge" -Force -ErrorAction SilentlyContinue
+Start-Sleep -Seconds 2
+
+# reset edge settings
+Start-Process "msedge.exe" -ArgumentList "--restore-last-session --disable-extensions"
+Start-Sleep -Seconds 2
+
+# stop edge running
+Stop-Process -Name "msedge" -Force -ErrorAction SilentlyContinue
+
+# download edge installer
+IWR "https://github.com/FR33THYFR33THY/Ultimate-Files/raw/refs/heads/main/edge.exe" -OutFile "$env:SystemRoot\Temp\edge.exe"
+
+# start edge installer
+Start-Process "$env:SystemRoot\Temp\edge.exe"
+
+exit
+
+          }
+        } } else { Write-Host "Invalid input. Please select a valid option (1-2)." } }
