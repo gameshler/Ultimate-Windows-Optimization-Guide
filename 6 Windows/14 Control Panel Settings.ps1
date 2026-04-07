@@ -1495,6 +1495,10 @@ E0,F6,C5,D5,0E,CA,50,00,00
 ; fix enter your pin hello face sign in bug allow password instead
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device]
 "DevicePasswordLessBuildVersion"=dword:00000000
+
+; disable finish setting up your device
+[HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\UserProfileEngagement]
+"ScoobeSystemSettingEnabled"=dword:00000000
 "@
 Set-Content -Path "$env:SystemRoot\Temp\registryoptimize.reg" -Value $RegistryOptimize -Force
 
@@ -2915,6 +2919,9 @@ Windows Registry Editor Version 5.00
 ; remove fix enter your pin hello face sign in bug allow password instead
 [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\PasswordLess\Device]
 "DevicePasswordLessBuildVersion"=dword:00000002
+
+; revert finish setting up your device
+[-HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement]
 "@
 Set-Content -Path "$env:SystemRoot\Temp\registrydefaults.reg" -Value $RegistryDefaults -Force
 
