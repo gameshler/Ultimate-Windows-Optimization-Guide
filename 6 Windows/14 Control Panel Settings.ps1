@@ -932,6 +932,10 @@ Windows Registry Editor Version 5.00
 [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
 "ShowCopilotButton"=dword:00000000
 
+; remove resume from taskbar
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
+"IsEnabled"=dword:00000000
+
 ; remove meet now
 [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer]
 "HideSCAMeetNow"=dword:00000001
@@ -2426,6 +2430,10 @@ Windows Registry Editor Version 5.00
 ; copilot from taskbar
 [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
 "ShowCopilotButton"=-
+
+; resume from taskbar
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced]
+"IsEnabled"=-
 
 ; meet now
 [-HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer]
