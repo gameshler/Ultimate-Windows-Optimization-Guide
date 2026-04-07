@@ -746,6 +746,12 @@ Windows Registry Editor Version 5.00
 "Hotkey"="3"
 "Layout Hotkey"="3"
 
+; disable calendar events
+[HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Search]
+"GleamEnabled"=dword:00000000
+"WeatherEnabled"=dword:00000000
+"HolidayEnabled"=dword:00000000
+
 
 
 
@@ -2279,6 +2285,12 @@ Windows Registry Editor Version 5.00
 "Language Hotkey"=-
 "Hotkey"=-
 "Layout Hotkey"=-
+
+; calendar events
+[HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Search]
+"GleamEnabled"=-
+"WeatherEnabled"=-
+"HolidayEnabled"=-
 
 
 
