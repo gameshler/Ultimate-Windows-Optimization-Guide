@@ -332,7 +332,7 @@ Clear-Host
 Write-Host "Installing: Frame View..."
 
 # download frame view
-IWR "https://images.nvidia.com/content/geforce/technologies/frameview/FrameView_1.7/FrameViewSetup.exe" -OutFile "$env:SystemRoot\Temp\FrameView.exe"
+IWR "https://images.nvidia.com/content/geforce/technologies/frameview/FrameView_1.8.1/FrameViewSetup.exe" -OutFile "$env:SystemRoot\Temp\FrameView.exe"
 
 # install frame view 
 Start-Process -Wait "$env:SystemRoot\Temp\FrameView.exe" -ArgumentList "/s"
