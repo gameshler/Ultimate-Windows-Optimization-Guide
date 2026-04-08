@@ -158,6 +158,21 @@ IWR "https://downloader.battle.net/download/getInstaller?os=win&installer=Battle
 # install battle.net 
 Start-Process "$env:SystemRoot\Temp\Battle.net.exe" -ArgumentList '--lang=enUS --installpath="C:\Program Files (x86)\Battle.net"'
 
+# create desktop shortcut
+$WshShell = New-Object -comObject WScript.Shell
+$Desktop = (New-Object -ComObject Shell.Application).Namespace('shell:Desktop').Self.Path
+$Shortcut = $WshShell.CreateShortcut("$Desktop\Battle.net.lnk")
+$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Battle.net\Battle.net Launcher.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\Battle.net"
+$Shortcut.Save()
+
+# create start menu shortcut
+$WshShell = New-Object -comObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut("$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Battle.net.lnk")
+$Shortcut.TargetPath = "$env:SystemDrive\Program Files (x86)\Battle.net\Battle.net Launcher.exe"
+$Shortcut.WorkingDirectory = "$env:SystemDrive\Program Files (x86)\Battle.net"
+$Shortcut.Save()
+
 show-menu
 
           }
