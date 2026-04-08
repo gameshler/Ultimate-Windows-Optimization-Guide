@@ -30,6 +30,35 @@ Clear-Host
 
 Write-Host "Gamebar Xbox: Off..."
 
+# stop gamebar running
+Stop-Process -Force -Name GameBar -ErrorAction SilentlyContinue | Out-Null
+
+# uninstall gamebar & xbox apps
+Get-AppXPackage -AllUsers | Where-Object {
+$_.Name -like '*Gaming*' -or
+$_.Name -like '*Xbox*'
+} | Remove-AppxPackage -ErrorAction SilentlyContinue
+
+# stop microsoft gameinput running
+cmd /c "sc stop `"GameInputSvc`" >nul 2>&1"
+$stop = "gamingservices", "gamingservicesnet", "GameInputRedistService"
+$stop | ForEach-Object { Stop-Process -Name $_ -Force -ErrorAction SilentlyContinue }
+Start-Sleep -Seconds 2
+
+# uninstall microsoft gameinput
+$findmicrosoftgameinput = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
+$microsoftgameinput = Get-ItemProperty $findmicrosoftgameinput -ErrorAction SilentlyContinue |
+Where-Object { $_.DisplayName -like "*Microsoft GameInput*" }
+if ($microsoftgameinput) {
+$guid = $microsoftgameinput.PSChildName
+Start-Process "msiexec.exe" -ArgumentList "/x $guid /qn /norestart" -Wait -NoNewWindow
+}
+
+# stop microsoft gameinput running again
+cmd /c "sc stop `"GameInputSvc`" >nul 2>&1"
+$stop = "gamingservices", "gamingservicesnet", "GameInputRedistService"
+$stop | ForEach-Object { Stop-Process -Name $_ -Force -ErrorAction SilentlyContinue }
+
 # create reg file
 $GameBarOff = @"
 Windows Registry Editor Version 5.00
@@ -81,35 +110,6 @@ Set-Content -Path "$env:SystemRoot\Temp\gamebaroff.reg" -Value $GameBarOff -Forc
 
 # import reg file
 Start-Process -Wait "regedit.exe" -ArgumentList "/S `"$env:SystemRoot\Temp\gamebaroff.reg`"" -WindowStyle Hidden
-
-# stop gamebar running
-Stop-Process -Force -Name GameBar -ErrorAction SilentlyContinue | Out-Null
-
-# uninstall gamebar & xbox apps
-Get-AppXPackage -AllUsers | Where-Object {
-$_.Name -like '*Gaming*' -or
-$_.Name -like '*Xbox*'
-} | Remove-AppxPackage -ErrorAction SilentlyContinue
-
-# stop microsoft gameinput running
-cmd /c "sc stop `"GameInputSvc`" >nul 2>&1"
-$stop = "gamingservices", "gamingservicesnet", "GameInputRedistService"
-$stop | ForEach-Object { Stop-Process -Name $_ -Force -ErrorAction SilentlyContinue }
-Start-Sleep -Seconds 2
-
-# uninstall microsoft gameinput
-$findmicrosoftgameinput = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*"
-$microsoftgameinput = Get-ItemProperty $findmicrosoftgameinput -ErrorAction SilentlyContinue |
-Where-Object { $_.DisplayName -like "*Microsoft GameInput*" }
-if ($microsoftgameinput) {
-$guid = $microsoftgameinput.PSChildName
-Start-Process "msiexec.exe" -ArgumentList "/x $guid /qn /norestart" -Wait -NoNewWindow
-}
-
-# stop microsoft gameinput running again
-cmd /c "sc stop `"GameInputSvc`" >nul 2>&1"
-$stop = "gamingservices", "gamingservicesnet", "GameInputRedistService"
-$stop | ForEach-Object { Stop-Process -Name $_ -Force -ErrorAction SilentlyContinue }
 
 exit
 
