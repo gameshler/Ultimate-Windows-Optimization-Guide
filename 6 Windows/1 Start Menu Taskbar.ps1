@@ -463,7 +463,7 @@ Remove-Item -Recurse -Force "$env:SystemDrive\Windows\StartMenuLayout.xml" -Erro
 # remove start2bin
 Remove-Item -Recurse -Force "$env:USERPROFILE\AppData\Local\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState\start2.bin" -ErrorAction SilentlyContinue | Out-Null
 
-# set start menu apps view to list
+# set start menu apps view to category
 cmd /c "reg add `"HKCU\Software\Microsoft\Windows\CurrentVersion\Start`" /v `"AllAppsViewMode`" /t REG_DWORD /d `"0`" /f >nul 2>&1"
 
 # restart explorer
