@@ -18,6 +18,33 @@
         # SCRIPT SILENT
         $progresspreference = 'silentlycontinue'
 
+        # FUNCTION RUN AS TRUSTED INSTALLER
+        function Run-Trusted([String]$command) {
+        try {
+    	Stop-Service -Name TrustedInstaller -Force -ErrorAction Stop -WarningAction Stop
+  		}
+  		catch {
+    	taskkill /im trustedinstaller.exe /f >$null
+  		}
+        $service = Get-CimInstance -ClassName Win32_Service -Filter "Name='TrustedInstaller'"
+        $DefaultBinPath = $service.PathName
+  		$trustedInstallerPath = "$env:SystemRoot\servicing\TrustedInstaller.exe"
+  		if ($DefaultBinPath -ne $trustedInstallerPath) {
+    	$DefaultBinPath = $trustedInstallerPath
+  		}
+        $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
+        $base64Command = [Convert]::ToBase64String($bytes)
+        sc.exe config TrustedInstaller binPath= "cmd.exe /c powershell.exe -encodedcommand $base64Command" | Out-Null
+        sc.exe start TrustedInstaller | Out-Null
+        sc.exe config TrustedInstaller binpath= "`"$DefaultBinPath`"" | Out-Null
+        try {
+    	Stop-Service -Name TrustedInstaller -Force -ErrorAction Stop -WarningAction Stop
+  		}
+  		catch {
+    	taskkill /im trustedinstaller.exe /f >$null
+  		}
+        }
+
         Write-Host "1. Gamebar Xbox: Off (Recommended)"
         Write-Host "2. Gamebar Xbox: Default`n"
         while ($true) {
@@ -111,6 +138,9 @@ Set-Content -Path "$env:SystemRoot\Temp\gamebaroff.reg" -Value $GameBarOff -Forc
 # import reg file
 Start-Process -Wait "regedit.exe" -ArgumentList "/S `"$env:SystemRoot\Temp\gamebaroff.reg`"" -WindowStyle Hidden
 
+# disable gamebarpresencewriter.exe
+Run-Trusted -command "reg add `"HKLM\SOFTWARE\Microsoft\WindowsRuntime\ActivatableClassId\Windows.Gaming.GameBar.PresenceServer.Internal.PresenceWriter`" /v `"ActivationType`" /t REG_DWORD /d `"0`" /f"
+
 exit
 
           }
@@ -191,6 +221,9 @@ Set-Content -Path "$env:SystemRoot\Temp\gamebaron.reg" -Value $GameBarOn -Force
 
 # import reg file
 Start-Process -Wait "regedit.exe" -ArgumentList "/S `"$env:SystemRoot\Temp\gamebaron.reg`"" -WindowStyle Hidden
+
+# revert disable gamebarpresencewriter.exe
+Run-Trusted -command "reg add `"HKLM\SOFTWARE\Microsoft\WindowsRuntime\ActivatableClassId\Windows.Gaming.GameBar.PresenceServer.Internal.PresenceWriter`" /v `"ActivationType`" /t REG_DWORD /d `"1`" /f"
 
 # install store, gamebar & xbox apps
 Get-AppXPackage -AllUsers | Where-Object {
