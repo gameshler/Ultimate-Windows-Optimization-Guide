@@ -34,6 +34,10 @@ Disable-BitLocker -MountPoint $_.MountPoint -ErrorAction SilentlyContinue | Out-
 # open settings
 Start-Process control.exe -ArgumentList "/name microsoft.bitlockerdriveencryption"
 
+manage-bde -status
+
+Pause
+
 exit
 
           }
@@ -45,6 +49,10 @@ Write-Host "BitLocker: On..."
 
 # open settings
 Start-Process control.exe -ArgumentList "/name microsoft.bitlockerdriveencryption"
+
+manage-bde -status
+
+Pause
 
 exit
 
